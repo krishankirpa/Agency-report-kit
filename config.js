@@ -1,0 +1,7 @@
+// Production configuration.
+// IMPORTANT: use the Supabase ANON/PUBLIC key only. Never put a service-role key here.
+window.AGENCY_REPORT_CONFIG = {
+  SUPABASE_URL: "YOUR_SUPABASE_PROJECT_URL",
+  SUPABASE_ANON_KEY: "YOUR_SUPABASE_ANON_KEY",
+  STRIPE_PAYMENT_LINK: "YOUR_STRIPE_MONTHLY_PAYMENT_LINK"
+};
