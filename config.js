@@ -11,17 +11,13 @@
 window.AGENCY_REPORT_CONFIG = {
 
   FIREBASE: {
-    apiKey: "PASTE_YOUR_FIREBASE_API_KEY_HERE",
-
-    authDomain: "agency-report-kit.firebaseapp.com",
-
-    projectId: "agency-report-kit",
-
-    storageBucket: "agency-report-kit.firebasestorage.app",
-
-    messagingSenderId: "66001938149",
-
-    appId: "PASTE_YOUR_FIREBASE_APP_ID_HERE"
+     apiKey: "AIzaSyDqMGnYC2bNDd-LCzWK5o8uajIFgbjVd9E",
+  authDomain: "agency-report-kit.firebaseapp.com",
+  projectId: "agency-report-kit",
+  storageBucket: "agency-report-kit.firebasestorage.app",
+  messagingSenderId: "660019389149",
+  appId: "1:660019389149:web:764dd195581404bf46b134",
+  measurementId: "G-37MVERRVEH"
   },
 
   // Your live GitHub Pages URL
