@@ -183,7 +183,7 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 
   <div class="cards">
     <div class="card"><div class="label">AD SPEND</div><div class="value" id="spend">—</div><div class="delta" id="spendDelta">Current period</div></div>
-    <div class="card"><div class="label">LEADS</div><div class="value" id="leads">—</div><div class="delta" id="leadsDelta">Current period</div></div>
+    <div class="card"><div class="label">RESULTS / CONVERSIONS</div><div class="value" id="leads">—</div><div class="delta" id="leadsDelta">Current period</div></div>
     <div class="card"><div class="label">CPL</div><div class="value" id="cpl">—</div><div class="delta" id="cplDelta">Current period</div></div>
     <div class="card"><div class="label">ROAS</div><div class="value" id="roas">—</div><div class="delta" id="roasDelta">Current period</div></div>
     <div class="card"><div class="label">CTR</div><div class="value" id="ctr">—</div><div class="delta" id="ctrDelta">Current period</div></div>
@@ -248,7 +248,7 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
     <div class="panel tablewrap">
       <div style="padding:18px 18px 7px"><div class="kicker">08 · Campaign Performance</div><h2 style="font-size:16px;margin:4px 0">Winners & Watchlist</h2></div>
       <table class="table">
-        <thead><tr><th>Campaign</th><th>Spend</th><th>Leads</th><th>CPL</th><th>CTR</th><th>ROAS</th><th>Status</th></tr></thead>
+        <thead><tr><th>Campaign</th><th>Spend</th><th>Results</th><th>CPL</th><th>CTR</th><th>ROAS</th><th>Status</th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
     </div>
@@ -299,7 +299,7 @@ function pct(v){return (Number(v||0)*100).toFixed(2)+"%"}
 function metric(data){
  const spend=data.reduce((a,x)=>a+x.spend,0), leads=data.reduce((a,x)=>a+x.leads,0), rev=data.reduce((a,x)=>a+x.revenue,0);
  const imp=data.reduce((a,x)=>a+x.imp,0), clicks=data.reduce((a,x)=>a+x.clicks,0);
- return {spend,leads,rev,imp,clicks,cpl:leads?spend/leads:0,roas:spend?rev/spend:0,ctr:imp?clicks/imp:0,cvr:clicks?leads/clicks:0};
+ return {spend,leads,rev,imp,clicks,revenueAvailable:data.some(x=>x.revenueProvided),cpl:leads?spend/leads:0,roas:spend&&data.some(x=>x.revenueProvided)?rev/spend:null,ctr:imp?clicks/imp:0,cvr:clicks?leads/clicks:0};
 }
 function delta(curr,prev,invert=false){
  if(!prev) return {text:"No comparison",cls:"neutral"};
@@ -343,12 +343,15 @@ function inferPlatform(name){
  if(/gpt|openai/.test(t)) return "GPT";
  return "Custom";
 }
-function normalizePlatform(v,name){
+function normalizePlatform(v,name,sourceHint){
  const t=String(v||"").toLowerCase();
- if(t.includes("instagram")) return "Instagram"; if(t.includes("meta")||t.includes("facebook")) return "Meta"; if(t.includes("youtube")) return "YouTube"; if(t.includes("google")) return "Google"; if(t.includes("tiktok")) return "TikTok"; if(t.includes("reddit")) return "Reddit"; if(t.includes("pinterest")) return "Pinterest"; if(t.includes("gpt")||t.includes("openai")) return "GPT"; return inferPlatform(name);
+ if(t.includes("instagram")) return "Instagram"; if(t.includes("meta")||t.includes("facebook")) return "Meta"; if(t.includes("youtube")) return "YouTube"; if(t.includes("google")) return "Google"; if(t.includes("tiktok")) return "TikTok"; if(t.includes("reddit")) return "Reddit"; if(t.includes("pinterest")) return "Pinterest"; if(t.includes("gpt")||t.includes("openai")) return "GPT";
+ const hint=String(sourceHint||"").toLowerCase();
+ if(hint.includes("meta")||hint.includes("facebook")||hint.includes("fb_pixel")) return "Meta";
+ return inferPlatform(name);
 }
-function parseRows(data){
- return data.map(x=>({date:x[0],campaign:x[1]||"Campaign",spend:n(x[2]),imp:n(x[3]),clicks:n(x[4]),leads:n(x[5]),revenue:n(x[6]),platform:normalizePlatform(x[7],x[1])}));
+function parseRows(data,sourceHint){
+ return data.map(x=>({date:x[0],campaign:x[1]||"Campaign",spend:n(x[2]),imp:n(x[3]),clicks:n(x[4]),leads:n(x[5]),revenue:n(x[6]),revenueProvided:String(x[6]??"").trim()!=="",platform:normalizePlatform(x[7],x[1],sourceHint)}));
 }
 const currencySelect=document.getElementById("currencySelect");
 currencySelect.value=selectedCurrency;
@@ -437,11 +440,23 @@ function applyPeriod(){
  render();
 }
 
-function setData(data,label){
- rows=parseRows(data);
+function setData(data,label,sourceHint=""){
+ rows=parseRows(data,sourceHint);
+ const detected=[...new Set(rows.map(x=>x.platform).filter(Boolean))];
+ const hintText=String(sourceHint||"").toLowerCase();
+ if(hintText==="meta" && currencySelect.querySelector('option[value="INR"]')){
+   selectedCurrency="INR";
+   currencySelect.value="INR";
+   localStorage.setItem("ark_currency","INR");
+ }
+ if(detected.length===1 && ["Meta","Google","YouTube","TikTok","Reddit","Pinterest","Instagram","GPT"].includes(detected[0])){
+   selectedPlatform=detected[0];
+   platformSelect.value=selectedPlatform;
+   localStorage.setItem("ark_platform",selectedPlatform);
+ }
  document.getElementById("fileStatus").textContent=label;
  const validDates=rows.filter(x=>parseReportDate(x.date)).length;
- document.getElementById("status").textContent=rows.length+" campaign rows loaded locally · "+validDates+" valid date rows.";
+ document.getElementById("status").textContent=rows.length+" campaign rows loaded locally · "+validDates+" valid date rows · Platform: "+(detected.join(", ")||"Unknown");
  applyPeriod();
 }
 function renderPlatformVisuals(){
@@ -459,12 +474,17 @@ function renderPlatformVisuals(){
  const max=Math.max(...arr.flatMap(x=>[x.spend,x.revenue]),1);
  document.getElementById("profitBars").innerHTML=arr.length?arr.map(x=>`<div class="profitrow"><span><strong>${esc(x.platform)}</strong></span><div class="profittrack"><i class="profitspend" style="width:${x.spend/max*100}%"></i><i class="profitrev" style="width:${x.revenue/max*100}%"></i></div><strong>${x.spend?((x.revenue/x.spend).toFixed(2)+"x"):"—"}</strong></div>`).join(""):'<div class="notice">No platform data available.</div>';
  const avg=metric(current);
- const best=arr.filter(x=>x.spend>0).sort((a,b)=>(b.revenue/b.spend)-(a.revenue/a.spend))[0];
+ if(!avg.revenueAvailable){
+   document.getElementById("revenueDonut").style.background="#e5e7eb";
+   document.getElementById("revenueLegend").innerHTML='<div class="notice">Revenue mix unavailable: this CSV does not contain a revenue/value column.</div>';
+   document.getElementById("profitBars").innerHTML='<div class="notice">ROAS/profitability cannot be calculated from this source. Scale signals are based on results and CPL.</div>';
+ }
+ const best=arr.filter(x=>x.spend>0).sort((a,b)=>avg.revenueAvailable?((b.revenue/b.spend)-(a.revenue/a.spend)):((a.leads?a.spend/a.leads:Infinity)-(b.leads?b.spend/b.leads:Infinity)))[0];
  const worst=arr.filter(x=>x.spend>0).sort((a,b)=>(a.revenue/a.spend)-(b.revenue/b.spend))[0];
  const high=arr.slice().sort((a,b)=>b.spend-a.spend)[0];
  const items=[];
- if(best) items.push(`<div class="scaleitem scale"><h4>🟢 Scale candidate · ${esc(best.platform)}</h4><p>${(best.revenue/best.spend).toFixed(2)}x ROAS from ${money(best.spend)} spend. Validate lead quality before increasing budget.</p></div>`);
- if(worst&&(!best||worst.platform!==best.platform)) items.push(`<div class="scaleitem watch"><h4>🔴 Watch · ${esc(worst.platform)}</h4><p>${(worst.revenue/worst.spend).toFixed(2)}x ROAS. Review campaign mix, creative, targeting and conversion quality.</p></div>`);
+ if(best) items.push(`<div class="scaleitem scale"><h4>🟢 Scale candidate · ${esc(best.platform)}</h4><p>${avg.revenueAvailable?((best.revenue/best.spend).toFixed(2)+"x ROAS"):((best.leads?money(best.spend/best.leads):"—")+" CPL")} from ${money(best.spend)} spend. Validate result quality before increasing budget.</p></div>`);
+ if(worst&&(!best||worst.platform!==best.platform)) items.push(`<div class="scaleitem watch"><h4>🔴 Watch · ${esc(worst.platform)}</h4><p>${avg.revenueAvailable?((worst.revenue/worst.spend).toFixed(2)+"x ROAS"):((worst.leads?money(worst.spend/worst.leads):"—")+" CPL")}. Review campaign mix, creative, targeting and conversion quality.</p></div>`);
  if(high) items.push(`<div class="scaleitem optimize"><h4>🟠 Validate allocation · ${esc(high.platform)}</h4><p>${money(high.spend)} of spend is concentrated here. Check incremental efficiency before moving more budget.</p></div>`);
  document.getElementById("scaleGrid").innerHTML=items.join("")||'<div class="notice">Not enough data for scale signals.</div>';
 }
@@ -474,7 +494,7 @@ function render(){
  document.getElementById("spend").textContent=money(m.spend);
  document.getElementById("leads").textContent=m.leads.toLocaleString();
  document.getElementById("cpl").textContent=money(m.cpl);
- document.getElementById("roas").textContent=m.roas.toFixed(2)+"x";
+ document.getElementById("roas").textContent=m.roas===null?"—":m.roas.toFixed(2)+"x";
  document.getElementById("ctr").textContent=pct(m.ctr);
  document.getElementById("revenue").textContent=money(m.rev);
 
@@ -507,15 +527,15 @@ function render(){
 }
 function renderInsights(m,p){
  const arr=[];
- const best=[...current].sort((a,b)=>(b.revenue/(b.spend||1))-(a.revenue/(a.spend||1)))[0];
+ const best=[...current].sort((a,b)=>m.revenueAvailable?((b.revenue/(b.spend||1))-(a.revenue/(a.spend||1))):((a.leads?a.spend/a.leads:Infinity)-(b.leads?b.spend/b.leads:Infinity)))[0];
  const high=[...current].sort((a,b)=>(b.leads?b.spend/b.leads:Infinity)-(a.leads?a.spend/a.leads:Infinity))[0];
  const leadChange=p.leads?((m.leads-p.leads)/p.leads):null;
  const cplChange=p.cpl?((m.cpl-p.cpl)/p.cpl):null;
- if(leadChange!==null) arr.push({tag:leadChange>=0?"positive":"watch",title:`Leads ${leadChange>=0?"increased":"decreased"} ${Math.abs(leadChange*100).toFixed(1)}%`,text:`${m.leads.toLocaleString()} leads in the current period versus ${p.leads.toLocaleString()} previously.`});
+ if(leadChange!==null) arr.push({tag:leadChange>=0?"positive":"watch",title:`Results ${leadChange>=0?"increased":"decreased"} ${Math.abs(leadChange*100).toFixed(1)}%`,text:`${m.leads.toLocaleString()} results in the current period versus ${p.leads.toLocaleString()} previously.`});
  else arr.push({tag:"positive",title:"Scale signal",text:`${m.leads.toLocaleString()} leads were generated from ${money(m.spend)} spend.`});
  if(cplChange!==null) arr.push({tag:cplChange<=0?"positive":"watch",title:`CPL ${cplChange<=0?"improved":"increased"} ${Math.abs(cplChange*100).toFixed(1)}%`,text:`Current CPL is ${money(m.cpl)}.`});
  else arr.push({tag:"watch",title:"Efficiency baseline",text:`Current blended CPL is ${money(m.cpl)}. Add another period for change analysis.`});
- arr.push({tag:"positive",title:`Top ROAS: ${esc(best.campaign)}`,text:`${(best.revenue/(best.spend||1)).toFixed(2)}x ROAS on ${money(best.spend)} spend.`});
+ arr.push({tag:"positive",title:m.revenueAvailable?`Top ROAS: ${esc(best.campaign)}`:`Lowest CPL: ${esc(best.campaign)}`,text:m.revenueAvailable?`${(best.revenue/(best.spend||1)).toFixed(2)}x ROAS on ${money(best.spend)} spend.`:`${money(best.leads?best.spend/best.leads:0)} CPL on ${money(best.spend)} spend.`});
  document.getElementById("insights").innerHTML=arr.map(x=>`<div class="panel insight"><div class="tag ${x.tag==="positive"?"good":"warn"}">${x.tag==="positive"?"Signal":"Watch"}</div><h3>${x.title}</h3><p>${x.text}</p></div>`).join("");
 }
 function renderChart(data){
@@ -523,13 +543,19 @@ function renderChart(data){
  document.getElementById("chart").innerHTML=data.map(x=>`<div class="barwrap" title="${esc(x.campaign)}: ${x.leads} leads"><div class="bar" style="height:${Math.max(5,x.leads/max*100)}%"></div><div class="barlabel">${esc(x.campaign)}</div></div>`).join("");
 }
 function renderFunnel(m){
- const vals=[["Impressions",m.imp],["Clicks",m.clicks],["Leads",m.leads]];
+ const vals=[["Impressions",m.imp],["Clicks",m.clicks],["Results",m.leads]];
  const base=Math.max(m.imp,1);
  document.getElementById("funnel").innerHTML=vals.map(x=>`<div class="funnelrow"><span>${x[0]}</span><div class="track"><div class="fill" style="width:${Math.max(2,x[1]/base*100)}%"></div></div><b>${x[1].toLocaleString()}</b></div>`).join("")+
  `<div class="confidence"><b>CTR</b> ${pct(m.ctr)} · <b>Lead CVR</b> ${pct(m.cvr)} · <b>CPL</b> ${money(m.cpl)}</div>`;
 }
 function campaignStatus(x,avg){
- const c=x.leads?x.spend/x.leads:Infinity, r=x.spend?x.revenue/x.spend:0;
+ const c=x.leads?x.spend/x.leads:Infinity;
+ if(!avg.revenueAvailable){
+   if(c<=avg.cpl*.85) return ["Scale candidate","good"];
+   if(c>=avg.cpl*1.3) return ["Watch","bad"];
+   return ["Stable","warn"];
+ }
+ const r=x.spend?x.revenue/x.spend:0;
  if(r>=avg.roas*1.15 || c<=avg.cpl*.85) return ["Scale candidate","good"];
  if(c>=avg.cpl*1.3 || r<=avg.roas*.7) return ["Watch","bad"];
  return ["Stable","warn"];
@@ -538,7 +564,7 @@ function renderCampaigns(m){
  const avg=m;
  document.getElementById("rows").innerHTML=current.map(x=>{
   const c=x.leads?x.spend/x.leads:0,r=x.spend?x.revenue/x.spend:0,ctr=x.imp?x.clicks/x.imp:0,s=campaignStatus(x,avg);
-  return `<tr><td><strong>${esc(x.campaign)}</strong></td><td>${money(x.spend)}</td><td>${x.leads.toLocaleString()}</td><td>${money(c)}</td><td>${pct(ctr)}</td><td>${r.toFixed(2)}x</td><td><span class="badge ${s[1]}">${s[0]}</span></td></tr>`;
+  return `<tr><td><strong>${esc(x.campaign)}</strong></td><td>${money(x.spend)}</td><td>${x.leads.toLocaleString()}</td><td>${money(c)}</td><td>${pct(ctr)}</td><td>${avg.revenueAvailable?r.toFixed(2)+"x":"—"}</td><td><span class="badge ${s[1]}">${s[0]}</span></td></tr>`;
  }).join("");
 }
 function renderActions(m){
@@ -556,24 +582,48 @@ function parseCSV(t){
  const rows=[]; let row=[]; let cell=""; let quoted=false;
  for(let i=0;i<text.length;i++){
    const ch=text[i], next=text[i+1];
-   if(ch==="\""){
-     if(quoted && next==="\""){cell+="\""; i++;}
+   if(ch==='"'){
+     if(quoted && next==='"'){cell+='"'; i++;}
      else quoted=!quoted;
-   } else if(ch==="," && !quoted){row.push(cell);cell="";}
-   else if((ch==="\n" || ch==="\r") && !quoted){
-     if(ch==="\r" && next==="\n") i++;
+   } else if(ch===',' && !quoted){row.push(cell);cell="";}
+   else if((ch==='\n' || ch==='\r') && !quoted){
+     if(ch==='\r' && next==='\n') i++;
      row.push(cell); cell="";
      if(row.some(v=>String(v).trim()!=="")) rows.push(row);
      row=[];
    } else cell+=ch;
  }
- row.push(cell); if(row.some(v=>String(v).trim()!=="")) rows.push(row);
- if(rows.length<2) return [];
+ if(cell!=="" || row.length){row.push(cell); if(row.some(v=>String(v).trim()!=="")) rows.push(row);}
+ if(rows.length<2) return {data:[],sourceHint:""};
  const h=rows[0].map(x=>String(x).trim().toLowerCase());
  const find=a=>{const i=h.findIndex(v=>a.some(k=>v===k||v.includes(k)));return i<0?-1:i};
- const ix={date:find(["date","day","date range"]),platform:find(["platform","channel","source","network"]),campaign:find(["campaign","campaign name","ad set","ad name","campaigns"]),spend:find(["spend","cost","amount spent","amount spend"]),imp:find(["impressions","impression"]),clicks:find(["clicks","click"]),leads:find(["leads","conversions","conversion","results","purchases"]),revenue:find(["revenue","value","conversion value","purchase value"])};
+ const ix={
+   dateEnd:find(["reporting ends","reporting end","date end"]),
+   dateStart:find(["reporting starts","reporting start","date"]),
+   platform:find(["platform","channel","source","network"]),
+   campaign:find(["campaign name","campaign","ad set","ad name","campaigns"]),
+   spend:find(["amount spent","amount spend","spend","cost"]),
+   imp:find(["impressions","impression"]),
+   clicks:find(["link clicks","clicks","click"]),
+   leads:find(["leads","conversions","conversion","results","purchases"]),
+   revenue:find(["revenue","value","conversion value","purchase value"])
+ };
  const val=(r,i)=>i>=0?(r[i]??""):"";
- return rows.slice(1).map(r=>[val(r,ix.date),val(r,ix.campaign),val(r,ix.spend),val(r,ix.imp),val(r,ix.clicks),val(r,ix.leads),val(r,ix.revenue),val(r,ix.platform)]).filter(r=>r.slice(1).some(v=>String(v).trim()!==""));
+ const sample=rows.slice(1,Math.min(rows.length,6)).flat().join(" ").toLowerCase();
+ let sourceHint="";
+ if(h.some(v=>v.includes("amount spent (inr)")) || h.some(v=>v.includes("result indicator")) || h.some(v=>v.includes("campaign delivery")) || sample.includes("fb_pixel")) sourceHint="Meta";
+ else if(h.some(v=>v.includes("customer id")) || h.some(v=>v.includes("campaign type")) || h.some(v=>v.includes("search impr. share"))) sourceHint="Google";
+ const out=rows.slice(1).map(r=>[
+   val(r,ix.dateEnd)||val(r,ix.dateStart),
+   val(r,ix.campaign),
+   val(r,ix.spend),
+   val(r,ix.imp),
+   val(r,ix.clicks),
+   val(r,ix.leads),
+   val(r,ix.revenue),
+   val(r,ix.platform)||sourceHint
+ ]).filter(r=>r.slice(1).some(v=>String(v).trim()!==""));
+ return {data:out,sourceHint};
 }
 
 document.querySelectorAll(".periodBtn").forEach(btn=>{
@@ -630,7 +680,7 @@ document.getElementById("csv").onchange=e=>{
  r.onload=()=>{
   const detected=detectCurrency(r.result);
   if(detected) setDetectedCurrency(detected);
-  setData(parseCSV(r.result),f.name);
+  const parsed=parseCSV(r.result); setData(parsed.data,f.name,parsed.sourceHint);
   const c=detected?CURRENCIES[detected]:CURRENCIES[selectedCurrency];
   document.getElementById("status").textContent=`${rows.length} campaign rows loaded locally · Currency: ${c.code}`;
  };
