@@ -45,10 +45,14 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 .tablewrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:12px}.table th,.table td{padding:10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}.table th{font-size:10px;color:var(--muted);text-transform:uppercase}.badge{display:inline-block;padding:4px 7px;border-radius:99px;font-size:9px;font-weight:850}.badge.good{background:#e9f9f1;color:#087443}.badge.warn{background:#fff4e5;color:#9a5b00}.badge.bad{background:#ffeded;color:#b42318}
 .hero{max-width:1450px;margin:0 auto;padding:44px 18px 6px}.hero .pill{display:inline-block;padding:6px 10px;border-radius:99px;background:#eeecff;color:#5546dc;font-size:10px;font-weight:850}.hero h1{font-size:clamp(36px,5vw,64px);line-height:1;letter-spacing:-.055em;margin:15px 0 10px}.hero h1 span{color:var(--brand)}.hero p{max-width:720px;color:var(--muted);font-size:16px}
 .hidden{display:none!important}.modal{position:fixed;inset:0;background:#10182899;display:grid;place-items:center;padding:20px;z-index:100}.modalbox{background:#fff;border-radius:18px;max-width:430px;width:100%;padding:28px}.notice{font-size:12px;color:var(--muted)}
+.currencyControl{display:flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:7px 9px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.currencyControl label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.currencyControl select{border:0;background:transparent;font:inherit;font-size:12px;font-weight:700;color:var(--ink);outline:none;cursor:pointer;max-width:225px}
+@media(max-width:850px){.currencyControl{width:100%;justify-content:space-between}.currencyControl select{max-width:none;flex:1}}
 .periodbar{margin-bottom:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:15px}.periodcontrols{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.periodBtn.active{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-color:transparent}.periodselect{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;color:var(--ink);font-weight:700}.periodbar strong{display:block;font-size:15px;margin-top:2px}
-@media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}.executive,.two{grid-template-columns:1fr}}
+@media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}.executive,.two,.platformgrid{grid-template-columns:1fr}.scalegrid{grid-template-columns:1fr 1fr}}
 @media(max-width:850px){.periodbar{align-items:flex-start;flex-direction:column}.app{grid-template-columns:1fr}.sidebar{display:none}.head{align-items:flex-start;flex-direction:column}.insightgrid{grid-template-columns:1fr}.navlinks{display:none}}
-@media(max-width:560px){.cards{grid-template-columns:1fr 1fr}.hero{padding-top:30px}.tools{width:100%}.tools .btn{flex:1}.user{display:none!important}}
+@media(max-width:560px){.cards{grid-template-columns:1fr 1fr}.mix{grid-template-columns:1fr}.donut{margin:auto}.platformrow,.profitrow{grid-template-columns:90px 1fr 65px}.scalegrid{grid-template-columns:1fr}.hero{padding-top:30px}.tools{width:100%}.tools .btn{flex:1}.user{display:none!important}}
 @media print{.nav,.hero,.sidebar,.import,.tools{display:none!important}.workspace{margin:0;padding:0}.app{display:block;border:0;box-shadow:none}.content{background:#fff;padding:10px}.section{break-inside:avoid}.panel,.card{box-shadow:none}.tablewrap{overflow:visible}}
 .google-nav-btn{display:inline-flex;align-items:center;gap:8px}.google-signin{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#202124;border:1px solid #dadce0;border-radius:10px;padding:12px 14px;font-weight:750;box-shadow:0 1px 2px rgba(0,0,0,.05)}.google-signin:hover{background:#f8f9fa}.google-signin:disabled{opacity:.65;cursor:wait}.google-icon{width:18px;height:18px;flex:0 0 18px}.google-icon.large{width:20px;height:20px;flex-basis:20px}.modalbox .notice{margin-bottom:16px}
 </style>
@@ -89,6 +93,56 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
       <p id="fileStatus">No report loaded — use Demo Data or upload a CSV.</p>
     </div>
     <div class="tools">
+      <div class="currencyControl">
+        <label for="currencySelect">Currency</label>
+        <select id="currencySelect" aria-label="Report currency">
+          <option value="INR">🇮🇳 INR — Indian Rupee (₹)</option>
+          <option value="USD">🇺🇸 USD — US Dollar ($)</option>
+          <option value="EUR">🇪🇺 EUR — Euro (€)</option>
+          <option value="GBP">🇬🇧 GBP — British Pound (£)</option>
+          <option value="AED">🇦🇪 AED — UAE Dirham (د.إ)</option>
+          <option value="SAR">🇸🇦 SAR — Saudi Riyal (﷼)</option>
+          <option value="QAR">🇶🇦 QAR — Qatari Riyal (﷼)</option>
+          <option value="KWD">🇰🇼 KWD — Kuwaiti Dinar (د.ك)</option>
+          <option value="CAD">🇨🇦 CAD — Canadian Dollar (C$)</option>
+          <option value="AUD">🇦🇺 AUD — Australian Dollar (A$)</option>
+          <option value="SGD">🇸🇬 SGD — Singapore Dollar (S$)</option>
+          <option value="NZD">🇳🇿 NZD — New Zealand Dollar (NZ$)</option>
+          <option value="JPY">🇯🇵 JPY — Japanese Yen (¥)</option>
+          <option value="CNY">🇨🇳 CNY — Chinese Yuan (¥)</option>
+          <option value="HKD">🇭🇰 HKD — Hong Kong Dollar (HK$)</option>
+          <option value="CHF">🇨🇭 CHF — Swiss Franc (CHF)</option>
+          <option value="SEK">🇸🇪 SEK — Swedish Krona (kr)</option>
+          <option value="NOK">🇳🇴 NOK — Norwegian Krone (kr)</option>
+          <option value="DKK">🇩🇰 DKK — Danish Krone (kr)</option>
+          <option value="ZAR">🇿🇦 ZAR — South African Rand (R)</option>
+          <option value="BRL">🇧🇷 BRL — Brazilian Real (R$)</option>
+          <option value="MXN">🇲🇽 MXN — Mexican Peso (MX$)</option>
+          <option value="THB">🇹🇭 THB — Thai Baht (฿)</option>
+          <option value="MYR">🇲🇾 MYR — Malaysian Ringgit (RM)</option>
+          <option value="IDR">🇮🇩 IDR — Indonesian Rupiah (Rp)</option>
+          <option value="PHP">🇵🇭 PHP — Philippine Peso (₱)</option>
+          <option value="KRW">🇰🇷 KRW — South Korean Won (₩)</option>
+          <option value="TRY">🇹🇷 TRY — Turkish Lira (₺)</option>
+          <option value="PLN">🇵🇱 PLN — Polish Złoty (zł)</option>
+          <option value="ILS">🇮🇱 ILS — Israeli Shekel (₪)</option>
+        </select>
+      </div>
+      <div class="currencyControl">
+        <label for="platformSelect">Platform</label>
+        <select id="platformSelect" class="platformSelect" aria-label="Performance marketing platform">
+          <option value="all">All Platforms</option>
+          <option value="Meta">Meta Ads</option>
+          <option value="Google">Google Ads</option>
+          <option value="YouTube">YouTube Ads</option>
+          <option value="GPT">GPT Ads</option>
+          <option value="Reddit">Reddit Ads</option>
+          <option value="Pinterest">Pinterest Ads</option>
+          <option value="TikTok">TikTok Ads</option>
+          <option value="Instagram">Instagram Ads</option>
+          <option value="Custom">Custom / Other</option>
+        </select>
+      </div>
       <button class="btn outline" id="demoBtn">Demo Data</button>
       <button class="btn purple" id="generateBtn">Generate Report</button>
       <button class="btn outline" id="pdfBtn">Export PDF</button>
@@ -100,9 +154,10 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
     <div class="importline">
       <strong>Import campaign CSV</strong>
       <input type="file" id="csv" accept=".csv">
-      <small>Supported: Date, Campaign, Spend/Cost, Impressions, Clicks, Leads/Conversions, Revenue.</small>
+      <small>Supported: Date, Platform, Campaign, Spend/Cost, Impressions, Clicks, Leads/Conversions, Revenue.</small>
     </div>
     <div class="status" id="status"></div>
+    <div class="notice" style="margin-top:5px">Currency changes how monetary values are displayed in the report. It does not convert the uploaded numbers between currencies.</div>
   </div>
 
   <div class="periodbar panel">
@@ -110,6 +165,7 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
       <div class="kicker">REPORTING PERIOD</div>
       <strong id="periodModeTitle">Last 7 Days</strong>
       <div class="notice" id="periodRange">Select a reporting period to analyze.</div>
+      <div class="notice" id="currencyLabel" style="font-weight:700">Currency: INR — Indian Rupee (₹)</div>
     </div>
     <div class="periodcontrols">
       <button class="btn purple periodBtn active" data-period="7">7 Days</button>
@@ -149,18 +205,40 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
     </div>
   </section>
 
+  <section class="section platformgrid">
+    <div class="panel">
+      <div style="padding:18px 18px 4px"><div class="kicker">02 · Platform Mix</div><h2 style="font-size:18px;margin:4px 0">Where the budget is working</h2><p class="notice">Spend and revenue contribution by selected platform.</p></div>
+      <div class="platformlist" id="platformList"></div>
+    </div>
+    <div class="panel mix">
+      <div><div class="donut" id="revenueDonut"></div></div>
+      <div><div class="kicker">Revenue Contribution</div><h2 style="font-size:18px;margin:4px 0 12px">Profitability mix</h2><div class="legend" id="revenueLegend"></div></div>
+    </div>
+  </section>
+
+  <section class="section two">
+    <div class="panel">
+      <div style="padding:18px 18px 4px"><div class="kicker">03 · Spend vs Revenue</div><h2 style="font-size:18px;margin:4px 0">Efficiency by platform</h2><p class="notice">Gray = spend · Green = revenue.</p></div>
+      <div class="profitbar" id="profitBars"></div>
+    </div>
+    <div class="panel">
+      <div style="padding:18px 18px 4px"><div class="kicker">04 · Scale Signals</div><h2 style="font-size:18px;margin:4px 0">Where to scale</h2><p class="notice">Rule-based signals from the uploaded data.</p></div>
+      <div class="scalegrid" id="scaleGrid"></div>
+    </div>
+  </section>
+
   <section class="section">
-    <div class="section-title"><div><div class="kicker">02 · Insight</div><h2>What Changed?</h2></div><p>Evidence from the uploaded data</p></div>
+    <div class="section-title"><div><div class="kicker">05 · Insight</div><h2>What Changed?</h2></div><p>Evidence from the uploaded data</p></div>
     <div class="insightgrid" id="insights"></div>
   </section>
 
   <section class="section two">
     <div class="panel chartpanel">
-      <div class="section-title"><div><div class="kicker">03 · Trend</div><h2>Lead Performance</h2></div><p id="chartNote">By uploaded row</p></div>
+      <div class="section-title"><div><div class="kicker">06 · Trend</div><h2>Lead Performance</h2></div><p id="chartNote">By uploaded row</p></div>
       <div class="chart" id="chart"></div>
     </div>
     <div class="panel funnel">
-      <div class="kicker">04 · Funnel</div>
+      <div class="kicker">07 · Funnel</div>
       <h2 style="font-size:16px;margin:4px 0 15px">Conversion path</h2>
       <div id="funnel"></div>
     </div>
@@ -168,14 +246,14 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 
   <section class="section two">
     <div class="panel tablewrap">
-      <div style="padding:18px 18px 7px"><div class="kicker">05 · Campaign Performance</div><h2 style="font-size:16px;margin:4px 0">Winners & Watchlist</h2></div>
+      <div style="padding:18px 18px 7px"><div class="kicker">08 · Campaign Performance</div><h2 style="font-size:16px;margin:4px 0">Winners & Watchlist</h2></div>
       <table class="table">
         <thead><tr><th>Campaign</th><th>Spend</th><th>Leads</th><th>CPL</th><th>CTR</th><th>ROAS</th><th>Status</th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
     </div>
     <div class="panel actions">
-      <div class="kicker">06 · Action</div>
+      <div class="kicker">09 · Action</div>
       <h2 style="font-size:16px;margin:4px 0 14px">Next Actions</h2>
       <div id="actions"></div>
     </div>
@@ -197,17 +275,26 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 let rows=[], current=[], previous=[], user=null;
 
 const demo = [
- ["2026-09-01","Search - High Intent",420,4200,310,72,980],
- ["2026-09-05","Meta - Lead Gen",520,6800,410,96,1420],
- ["2026-09-09","Retargeting",260,3900,240,54,760],
- ["2026-09-13","Brand Search",180,2400,190,41,690],
- ["2026-09-17","Performance Max",610,7200,530,128,2100],
- ["2026-09-21","Meta - Creative Test",390,5100,350,83,1210]
+ ["2026-09-01","Search - High Intent",420,4200,310,72,980,"Google"],
+ ["2026-09-05","Meta - Lead Gen",520,6800,410,96,1420,"Meta"],
+ ["2026-09-09","Retargeting",260,3900,240,54,760,"Meta"],
+ ["2026-09-13","Brand Search",180,2400,190,41,690,"Google"],
+ ["2026-09-17","Performance Max",610,7200,530,128,2100,"Google"],
+ ["2026-09-21","Meta - Creative Test",390,5100,350,83,1210,"Instagram"]
 ];
 
-function n(v){return parseFloat(String(v??"").replace(/[$,%x,]/g,""))||0}
+function n(v){
+ const raw=String(v??"").trim();
+ if(!raw) return 0;
+ const cleaned=raw.replace(/\(([^)]+)\)/,"-$1").replace(/(?:₹|₨|\$|€|£|¥|₱|₩|₺|₪|฿|₫|₦|₲|₴|﷼|د.إ|د.ك|C\$|A\$|S\$|NZ\$|HK\$|R\$|MX\$|Rp|RM|zł|kr|CHF|INR|USD|EUR|GBP|AED|SAR|QAR|KWD|CAD|AUD|SGD|NZD|JPY|CNY|HKD|SEK|NOK|DKK|ZAR|BRL|MXN|THB|MYR|IDR|PHP|KRW|TRY|PLN|ILS|Rs\.?|INR\.?)/gi,"").replace(/[%x,]/gi,"").replace(/\s+/g,"");
+ return parseFloat(cleaned)||0;
+}
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-function money(v){return "$"+Number(v||0).toLocaleString(undefined,{maximumFractionDigits:0})}
+const CURRENCIES={
+ INR:{symbol:"₹",code:"INR",locale:"en-IN",digits:0}, USD:{symbol:"$",code:"USD",locale:"en-US",digits:0}, EUR:{symbol:"€",code:"EUR",locale:"de-DE",digits:0}, GBP:{symbol:"£",code:"GBP",locale:"en-GB",digits:0}, AED:{symbol:"د.إ",code:"AED",locale:"en-AE",digits:0}, SAR:{symbol:"﷼",code:"SAR",locale:"en-SA",digits:0}, QAR:{symbol:"﷼",code:"QAR",locale:"en-QA",digits:0}, KWD:{symbol:"د.ك",code:"KWD",locale:"en-KW",digits:3}, CAD:{symbol:"C$",code:"CAD",locale:"en-CA",digits:0}, AUD:{symbol:"A$",code:"AUD",locale:"en-AU",digits:0}, SGD:{symbol:"S$",code:"SGD",locale:"en-SG",digits:0}, NZD:{symbol:"NZ$",code:"NZD",locale:"en-NZ",digits:0}, JPY:{symbol:"¥",code:"JPY",locale:"ja-JP",digits:0}, CNY:{symbol:"¥",code:"CNY",locale:"zh-CN",digits:0}, HKD:{symbol:"HK$",code:"HKD",locale:"en-HK",digits:0}, CHF:{symbol:"CHF",code:"CHF",locale:"de-CH",digits:0}, SEK:{symbol:"kr",code:"SEK",locale:"sv-SE",digits:0}, NOK:{symbol:"kr",code:"NOK",locale:"nb-NO",digits:0}, DKK:{symbol:"kr",code:"DKK",locale:"da-DK",digits:0}, ZAR:{symbol:"R",code:"ZAR",locale:"en-ZA",digits:0}, BRL:{symbol:"R$",code:"BRL",locale:"pt-BR",digits:0}, MXN:{symbol:"MX$",code:"MXN",locale:"es-MX",digits:0}, THB:{symbol:"฿",code:"THB",locale:"th-TH",digits:0}, MYR:{symbol:"RM",code:"MYR",locale:"ms-MY",digits:0}, IDR:{symbol:"Rp",code:"IDR",locale:"id-ID",digits:0}, PHP:{symbol:"₱",code:"PHP",locale:"en-PH",digits:0}, KRW:{symbol:"₩",code:"KRW",locale:"ko-KR",digits:0}, TRY:{symbol:"₺",code:"TRY",locale:"tr-TR",digits:0}, PLN:{symbol:"zł",code:"PLN",locale:"pl-PL",digits:0}, ILS:{symbol:"₪",code:"ILS",locale:"he-IL",digits:0}
+};
+let selectedCurrency=localStorage.getItem("ark_currency")||"INR";
+function money(v){const c=CURRENCIES[selectedCurrency]||CURRENCIES.INR;return c.symbol+Number(v||0).toLocaleString(c.locale,{minimumFractionDigits:c.digits,maximumFractionDigits:c.digits})}
 function pct(v){return (Number(v||0)*100).toFixed(2)+"%"}
 function metric(data){
  const spend=data.reduce((a,x)=>a+x.spend,0), leads=data.reduce((a,x)=>a+x.leads,0), rev=data.reduce((a,x)=>a+x.revenue,0);
@@ -221,10 +308,59 @@ function delta(curr,prev,invert=false){
  const positive=invert?d<0:d>0;
  return {text:(d>=0?"↑ ":"↓ ")+Math.abs(d*100).toFixed(1)+"%",cls:positive?"up":"down"};
 }
-function parseRows(data){
- return data.map(x=>({date:x[0],campaign:x[1]||"Campaign",spend:n(x[2]),imp:n(x[3]),clicks:n(x[4]),leads:n(x[5]),revenue:n(x[6])}));
+function detectCurrency(text){
+ const t=String(text||"");
+ const checks=[
+  [/₹|₨|\bINR\b|Rs\.?/i,"INR"],[/\$|\bUSD\b/i,"USD"],[/€|\bEUR\b/i,"EUR"],[/£|\bGBP\b/i,"GBP"],
+  [/د\.إ|\bAED\b/i,"AED"],[/﷼|\bSAR\b/i,"SAR"],[/\bQAR\b/i,"QAR"],[/د\.ك|\bKWD\b/i,"KWD"],
+  [/C\$|\bCAD\b/i,"CAD"],[/A\$|\bAUD\b/i,"AUD"],[/S\$|\bSGD\b/i,"SGD"],[/NZ\$|\bNZD\b/i,"NZD"],
+  [/\bJPY\b/i,"JPY"],[/\bCNY\b/i,"CNY"],[/HK\$|\bHKD\b/i,"HKD"],[/\bCHF\b/i,"CHF"],
+  [/\bSEK\b/i,"SEK"],[/\bNOK\b/i,"NOK"],[/\bDKK\b/i,"DKK"],[/\bZAR\b/i,"ZAR"],[/R\$|\bBRL\b/i,"BRL"],
+  [/MX\$|\bMXN\b/i,"MXN"],[/฿|\bTHB\b/i,"THB"],[/RM|\bMYR\b/i,"MYR"],[/Rp|\bIDR\b/i,"IDR"],
+  [/₱|\bPHP\b/i,"PHP"],[/₩|\bKRW\b/i,"KRW"],[/₺|\bTRY\b/i,"TRY"],[/zł|\bPLN\b/i,"PLN"],[/₪|\bILS\b/i,"ILS"]
+ ];
+ for(const [re,code] of checks) if(re.test(t)) return code;
+ return null;
 }
+function setDetectedCurrency(code){
+ if(!code || !CURRENCIES[code]) return false;
+ selectedCurrency=code;
+ localStorage.setItem("ark_currency",code);
+ currencySelect.value=code;
+ const c=CURRENCIES[code];
+ document.getElementById("currencyLabel").textContent=`Currency: ${c.code} — ${currencySelect.options[currencySelect.selectedIndex].text.replace(/^\S+\s+[^—]+—\s*/,"")}`;
+ return true;
+}
+function inferPlatform(name){
+ const t=String(name||"").toLowerCase();
+ if(/instagram|ig\b/.test(t)) return "Instagram";
+ if(/facebook|meta/.test(t)) return "Meta";
+ if(/youtube|video/.test(t)) return "YouTube";
+ if(/google|search|pmax|performance max|shopping|display/.test(t)) return "Google";
+ if(/tiktok/.test(t)) return "TikTok";
+ if(/reddit/.test(t)) return "Reddit";
+ if(/pinterest/.test(t)) return "Pinterest";
+ if(/gpt|openai/.test(t)) return "GPT";
+ return "Custom";
+}
+function normalizePlatform(v,name){
+ const t=String(v||"").toLowerCase();
+ if(t.includes("instagram")) return "Instagram"; if(t.includes("meta")||t.includes("facebook")) return "Meta"; if(t.includes("youtube")) return "YouTube"; if(t.includes("google")) return "Google"; if(t.includes("tiktok")) return "TikTok"; if(t.includes("reddit")) return "Reddit"; if(t.includes("pinterest")) return "Pinterest"; if(t.includes("gpt")||t.includes("openai")) return "GPT"; return inferPlatform(name);
+}
+function parseRows(data){
+ return data.map(x=>({date:x[0],campaign:x[1]||"Campaign",spend:n(x[2]),imp:n(x[3]),clicks:n(x[4]),leads:n(x[5]),revenue:n(x[6]),platform:normalizePlatform(x[7],x[1])}));
+}
+const currencySelect=document.getElementById("currencySelect");
+currencySelect.value=selectedCurrency;
+currencySelect.addEventListener("change",()=>{selectedCurrency=currencySelect.value;localStorage.setItem("ark_currency",selectedCurrency);const c=CURRENCIES[selectedCurrency];document.getElementById("currencyLabel").textContent=`Currency: ${c.code} — ${currencySelect.options[currencySelect.selectedIndex].text.replace(/^\S+\s+[^—]+—\s*/,"")}`;if(rows.length)render();});
+const initialCurrency=CURRENCIES[selectedCurrency]||CURRENCIES.INR;
+document.getElementById("currencyLabel").textContent=`Currency: ${initialCurrency.code} — ${currencySelect.options[currencySelect.selectedIndex].text.replace(/^\S+\s+[^—]+—\s*/,"")}`;
+
 let selectedPeriod="7";
+let selectedPlatform=localStorage.getItem("ark_platform")||"all";
+const platformSelect=document.getElementById("platformSelect");
+platformSelect.value=selectedPlatform;
+platformSelect.addEventListener("change",()=>{selectedPlatform=platformSelect.value;localStorage.setItem("ark_platform",selectedPlatform);if(rows.length)applyPeriod();});
 
 function getPeriodRows(data, period){
  const dated=data.filter(x=>x.date && !isNaN(new Date(x.date).getTime()));
@@ -255,13 +391,14 @@ function getPeriodRows(data, period){
 
 function applyPeriod(){
  const result=getPeriodRows(rows,selectedPeriod);
- current=result.current; previous=result.previous;
+ current=selectedPlatform==="all"?result.current:result.current.filter(x=>x.platform===selectedPlatform);
+ previous=selectedPlatform==="all"?result.previous:result.previous.filter(x=>x.platform===selectedPlatform);
  const dated=current.filter(x=>x.date).map(x=>x.date).sort();
  const label={7:"Last 7 Days",14:"Last 14 Days",30:"Last 30 Days",90:"Last 90 Days",month:"This Month",prevmonth:"Previous Month",all:"All Data"}[selectedPeriod]||"Custom Period";
  document.getElementById("periodModeTitle").textContent=label;
  document.getElementById("periodRange").textContent=dated.length?`${dated[0]} → ${dated[dated.length-1]} · ${current.length} rows`:"No dated rows available";
  document.getElementById("periodLabel").textContent=dated.length?`${dated[0]} → ${dated[dated.length-1]}`:"—";
- document.getElementById("periodMeta").textContent=`${current.length} selected rows · ${previous.length} comparison rows`;
+ document.getElementById("periodMeta").textContent=`${current.length} selected rows · ${previous.length} comparison rows · ${selectedPlatform==="all"?"All platforms":selectedPlatform}`;
  render();
 }
 
@@ -271,8 +408,32 @@ function setData(data,label){
  document.getElementById("status").textContent=rows.length+" campaign rows loaded locally.";
  applyPeriod();
 }
+function renderPlatformVisuals(){
+ const groups={};
+ current.forEach(x=>{const p=x.platform||"Custom";groups[p]??={platform:p,spend:0,revenue:0,leads:0};groups[p].spend+=x.spend;groups[p].revenue+=x.revenue;groups[p].leads+=x.leads;});
+ const arr=Object.values(groups).sort((a,b)=>b.revenue-a.revenue||b.spend-a.spend);
+ const maxSpend=Math.max(...arr.map(x=>x.spend),1);
+ document.getElementById("platformList").innerHTML=arr.length?arr.map(x=>`<div class="platformrow"><span><span class="smalltag">${esc(x.platform)}</span></span><div class="platformbar"><i style="width:${Math.max(4,x.spend/maxSpend*100)}%"></i></div><strong>${money(x.spend)}</strong></div>`).join(""):'<div class="notice">No platform data available.</div>';
+ const revTotal=arr.reduce((a,x)=>a+x.revenue,0);
+ const palette=["#6c63ff","#22a06b","#f59e0b","#ef4444","#0ea5e9","#a855f7","#14b8a6","#f97316","#64748b"];
+ let cursor=0; const stops=[];
+ arr.forEach((x,i)=>{const share=revTotal?x.revenue/revTotal*100:0;stops.push(`${palette[i%palette.length]} ${cursor}% ${cursor+share}%`);cursor+=share;});
+ document.getElementById("revenueDonut").style.background=arr.length&&revTotal?`conic-gradient(${stops.join(",")})`:"#e5e7eb";
+ document.getElementById("revenueLegend").innerHTML=arr.length?arr.map((x,i)=>`<div><span><i class="dot" style="background:${palette[i%palette.length]}"></i>${esc(x.platform)}</span><strong>${revTotal?(x.revenue/revTotal*100).toFixed(1):"0.0"}%</strong></div>`).join(""):'<div class="notice">Revenue mix requires revenue in the source data.</div>';
+ const max=Math.max(...arr.flatMap(x=>[x.spend,x.revenue]),1);
+ document.getElementById("profitBars").innerHTML=arr.length?arr.map(x=>`<div class="profitrow"><span><strong>${esc(x.platform)}</strong></span><div class="profittrack"><i class="profitspend" style="width:${x.spend/max*100}%"></i><i class="profitrev" style="width:${x.revenue/max*100}%"></i></div><strong>${x.spend?((x.revenue/x.spend).toFixed(2)+"x"):"—"}</strong></div>`).join(""):'<div class="notice">No platform data available.</div>';
+ const avg=metric(current);
+ const best=arr.filter(x=>x.spend>0).sort((a,b)=>(b.revenue/b.spend)-(a.revenue/a.spend))[0];
+ const worst=arr.filter(x=>x.spend>0).sort((a,b)=>(a.revenue/a.spend)-(b.revenue/b.spend))[0];
+ const high=arr.slice().sort((a,b)=>b.spend-a.spend)[0];
+ const items=[];
+ if(best) items.push(`<div class="scaleitem scale"><h4>🟢 Scale candidate · ${esc(best.platform)}</h4><p>${(best.revenue/best.spend).toFixed(2)}x ROAS from ${money(best.spend)} spend. Validate lead quality before increasing budget.</p></div>`);
+ if(worst&&(!best||worst.platform!==best.platform)) items.push(`<div class="scaleitem watch"><h4>🔴 Watch · ${esc(worst.platform)}</h4><p>${(worst.revenue/worst.spend).toFixed(2)}x ROAS. Review campaign mix, creative, targeting and conversion quality.</p></div>`);
+ if(high) items.push(`<div class="scaleitem optimize"><h4>🟠 Validate allocation · ${esc(high.platform)}</h4><p>${money(high.spend)} of spend is concentrated here. Check incremental efficiency before moving more budget.</p></div>`);
+ document.getElementById("scaleGrid").innerHTML=items.join("")||'<div class="notice">Not enough data for scale signals.</div>';
+}
 function render(){
- if(!current.length) return;
+ if(!current.length){renderPlatformVisuals();return;}
  const m=metric(current), p=metric(previous);
  document.getElementById("spend").textContent=money(m.spend);
  document.getElementById("leads").textContent=m.leads.toLocaleString();
@@ -306,6 +467,7 @@ function render(){
  renderFunnel(m);
  renderCampaigns(m);
  renderActions(m);
+ renderPlatformVisuals();
 }
 function renderInsights(m,p){
  const arr=[];
@@ -357,8 +519,8 @@ function parseCSV(t){
  const lines=t.trim().split(/\r?\n/); if(lines.length<2)return[];
  const h=lines[0].split(",").map(x=>x.trim().toLowerCase());
  const find=a=>{const i=h.findIndex(v=>a.some(k=>v.includes(k)));return i<0?0:i};
- const ix={date:find(["date"]),campaign:find(["campaign","ad set","ad name"]),spend:find(["spend","cost"]),imp:find(["impression"]),clicks:find(["click"]),leads:find(["lead","conversion"]),revenue:find(["revenue","value"])};
- return lines.slice(1).map(l=>l.split(",")).filter(x=>x.length>=2).map(x=>[x[ix.date],x[ix.campaign],x[ix.spend],x[ix.imp],x[ix.clicks],x[ix.leads],x[ix.revenue]]);
+ const ix={date:find(["date"]),platform:find(["platform","channel","source"]),campaign:find(["campaign","ad set","ad name"]),spend:find(["spend","cost","amount spent"]),imp:find(["impression"]),clicks:find(["click"]),leads:find(["lead","conversion","result"]),revenue:find(["revenue","value","conversion value"])};
+ return lines.slice(1).map(l=>l.split(",")).filter(x=>x.length>=2).map(x=>[x[ix.date],x[ix.campaign],x[ix.spend],x[ix.imp],x[ix.clicks],x[ix.leads],x[ix.revenue],x[ix.platform]]);
 }
 document.querySelectorAll(".periodBtn").forEach(btn=>{
  btn.onclick=()=>{
@@ -380,7 +542,19 @@ function demoLoad(){setData(demo,"Demo Data");document.querySelector(".workspace
 document.getElementById("demoBtn").onclick=demoLoad;
 document.getElementById("generateBtn").onclick=()=>{if(!rows.length){alert("No report data loaded. Please upload your CSV first, or click Demo Data to test the app.");return;} render();};
 document.getElementById("pdfBtn").onclick=()=>{if(!rows.length){alert("No report data loaded. Please upload your CSV first, or click Demo Data to test the app.");return;} setTimeout(()=>window.print(),150)};
-document.getElementById("csv").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>setData(parseCSV(r.result),f.name);r.readAsText(f)};
+document.getElementById("csv").onchange=e=>{
+ const f=e.target.files[0];
+ if(!f)return;
+ const r=new FileReader();
+ r.onload=()=>{
+  const detected=detectCurrency(r.result);
+  if(detected) setDetectedCurrency(detected);
+  setData(parseCSV(r.result),f.name);
+  const c=detected?CURRENCIES[detected]:CURRENCIES[selectedCurrency];
+  document.getElementById("status").textContent=`${rows.length} campaign rows loaded locally · Currency: ${c.code}`;
+ };
+ r.readAsText(f);
+};
 
 document.getElementById("loginBtn").onclick=()=>document.getElementById("authModal").classList.remove("hidden");
 document.getElementById("closeAuth").onclick=()=>document.getElementById("authModal").classList.add("hidden");
@@ -446,7 +620,7 @@ function buildClientEmail(){
  const period=document.getElementById("periodLabel")?.textContent||"Current reporting period";
  const spend=shareRows.reduce((a,x)=>a+x.spend,0), leads=shareRows.reduce((a,x)=>a+x.leads,0), rev=shareRows.reduce((a,x)=>a+x.revenue,0);
  const cpl=leads?spend/leads:0, roas=spend?rev/spend:0;
- const campaigns=[...shareRows].sort((a,b)=>b.spend-a.spend).slice(0,5).map(x=>`• ${x.campaign}: $${x.spend.toFixed(0)} spend, ${x.leads.toLocaleString()} leads, $${(x.leads?x.spend/x.leads:0).toFixed(2)} CPL`).join("\n");
+ const campaigns=[...shareRows].sort((a,b)=>b.spend-a.spend).slice(0,5).map(x=>`• ${x.campaign} (${x.platform||"Custom"}): ${money(x.spend)} spend, ${x.leads.toLocaleString()} leads, ${money(x.leads?x.spend/x.leads:0)} CPL`).join("\n");
  return {period,subject:`Agency Report Kit — Performance Report | ${period}`,body:`Hi,\n\nPlease find the latest performance report for ${period}.\n\nPERFORMANCE SUMMARY\n• Ad Spend: $${spend.toFixed(0)}\n• Leads: ${leads.toLocaleString()}\n• CPL: $${cpl.toFixed(2)}\n• ROAS: ${roas.toFixed(2)}x\n\nTOP CAMPAIGNS\n${campaigns || "No campaign data available."}\n\nThe report was prepared with Agency Report Kit.\n\nRegards`};
 }
 document.getElementById("shareClientBtn").onclick=()=>{
