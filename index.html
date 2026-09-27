@@ -166,17 +166,9 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 <button class="btn outline gmailBtn" id="shareClientBtn" type="button">Gmail</button>
 </div>
 <div class="shareHint" id="shareHint">Share Report uses your device share menu. Share PDF creates a PDF; Gmail opens a pre-filled client email.</div>
+<div class="status" id="status">Waiting for Demo Data.</div>
 </div>
 </div>
-</div>
-<div class="import">
-<div class="importline">
-<strong>Import campaign CSV</strong>
-<input accept=".csv" id="csv" type="file"/>
-<small>Supported: Date, Platform, Campaign, Spend/Cost, Impressions, Clicks, Leads/Conversions, Revenue.</small>
-</div>
-<div class="status" id="status"></div>
-<div class="notice" style="margin-top:5px">Currency changes how monetary values are displayed in the report. It does not convert the uploaded numbers between currencies.</div>
 </div>
 <div class="periodbar panel">
 <div>
@@ -672,8 +664,8 @@ document.getElementById("demoBtn").onclick=demoLoad;
 document.getElementById("generateBtn").onclick=()=>{
  const btn=document.getElementById("generateBtn");
  if(!rows.length){
-   document.getElementById("status").textContent="No report data loaded. Upload a CSV first or click Demo Data.";
-   alert("No report data loaded. Please upload your CSV first, or click Demo Data to test the app.");
+   
+   alert("No report data loaded. Please click Demo Data to test the app.");
    return;
  }
  btn.disabled=true;
@@ -710,14 +702,14 @@ document.getElementById("generateBtn").onclick=()=>{
  }catch(err){
    console.error("Report generation failed",err);
    document.getElementById("status").textContent="Report generation failed: "+(err.message||err);
-   alert("Report generation failed. Check the CSV columns and try again.\n\n"+(err.message||err));
+   alert("Report generation failed. Check the demo data and try again.\n\n"+(err.message||err));
  }finally{
    btn.disabled=false;
    btn.textContent="Generate Report";
  }
 };
 async function ensureReportReady(){
- if(!rows.length){alert("No report data loaded. Please upload your CSV first, or click Demo Data to test the app.");return false;}
+ if(!rows.length){alert("No report data loaded. Please click Demo Data to test the app.");return false;}
  updatePrintHeader();
  return true;
 }
@@ -789,20 +781,6 @@ document.getElementById("sharePdfBtn").onclick=async()=>{
  setTimeout(()=>URL.revokeObjectURL(url),2000);
  alert("PDF created and downloaded. You can attach this PDF in Gmail.");
 };
-document.getElementById("csv").onchange=e=>{
- const f=e.target.files[0];
- if(!f)return;
- const r=new FileReader();
- r.onload=()=>{
-  const detected=detectCurrency(r.result);
-  if(detected) setDetectedCurrency(detected);
-  const parsed=parseCSV(r.result); setData(parsed.data,f.name,parsed.sourceHint);
-  const c=detected?CURRENCIES[detected]:CURRENCIES[selectedCurrency];
-  document.getElementById("status").textContent=`${rows.length} campaign rows loaded locally · Currency: ${c.code}`;
- };
- r.readAsText(f);
-};
-
 document.getElementById("loginBtn").onclick=()=>document.getElementById("authModal").classList.remove("hidden");
 document.getElementById("closeAuth").onclick=()=>document.getElementById("authModal").classList.add("hidden");
 async function finishGoogleLogin(result){
@@ -857,13 +835,13 @@ window.ARK.onAuthStateChanged(window.ARK.auth,u=>{
 document.getElementById("logoutBtn").onclick=()=>window.ARK.signOut(window.ARK.auth);
 
 // Do not auto-load demo data. Reports must always be generated from the user's uploaded CSV unless Demo Data is explicitly clicked.
-document.getElementById("fileStatus").textContent="No report loaded — upload your CSV or click Demo Data";
-document.getElementById("status").textContent="Waiting for your campaign CSV.";
+document.getElementById("fileStatus").textContent="No report loaded — click Demo Data";
+document.getElementById("status").textContent="Waiting for Demo Data.";
 // Client sharing: prepares the selected reporting-period summary and opens a reliable email composer.
 function getShareRows(){ return (current && current.length) ? current : rows; }
 function buildClientEmail(){
  const shareRows=getShareRows();
- if(!shareRows.length){ alert("Load Demo Data or a CSV before sharing a report."); return null; }
+ if(!shareRows.length){ alert("Load Demo Data before sharing a report."); return null; }
  const period=document.getElementById("periodLabel")?.textContent||"Current reporting period";
  const spend=shareRows.reduce((a,x)=>a+x.spend,0), leads=shareRows.reduce((a,x)=>a+x.leads,0), rev=shareRows.reduce((a,x)=>a+x.revenue,0);
  const cpl=leads?spend/leads:0, roas=spend?rev/spend:0;
