@@ -54,6 +54,10 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 @media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}.executive,.two,.platformgrid{grid-template-columns:1fr}.scalegrid{grid-template-columns:1fr 1fr}}
 @media(max-width:850px){.periodbar{align-items:flex-start;flex-direction:column}.app{grid-template-columns:1fr}.sidebar{display:none}.head{align-items:flex-start;flex-direction:column}.insightgrid{grid-template-columns:1fr}.navlinks{display:none}}
 @media(max-width:560px){.cards{grid-template-columns:1fr 1fr}.mix{grid-template-columns:1fr}.donut{margin:auto}.platformrow,.profitrow{grid-template-columns:90px 1fr 65px}.scalegrid{grid-template-columns:1fr}.hero{padding-top:30px}.tools{width:100%}.tools .btn{flex:1}.user{display:none!important}}
+.headIntro{min-width:0;flex:1}.tools{min-width:0;max-width:100%;display:flex;flex-direction:column;align-items:stretch;gap:8px}.controlRow,.actionRow{display:flex;gap:8px;flex-wrap:wrap;align-items:stretch}.controlRow .currencyControl{flex:1 1 220px;min-width:0}.actionRow .btn{white-space:nowrap}.shareHint{font-size:10px;color:var(--muted);line-height:1.4}.gmailBtn{font-weight:800}.content{min-width:0}.head{min-width:0}.tools .currencyControl select{min-width:0}.tools .currencyControl{max-width:100%}.periodcontrols{max-width:100%}.periodcontrols .btn,.periodcontrols .periodselect{white-space:nowrap}
+@media(max-width:1100px){.head{align-items:flex-start}.tools{width:100%}.controlRow .currencyControl{flex:1 1 240px}}
+@media(max-width:850px){.head{flex-direction:column}.headIntro{width:100%}.tools{width:100%}.controlRow .currencyControl{flex:1 1 100%}.actionRow .btn{flex:1 1 150px}.shareHint{display:none}}
+@media(max-width:560px){.actionRow .btn{flex:1 1 100%}.controlRow .currencyControl{width:100%}.tools .currencyControl select{max-width:none;flex:1}.workspace{padding:0 10px}.content{padding:16px}.head h1{font-size:21px}}
 @media print{.nav,.hero,.sidebar,.import,.tools{display:none!important}.workspace{margin:0;padding:0}.app{display:block;border:0;box-shadow:none}.content{background:#fff;padding:10px}.section{break-inside:avoid}.panel,.card{box-shadow:none}.tablewrap{overflow:visible}}
 .google-nav-btn{display:inline-flex;align-items:center;gap:8px}.google-signin{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#202124;border:1px solid #dadce0;border-radius:10px;padding:12px 14px;font-weight:750;box-shadow:0 1px 2px rgba(0,0,0,.05)}.google-signin:hover{background:#f8f9fa}.google-signin:disabled{opacity:.65;cursor:wait}.google-icon{width:18px;height:18px;flex:0 0 18px}.google-icon.large{width:20px;height:20px;flex-basis:20px}.modalbox .notice{margin-bottom:16px}
 
@@ -62,6 +66,8 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 
 .templateGrid{align-items:stretch}.templateCard{overflow:hidden;padding:0 0 13px}.templatePreview{display:block;width:100%;height:118px;object-fit:cover;border-bottom:1px solid var(--line);margin-bottom:11px}.templateCard strong,.templateCard span,.templateCard em{margin-left:13px;margin-right:13px}.templateCard em{display:block;margin-top:9px;font-size:10px;font-style:normal;font-weight:800;color:var(--brand)}.templateCard:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(16,24,40,.08)}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
 </head>
 <body>
 <nav class="nav">
@@ -89,12 +95,13 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 </aside>
 <main class="content" data-template="executive"><div class="printHeader" id="printHeader"><div class="printBrand">AGENCY REPORT KIT</div><div class="printTitle" id="printTitle">Performance Marketing Report</div><div class="printMeta" id="printMeta"></div></div>
 <div class="head">
-<div>
+<div class="headIntro">
 <div class="kicker">Report Workspace</div>
 <h1>Performance Report</h1>
 <p id="fileStatus">No report loaded — use Demo Data or upload a CSV.</p>
 </div>
 <div class="tools">
+<div class="controlRow">
 <div class="currencyControl">
 <label for="currencySelect">Currency</label>
 <select aria-label="Report currency" id="currencySelect">
@@ -145,11 +152,22 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 <option value="Custom">Custom / Other</option>
 </select>
 </div>
+<div class="currencyControl">
+<label for="templateSelect">Template</label>
+<select aria-label="Report template" id="templateSelect"><option value="executive">Executive Overview</option><option value="multiplatform">Multi-Platform Performance</option><option value="leadgen">Lead Generation</option><option value="ecommerce">E-commerce ROAS</option><option value="deepdive">Performance Deep Dive</option></select>
+</div>
+</div>
+<div class="actionRow">
 <button class="btn outline" id="demoBtn">Demo Data</button>
 <button class="btn purple" id="generateBtn">Generate Report</button>
 <button class="btn outline" id="pdfBtn">Export PDF</button>
-<button class="btn primary" id="shareClientBtn">Share to Client</button><span style="font-size:11px;color:var(--muted);display:block;margin-top:4px">Opens Gmail with the report pre-filled</span>
-</div><div class="currencyControl"><label for="templateSelect">Template</label><select aria-label="Report template" id="templateSelect"><option value="executive">Executive Overview</option><option value="multiplatform">Multi-Platform Performance</option><option value="leadgen">Lead Generation</option><option value="ecommerce">E-commerce ROAS</option><option value="deepdive">Performance Deep Dive</option></select></div>
+<button class="btn primary" id="shareBtn" type="button">Share Report</button>
+<button class="btn outline" id="sharePdfBtn" type="button">Share PDF</button>
+<button class="btn outline gmailBtn" id="shareClientBtn" type="button">Gmail</button>
+</div>
+<div class="shareHint" id="shareHint">Share Report uses your device share menu. Share PDF creates a PDF; Gmail opens a pre-filled client email.</div>
+</div>
+</div>
 </div>
 <div class="import">
 <div class="importline">
@@ -698,7 +716,79 @@ document.getElementById("generateBtn").onclick=()=>{
    btn.textContent="Generate Report";
  }
 };
-document.getElementById("pdfBtn").onclick=()=>{if(!rows.length){alert("No report data loaded. Please upload your CSV first, or click Demo Data to test the app.");return;} updatePrintHeader(); setTimeout(()=>window.print(),150)};
+async function ensureReportReady(){
+ if(!rows.length){alert("No report data loaded. Please upload your CSV first, or click Demo Data to test the app.");return false;}
+ updatePrintHeader();
+ return true;
+}
+async function buildPdfBlob(){
+ if(!(await ensureReportReady())) return null;
+ if(!window.html2canvas || !window.jspdf?.jsPDF){
+   alert("PDF tools are still loading. Please wait a moment and try again.");
+   return null;
+ }
+ const target=document.querySelector(".content");
+ if(!target)return null;
+ const oldOverflow=target.style.overflow;
+ target.style.overflow="visible";
+ try{
+   const canvas=await html2canvas(target,{scale:2,useCORS:true,backgroundColor:"#f8f9fc",logging:false,windowWidth:Math.max(document.documentElement.clientWidth,target.scrollWidth)});
+   const {jsPDF}=window.jspdf;
+   const pdf=new jsPDF("p","mm","a4");
+   const pageW=210,pageH=297,margin=8;
+   const imgW=pageW-margin*2;
+   const imgH=canvas.height*imgW/canvas.width;
+   let y=margin, remaining=imgH;
+   const pageCanvas=document.createElement("canvas");
+   const pxPerMm=canvas.width/imgW;
+   const pagePx=Math.floor((pageH-margin*2)*pxPerMm);
+   let sourceY=0, pageNo=0;
+   while(sourceY<canvas.height){
+     const sliceH=Math.min(pagePx,canvas.height-sourceY);
+     pageCanvas.width=canvas.width; pageCanvas.height=sliceH;
+     const ctx=pageCanvas.getContext("2d");
+     ctx.fillStyle="#f8f9fc"; ctx.fillRect(0,0,pageCanvas.width,sliceH);
+     ctx.drawImage(canvas,0,sourceY,canvas.width,sliceH,0,0,canvas.width,sliceH);
+     if(pageNo>0)pdf.addPage();
+     const renderedH=sliceH/pxPerMm;
+     pdf.addImage(pageCanvas.toDataURL("image/jpeg",0.92),"JPEG",margin,margin,imgW,renderedH,"","FAST");
+     sourceY+=sliceH; pageNo++;
+   }
+   const blob=pdf.output("blob");
+   return blob;
+ }finally{target.style.overflow=oldOverflow;}
+}
+function reportFileName(){
+ const base=(document.getElementById("fileStatus")?.textContent||"Agency-Report-Kit-Report").replace(/[^a-z0-9]+/gi,"-").replace(/^-+|-+$/g,"").slice(0,70)||"Agency-Report-Kit-Report";
+ return base+".pdf";
+}
+document.getElementById("pdfBtn").onclick=async()=>{
+ if(!(await ensureReportReady()))return;
+ updatePrintHeader();
+ setTimeout(()=>window.print(),150);
+};
+document.getElementById("shareBtn").onclick=async()=>{
+ if(!(await ensureReportReady()))return;
+ const data=buildClientEmail();
+ const text=data?`${data.subject}\n\n${data.body}`:"Agency Report Kit — client performance report";
+ if(navigator.share){
+   try{await navigator.share({title:data?.subject||"Agency Report Kit Report",text});return;}catch(e){if(e?.name==="AbortError")return;}
+ }
+ await navigator.clipboard?.writeText(text).catch(()=>{});
+ alert("Report summary copied. Your device/browser does not support native sharing here.");
+};
+document.getElementById("sharePdfBtn").onclick=async()=>{
+ const blob=await buildPdfBlob();
+ if(!blob)return;
+ const file=new File([blob],reportFileName(),{type:"application/pdf"});
+ if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
+   try{await navigator.share({title:"Agency Report Kit — PDF Report",text:"Client performance report",files:[file]});return;}catch(e){if(e?.name==="AbortError")return;}
+ }
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");a.href=url;a.download=file.name;document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),2000);
+ alert("PDF created and downloaded. You can attach this PDF in Gmail.");
+};
 document.getElementById("csv").onchange=e=>{
  const f=e.target.files[0];
  if(!f)return;
@@ -780,17 +870,16 @@ function buildClientEmail(){
  const campaigns=[...shareRows].sort((a,b)=>b.spend-a.spend).slice(0,5).map(x=>`• ${x.campaign} (${x.platform||"Custom"}): ${money(x.spend)} spend, ${x.leads.toLocaleString()} leads, ${money(x.leads?x.spend/x.leads:0)} CPL`).join("\n");
  return {period,subject:`Agency Report Kit — Performance Report | ${period}`,body:`Hi,\n\nPlease find the latest performance report for ${period}.\n\nPERFORMANCE SUMMARY\n• Ad Spend: $${spend.toFixed(0)}\n• Leads: ${leads.toLocaleString()}\n• CPL: $${cpl.toFixed(2)}\n• ROAS: ${roas.toFixed(2)}x\n\nTOP CAMPAIGNS\n${campaigns || "No campaign data available."}\n\nThe report was prepared with Agency Report Kit.\n\nRegards`};
 }
-document.getElementById("shareClientBtn").onclick=()=>{
+document.getElementById("shareClientBtn").onclick=async()=>{
  const data=buildClientEmail(); if(!data)return;
  const email=prompt("Enter client email address:","");
  if(email===null)return;
  const clean=email.trim();
  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean)){alert("Please enter a valid client email address.");return;}
  const to=encodeURIComponent(clean), subject=encodeURIComponent(data.subject), body=encodeURIComponent(data.body);
- // Gmail compose works even when the browser has no default mail application.
  const gmail=`https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`;
  const win=window.open(gmail,"_blank","noopener,noreferrer");
- if(!win){ window.location.href=`mailto:${to}?subject=${subject}&body=${body}`; }
+ if(!win) window.location.href=`mailto:${to}?subject=${subject}&body=${body}`;
 };
 
 let selectedTemplate=localStorage.getItem("ark_template")||"executive";
