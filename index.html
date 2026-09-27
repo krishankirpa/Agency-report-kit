@@ -1,23 +1,405 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Agency Report Kit — Client Reporting, Simplified</title><meta name="description" content="Turn marketing CSV exports into clear, client-ready performance reports in seconds."><style>
-:root{--bg:#f6f7fb;--surface:#fff;--surface2:#fbfcfe;--ink:#182033;--muted:#697386;--line:#e5e9f0;--brand:#635bff;--brand2:#857dff;--soft:#efedff;--good:#16a66a;--shadow:0 18px 60px rgba(24,32,51,.09)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inherit}.hidden{display:none!important}
-.nav{height:68px;background:rgba(255,255,255,.94);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);padding:0 5%;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}.brand{display:flex;gap:10px;align-items:center;font-weight:850;letter-spacing:-.02em}.logo{width:35px;height:35px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;display:grid;place-items:center;font-size:12px;font-weight:900}.navlinks{display:flex;gap:26px;color:var(--muted);font-size:13px}.navright{display:flex;gap:8px;align-items:center}.btn{border:0;border-radius:10px;padding:10px 15px;font-weight:750;transition:.18s}.btn:hover{transform:translateY(-1px)}.primary{background:var(--ink);color:#fff}.purple{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;box-shadow:0 8px 22px rgba(99,91,255,.2)}.outline{background:#fff;color:var(--ink);border:1px solid var(--line)}.small{padding:8px 11px;font-size:12px}
-.hero{padding:66px 5% 48px;text-align:center;background:radial-gradient(circle at 50% -10%,#e9e6ff 0,rgba(233,230,255,.55) 30%,transparent 58%),#fff;border-bottom:1px solid var(--line)}.hero-inner{max-width:960px;margin:auto}.pill{display:inline-flex;padding:6px 10px;border-radius:99px;background:var(--soft);color:#554bdc;font-size:10px;font-weight:850;letter-spacing:.07em;text-transform:uppercase}.hero h1{font-size:clamp(42px,6vw,72px);line-height:1.01;letter-spacing:-.065em;max-width:900px;margin:18px auto 15px}.hero h1 span{color:var(--brand)}.hero p{max-width:650px;margin:auto;color:var(--muted);font-size:17px}.hero-actions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:25px 0 10px}.micro{font-size:12px;color:#98a2b3}
-.workspace{max-width:1280px;margin:28px auto 72px;padding:0 18px}.app{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);display:grid;grid-template-columns:205px 1fr;min-height:740px;overflow:hidden}.sidebar{padding:22px 13px;border-right:1px solid var(--line);background:#fcfcfe}.side-title{padding:0 10px 16px;font-size:10px;font-weight:850;color:#98a2b3;letter-spacing:.08em;text-transform:uppercase}.navitem{padding:10px 11px;border-radius:9px;color:var(--muted);margin:3px 0;font-size:13px;font-weight:650}.navitem.active{background:var(--soft);color:#554bdc}.side-divider{height:1px;background:var(--line);margin:18px 10px}.content{padding:27px;background:var(--surface2)}.head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:20px}.head h2{font-size:23px;letter-spacing:-.03em;margin:0 0 3px}.head p{margin:0;color:var(--muted);font-size:12px}.tools{display:flex;gap:7px;flex-wrap:wrap}.import{padding:17px;background:linear-gradient(180deg,#faf9ff,#fff);border:1px dashed #bdb6ff;border-radius:14px;margin-bottom:15px}.importline{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.upload-icon{width:32px;height:32px;border-radius:9px;background:var(--soft);color:var(--brand);display:grid;place-items:center;font-weight:900}.import-title{display:flex;align-items:center;gap:9px;font-weight:800}.import small{display:block;color:var(--muted);margin-top:7px}.status{font-size:12px;color:var(--muted);margin-top:7px}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px;min-height:122px}.card-top{display:flex;justify-content:space-between}.label{font-size:10px;color:var(--muted);font-weight:850;letter-spacing:.06em}.metric-icon{width:28px;height:28px;border-radius:8px;background:#f1f2f7;color:#5b6475;display:grid;place-items:center;font-size:12px}.value{font-size:27px;font-weight:900;letter-spacing:-.04em;margin:9px 0 2px}.delta{font-size:11px;color:var(--muted)}
-.grid{display:grid;grid-template-columns:1.45fr 1fr;gap:12px;margin-top:12px}.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}.panel-header{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:15px}.panel h3{font-size:11px;margin:0;color:#596275;letter-spacing:.06em}.panel-sub{font-size:11px;color:#98a2b3}.chart{height:235px;display:flex;align-items:end;gap:8px;border-bottom:1px solid var(--line);padding:0 3px}.bar{flex:1;min-width:5px;background:linear-gradient(180deg,#7b73ff,#dedbff);border-radius:6px 6px 0 0;min-height:5px}.insight{background:#f7f7ff;border:1px solid #ebe9ff;border-radius:10px;padding:11px;margin-bottom:8px;font-size:12px}.insight b{color:#5148d7}.tablewrap{overflow:auto;margin-top:12px}.table{width:100%;border-collapse:collapse;font-size:12px}.table th,.table td{padding:11px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}.table th{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;background:#fafbfc}.table tbody tr:hover{background:#fafbff}
-.features{max-width:1120px;margin:0 auto;padding:28px 20px 80px}.section-kicker{text-align:center;color:var(--brand);font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.08em}.features h2{text-align:center;font-size:40px;letter-spacing:-.045em;margin:8px 0 12px}.section-lead{max-width:620px;text-align:center;color:var(--muted);margin:0 auto 32px}.featuregrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.feature{background:#fff;border:1px solid var(--line);border-radius:15px;padding:22px}.feature-icon{width:34px;height:34px;border-radius:10px;background:var(--soft);display:grid;place-items:center;color:var(--brand);font-weight:900;margin-bottom:13px}.feature h3{font-size:14px;margin:0 0 7px}.feature p{color:var(--muted);font-size:12px;margin:0}
-.pricing{max-width:820px;margin:0 auto 90px;display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:0 20px}.price{background:#fff;border:1px solid var(--line);border-radius:17px;padding:27px}.pro{border:2px solid var(--brand);box-shadow:0 18px 45px rgba(99,91,255,.1)}.price h3{margin:10px 0 0}.amount{font-size:44px;font-weight:900;letter-spacing:-.05em;margin:13px 0}.amount span{font-size:14px;color:var(--muted);letter-spacing:0}.price ul{padding-left:19px;color:var(--muted);line-height:2;font-size:13px}
-.admin{max-width:1150px;margin:35px auto 80px;padding:0 18px}.adminhead{display:flex;justify-content:space-between;align-items:center}.admincards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}.admincard{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px}.admincard b{display:block;font-size:27px;margin-top:5px}.notice{font-size:12px;color:var(--muted);line-height:1.55}.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(6px);display:grid;place-items:center;padding:20px;z-index:100}.modalbox{background:#fff;border-radius:18px;max-width:430px;width:100%;padding:28px;box-shadow:var(--shadow)}.google{width:100%;background:#fff;border:1px solid var(--line);border-radius:10px;padding:13px;font-weight:800}.footer{text-align:center;border-top:1px solid var(--line);padding:30px;color:#98a2b3;font-size:12px;background:#fff}
-@media(max-width:900px){.navlinks{display:none}.app{grid-template-columns:1fr}.sidebar{display:none}.cards,.admincards{grid-template-columns:1fr 1fr}.grid,.featuregrid,.pricing{grid-template-columns:1fr}.head{flex-direction:column}}@media(max-width:560px){.cards,.admincards{grid-template-columns:1fr}.hero{padding-top:48px}.hero h1{font-size:42px}.content{padding:18px}}@media print{.nav,.hero,.sidebar,.import,.tools,.features,.pricing,.footer{display:none!important}.app{display:block;box-shadow:none;border:0}.content{background:#fff}.workspace{margin:0}}
-</style></head><body>
-<nav class="nav"><div class="brand"><span class="logo">AR</span><span>Agency Report Kit</span></div><div class="navlinks"><a href="#features">Features</a><a href="#workspace">Workspace</a><a href="#pricing">Pricing</a></div><div class="navright"><div id="userInfo" style="display:none"></div><button class="btn outline small" id="logoutBtn" style="display:none">Logout</button><button class="btn outline small" id="adminOpen">Admin</button><button class="btn primary small" id="authOpen">Sign in with Google</button></div></nav>
-<header class="hero"><div class="hero-inner"><span class="pill">Marketing reporting for agencies</span><h1>Turn campaign data into a <span>client-ready story.</span></h1><p>Upload a campaign export, understand what changed, and produce a polished report without spending hours formatting spreadsheets.</p><div class="hero-actions"><button class="btn purple" id="demoTop">Try live demo →</button><button class="btn outline" onclick="document.getElementById('workspace').scrollIntoView({behavior:'smooth'})">Open workspace</button></div><div class="micro">Browser-first · CSV stays local · Google sign-in available</div></div></header>
-<section class="workspace" id="workspace"><div class="app"><aside class="sidebar"><div class="side-title">Workspace</div><div class="navitem active">Overview</div><div class="navitem">Clients</div><div class="navitem">Reports</div><div class="navitem">Templates</div><div class="navitem">Branding</div><div class="side-divider"></div><div class="side-title">Management</div><div class="navitem" id="adminSide">Admin</div></aside><main class="content"><div class="head"><div><h2>Report Workspace</h2><p id="fileStatus">No report loaded — start with demo data or upload a CSV.</p></div><div class="tools"><button class="btn outline small" id="demo">Demo Data</button><button class="btn purple small" id="generate">Generate Report</button><button class="btn outline small" id="pdf">Export PDF</button></div></div><div class="import"><div class="importline"><div class="import-title"><span class="upload-icon">↑</span><span>Import campaign CSV</span></div><input type="file" id="csv" accept=".csv"></div><small>Supported fields: Date, Campaign, Spend/Cost, Impressions, Clicks, Leads/Conversions and Revenue.</small><div class="status" id="status"></div></div><div class="cards"><div class="card"><div class="card-top"><div class="label">AD SPEND</div><div class="metric-icon">$</div></div><div class="value" id="spend">$0</div><div class="delta" id="spendD">Total spend</div></div><div class="card"><div class="card-top"><div class="label">LEADS</div><div class="metric-icon">↗</div></div><div class="value" id="leads">0</div><div class="delta" id="leadsD">Total leads</div></div><div class="card"><div class="card-top"><div class="label">CPL</div><div class="metric-icon">◉</div></div><div class="value" id="cpl">$0</div><div class="delta" id="cplD">Cost per lead</div></div><div class="card"><div class="card-top"><div class="label">ROAS</div><div class="metric-icon">×</div></div><div class="value" id="roas">0.00x</div><div class="delta" id="roasD">Return on ad spend</div></div></div><div class="grid"><div class="panel"><div class="panel-header"><h3>LEAD PERFORMANCE</h3><span class="panel-sub">By campaign row</span></div><div class="chart" id="chart"></div></div><div class="panel"><div class="panel-header"><h3>CLIENT STORY</h3><span class="panel-sub">Automated summary</span></div><div id="insights"><div class="insight">Load data to generate your client story.</div></div></div></div><div class="panel tablewrap"><div class="panel-header"><h3>CAMPAIGN BREAKDOWN</h3><span class="panel-sub">Performance by campaign</span></div><table class="table"><thead><tr><th>Campaign</th><th>Spend</th><th>Leads</th><th>CPL</th><th>ROAS</th></tr></thead><tbody id="rows"></tbody></table></div></main></div></section>
-<section class="features" id="features"><div class="section-kicker">Why agencies use it</div><h2>Less spreadsheet work. More useful reporting.</h2><p class="section-lead">A focused workflow for turning performance data into a clear client conversation.</p><div class="featuregrid"><div class="feature"><div class="feature-icon">⚡</div><h3>60-second reports</h3><p>Upload campaign data and calculate core performance metrics automatically.</p></div><div class="feature"><div class="feature-icon">◈</div><h3>Client story</h3><p>Turn raw metrics into concise observations and practical next actions.</p></div><div class="feature"><div class="feature-icon">▣</div><h3>Agency-ready</h3><p>Built to grow toward branding, templates, client links and report history.</p></div><div class="feature"><div class="feature-icon">◎</div><h3>Privacy-first</h3><p>Campaign CSV processing remains browser-side in the current workflow.</p></div><div class="feature"><div class="feature-icon">↗</div><h3>PDF-ready</h3><p>Export the report using the browser's native print-to-PDF workflow.</p></div><div class="feature"><div class="feature-icon">∞</div><h3>Simple pricing</h3><p>Start free and evolve toward a lightweight $5/month agency product.</p></div></div></section>
-<section class="pricing" id="pricing"><div class="price"><span class="pill">FREE</span><h3>Free</h3><div class="amount">$0</div><ul><li>3 reports/month</li><li>Core KPI calculations</li><li>Client story</li><li>PDF export</li></ul><button class="btn outline" style="width:100%">Included</button></div><div class="price pro"><span class="pill">AGENCY PRO</span><h3>Agency Pro</h3><div class="amount">$5<span>/month</span></div><ul><li>Unlimited clients</li><li>White-label reports</li><li>Saved templates</li><li>Client share links</li><li>Report history</li><li>Custom branding</li></ul><button class="btn purple" style="width:100%" id="upgrade">Upgrade to Pro</button></div></section>
-<section class="admin hidden" id="admin"><div class="adminhead"><div><div class="section-kicker" style="text-align:left">Management</div><h2 style="margin:4px 0">Admin Dashboard</h2></div><button class="btn outline" id="adminClose">Back to app</button></div><div class="admincards"><div class="admincard">Registered users<b id="users">0</b></div><div class="admincard">Report events<b id="reports">0</b></div><div class="admincard">PDF exports<b id="exports">0</b></div><div class="admincard">Pro users<b id="pros">0</b></div></div><div class="panel tablewrap"><div class="panel-header"><h3>RECENT ACTIVITY</h3><span class="panel-sub">Latest browser events</span></div><table class="table"><thead><tr><th>User</th><th>Event</th><th>Time</th></tr></thead><tbody id="activity"></tbody></table></div><p class="notice" id="adminNote"></p></section>
-<div class="modal hidden" id="authModal"><div class="modalbox"><h2>Sign in to Agency Report Kit</h2><p class="notice">Use Google to create your account and associate future activity with your profile.</p><button class="google" id="google">Continue with Google</button><button class="btn outline" style="width:100%;margin-top:10px" id="authClose">Cancel</button></div></div>
-<footer class="footer">Agency Report Kit · Open-source core · Built for marketing agencies</footer>
-{script}
-</body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agency Report Kit — Data → Insight → Action</title>
+<meta name="description" content="Turn marketing campaign data into client-ready insights and next actions.">
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDqMGnYC2bNDd-LCzWK5o8uajIFgbjVd9E",
+  authDomain: "agency-report-kit.firebaseapp.com",
+  projectId: "agency-report-kit",
+  storageBucket: "agency-report-kit.firebasestorage.app",
+  messagingSenderId: "66001938149",
+  appId: "1:66001938149:web:764dd195581404bf46b134",
+  measurementId: "G-37MVERRVEH"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+window.ARK = {auth,db,provider,signInWithPopup,signOut,onAuthStateChanged,doc,setDoc,addDoc,collection,serverTimestamp};
+</script>
+<style>
+:root{--bg:#f5f7fb;--surface:#fff;--ink:#101828;--muted:#667085;--line:#e4e7ec;--brand:#6d5dfc;--brand2:#8d7fff;--good:#12b76a;--warn:#f79009;--bad:#f04438;--nav:#17152b;--shadow:0 18px 55px rgba(16,24,40,.08)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer}
+.nav{height:68px;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:0 4%;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:30}.brand{display:flex;gap:10px;align-items:center;font-weight:850}.logo{width:35px;height:35px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;display:grid;place-items:center;font-weight:900}.navright{display:flex;align-items:center;gap:9px}.user{display:none;align-items:center;gap:8px;color:var(--muted);font-size:12px}.user img{width:28px;height:28px;border-radius:50%}
+.btn{border:0;border-radius:10px;padding:10px 15px;font-weight:760}.primary{background:var(--ink);color:#fff}.purple{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}.outline{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.workspace{max-width:1450px;margin:26px auto 70px;padding:0 18px}.app{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);display:grid;grid-template-columns:215px 1fr;min-height:780px;overflow:hidden}.sidebar{padding:22px 14px;border-right:1px solid var(--line);background:#fcfcfe}.sidebar h3{font-size:13px;margin:0 0 22px}.navitem{padding:11px;border-radius:9px;color:var(--muted);margin:4px 0;font-size:13px}.navitem.active{background:#efedff;color:#5546dc;font-weight:800}
+.content{padding:27px;background:#f8f9fc}.head{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:18px}.head h1{font-size:24px;margin:0 0 3px;letter-spacing:-.03em}.head p{margin:0;color:var(--muted);font-size:12px}.tools{display:flex;gap:8px;flex-wrap:wrap}
+.import{padding:17px;background:#faf9ff;border:1px dashed #bdb6ff;border-radius:13px;margin-bottom:14px}.importline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.import small{color:var(--muted)}.status{font-size:12px;color:var(--muted);margin-top:7px}
+.kicker{font-size:10px;font-weight:850;letter-spacing:.08em;color:#5546dc;text-transform:uppercase}.cards{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.card,.panel{background:#fff;border:1px solid var(--line);border-radius:13px}.card{padding:15px}.label{font-size:10px;color:var(--muted);font-weight:850}.value{font-size:24px;font-weight:900;margin:5px 0}.delta{font-size:11px}.up{color:var(--good)}.down{color:var(--bad)}.neutral{color:var(--muted)}
+.section{margin-top:14px}.section-title{display:flex;justify-content:space-between;align-items:end;margin-bottom:9px}.section-title h2{font-size:15px;margin:0}.section-title p{font-size:11px;color:var(--muted);margin:0}
+.executive{display:grid;grid-template-columns:1.35fr .65fr;gap:12px}.summary{padding:20px}.summary h2{font-size:20px;margin:4px 0 8px}.summary p{color:var(--muted);margin:0}.confidence{padding:15px;background:#f8f7ff;border-radius:10px;margin-top:15px;font-size:12px}.confidence b{color:#5546dc}
+.insightgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.insight{padding:16px}.insight .tag{font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}.insight h3{font-size:14px;margin:0 0 5px}.insight p{font-size:12px;color:var(--muted);margin:0}.tag.good{color:var(--good)}.tag.warn{color:var(--warn)}.tag.bad{color:var(--bad)}
+.chartpanel{padding:18px}.chart{height:230px;display:flex;align-items:end;gap:7px;border-bottom:1px solid var(--line);padding:0 4px}.barwrap{height:100%;flex:1;display:flex;align-items:end;min-width:15px}.bar{width:100%;min-height:5px;background:linear-gradient(180deg,var(--brand2),#dfdcff);border-radius:6px 6px 0 0}.barlabel{font-size:8px;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);margin:0 0 5px 3px;max-height:80px;overflow:hidden}
+.two{display:grid;grid-template-columns:1.4fr .6fr;gap:12px}.funnel{padding:18px}.funnelrow{display:grid;grid-template-columns:130px 1fr 80px;gap:10px;align-items:center;margin:12px 0;font-size:11px}.track{height:9px;background:#eef0f5;border-radius:99px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,var(--brand),var(--brand2));border-radius:99px}.actions{padding:18px}.action{padding:13px;border:1px solid var(--line);border-radius:10px;margin-bottom:9px}.action strong{display:block;font-size:12px}.action span{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.tablewrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:12px}.table th,.table td{padding:10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}.table th{font-size:10px;color:var(--muted);text-transform:uppercase}.badge{display:inline-block;padding:4px 7px;border-radius:99px;font-size:9px;font-weight:850}.badge.good{background:#e9f9f1;color:#087443}.badge.warn{background:#fff4e5;color:#9a5b00}.badge.bad{background:#ffeded;color:#b42318}
+.hero{max-width:1450px;margin:0 auto;padding:44px 18px 6px}.hero .pill{display:inline-block;padding:6px 10px;border-radius:99px;background:#eeecff;color:#5546dc;font-size:10px;font-weight:850}.hero h1{font-size:clamp(36px,5vw,64px);line-height:1;letter-spacing:-.055em;margin:15px 0 10px}.hero h1 span{color:var(--brand)}.hero p{max-width:720px;color:var(--muted);font-size:16px}
+.hidden{display:none!important}.modal{position:fixed;inset:0;background:#10182899;display:grid;place-items:center;padding:20px;z-index:100}.modalbox{background:#fff;border-radius:18px;max-width:430px;width:100%;padding:28px}.notice{font-size:12px;color:var(--muted)}
+.periodbar{margin-bottom:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:15px}.periodcontrols{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.periodBtn.active{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-color:transparent}.periodselect{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;color:var(--ink);font-weight:700}.periodbar strong{display:block;font-size:15px;margin-top:2px}
+@media(max-width:1100px){.cards{grid-template-columns:repeat(3,1fr)}.executive,.two{grid-template-columns:1fr}}
+@media(max-width:850px){.periodbar{align-items:flex-start;flex-direction:column}.app{grid-template-columns:1fr}.sidebar{display:none}.head{align-items:flex-start;flex-direction:column}.insightgrid{grid-template-columns:1fr}.navlinks{display:none}}
+@media(max-width:560px){.cards{grid-template-columns:1fr 1fr}.hero{padding-top:30px}.tools{width:100%}.tools .btn{flex:1}.user{display:none!important}}
+@media print{.nav,.hero,.sidebar,.import,.tools{display:none!important}.workspace{margin:0;padding:0}.app{display:block;border:0;box-shadow:none}.content{background:#fff;padding:10px}.section{break-inside:avoid}.panel,.card{box-shadow:none}.tablewrap{overflow:visible}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand"><span class="logo">AR</span>Agency Report Kit</div>
+  <div class="navright">
+    <div class="user" id="userBox"><img id="userPhoto"><span id="userName"></span></div>
+    <button class="btn outline" id="loginBtn">Sign in with Google</button>
+    <button class="btn outline hidden" id="logoutBtn">Logout</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <span class="pill">PERFORMANCE MARKETING REPORTING</span>
+  <h1>DATA <span>→</span> INSIGHT <span>→</span> ACTION</h1>
+  <p>Turn campaign exports into a report that explains what changed, why it matters, and what the marketer should do next.</p>
+</header>
+
+<section class="workspace">
+<div class="app">
+<aside class="sidebar">
+  <h3>Agency Report Kit</h3>
+  <div class="navitem active">Overview</div>
+  <div class="navitem">Clients</div>
+  <div class="navitem">Reports</div>
+  <div class="navitem">Templates</div>
+  <div class="navitem">Branding</div>
+</aside>
+
+<main class="content">
+  <div class="head">
+    <div>
+      <div class="kicker">Report Workspace</div>
+      <h1>Performance Report</h1>
+      <p id="fileStatus">No report loaded — use Demo Data or upload a CSV.</p>
+    </div>
+    <div class="tools">
+      <button class="btn outline" id="demoBtn">Demo Data</button>
+      <button class="btn purple" id="generateBtn">Generate Report</button>
+      <button class="btn outline" id="pdfBtn">Export PDF</button>
+    </div>
+  </div>
+
+  <div class="import">
+    <div class="importline">
+      <strong>Import campaign CSV</strong>
+      <input type="file" id="csv" accept=".csv">
+      <small>Supported: Date, Campaign, Spend/Cost, Impressions, Clicks, Leads/Conversions, Revenue.</small>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="periodbar panel">
+    <div>
+      <div class="kicker">REPORTING PERIOD</div>
+      <strong id="periodModeTitle">Last 7 Days</strong>
+      <div class="notice" id="periodRange">Select a reporting period to analyze.</div>
+    </div>
+    <div class="periodcontrols">
+      <button class="btn purple periodBtn active" data-period="7">7 Days</button>
+      <button class="btn outline periodBtn" data-period="30">30 Days</button>
+      <button class="btn outline periodBtn" data-period="month">This Month</button>
+      <button class="btn outline periodBtn" data-period="prevmonth">Previous Month</button>
+      <button class="btn outline periodBtn" data-period="all">All Data</button>
+      <select id="customDays" class="periodselect">
+        <option value="">Custom</option>
+        <option value="14">Last 14 Days</option>
+        <option value="90">Last 90 Days</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card"><div class="label">AD SPEND</div><div class="value" id="spend">—</div><div class="delta" id="spendDelta">Current period</div></div>
+    <div class="card"><div class="label">LEADS</div><div class="value" id="leads">—</div><div class="delta" id="leadsDelta">Current period</div></div>
+    <div class="card"><div class="label">CPL</div><div class="value" id="cpl">—</div><div class="delta" id="cplDelta">Current period</div></div>
+    <div class="card"><div class="label">ROAS</div><div class="value" id="roas">—</div><div class="delta" id="roasDelta">Current period</div></div>
+    <div class="card"><div class="label">CTR</div><div class="value" id="ctr">—</div><div class="delta" id="ctrDelta">Current period</div></div>
+    <div class="card"><div class="label">REVENUE</div><div class="value" id="revenue">—</div><div class="delta" id="revenueDelta">Current period</div></div>
+  </div>
+
+  <section class="section executive">
+    <div class="panel summary">
+      <div class="kicker">01 · Executive Summary</div>
+      <h2 id="summaryTitle">Load campaign data to generate your summary.</h2>
+      <p id="summaryText">Agency Report Kit will turn the numbers into a concise performance narrative.</p>
+      <div class="confidence" id="dataNote">Analysis is generated from the fields available in your CSV. Missing fields are not invented.</div>
+    </div>
+    <div class="panel summary">
+      <div class="kicker">Reporting Period</div>
+      <h2 id="periodLabel">—</h2>
+      <p id="periodMeta">—</p>
+      <div class="confidence"><b>Decision lens</b><br>Efficiency, scale, campaign contribution and optimization opportunities.</div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title"><div><div class="kicker">02 · Insight</div><h2>What Changed?</h2></div><p>Evidence from the uploaded data</p></div>
+    <div class="insightgrid" id="insights"></div>
+  </section>
+
+  <section class="section two">
+    <div class="panel chartpanel">
+      <div class="section-title"><div><div class="kicker">03 · Trend</div><h2>Lead Performance</h2></div><p id="chartNote">By uploaded row</p></div>
+      <div class="chart" id="chart"></div>
+    </div>
+    <div class="panel funnel">
+      <div class="kicker">04 · Funnel</div>
+      <h2 style="font-size:16px;margin:4px 0 15px">Conversion path</h2>
+      <div id="funnel"></div>
+    </div>
+  </section>
+
+  <section class="section two">
+    <div class="panel tablewrap">
+      <div style="padding:18px 18px 7px"><div class="kicker">05 · Campaign Performance</div><h2 style="font-size:16px;margin:4px 0">Winners & Watchlist</h2></div>
+      <table class="table">
+        <thead><tr><th>Campaign</th><th>Spend</th><th>Leads</th><th>CPL</th><th>CTR</th><th>ROAS</th><th>Status</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="panel actions">
+      <div class="kicker">06 · Action</div>
+      <h2 style="font-size:16px;margin:4px 0 14px">Next Actions</h2>
+      <div id="actions"></div>
+    </div>
+  </section>
+</main>
+</div>
+</section>
+
+<div class="modal hidden" id="authModal">
+  <div class="modalbox">
+    <h2>Sign in to Agency Report Kit</h2>
+    <p class="notice">Use Google to save your account activity and prepare the SaaS for client/report history.</p>
+    <button class="btn purple" style="width:100%" id="googleBtn">Continue with Google</button>
+    <button class="btn outline" style="width:100%;margin-top:10px" id="closeAuth">Cancel</button>
+  </div>
+</div>
+
+<script>
+let rows=[], current=[], previous=[], user=null;
+
+const demo = [
+ ["2026-09-01","Search - High Intent",420,4200,310,72,980],
+ ["2026-09-05","Meta - Lead Gen",520,6800,410,96,1420],
+ ["2026-09-09","Retargeting",260,3900,240,54,760],
+ ["2026-09-13","Brand Search",180,2400,190,41,690],
+ ["2026-09-17","Performance Max",610,7200,530,128,2100],
+ ["2026-09-21","Meta - Creative Test",390,5100,350,83,1210]
+];
+
+function n(v){return parseFloat(String(v??"").replace(/[$,%x,]/g,""))||0}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function money(v){return "$"+Number(v||0).toLocaleString(undefined,{maximumFractionDigits:0})}
+function pct(v){return (Number(v||0)*100).toFixed(2)+"%"}
+function metric(data){
+ const spend=data.reduce((a,x)=>a+x.spend,0), leads=data.reduce((a,x)=>a+x.leads,0), rev=data.reduce((a,x)=>a+x.revenue,0);
+ const imp=data.reduce((a,x)=>a+x.imp,0), clicks=data.reduce((a,x)=>a+x.clicks,0);
+ return {spend,leads,rev,imp,clicks,cpl:leads?spend/leads:0,roas:spend?rev/spend:0,ctr:imp?clicks/imp:0,cvr:clicks?leads/clicks:0};
+}
+function delta(curr,prev,invert=false){
+ if(!prev) return {text:"No comparison",cls:"neutral"};
+ if(!prev) return {text:"—",cls:"neutral"};
+ const d=(curr-prev)/Math.abs(prev);
+ const positive=invert?d<0:d>0;
+ return {text:(d>=0?"↑ ":"↓ ")+Math.abs(d*100).toFixed(1)+"%",cls:positive?"up":"down"};
+}
+function parseRows(data){
+ return data.map(x=>({date:x[0],campaign:x[1]||"Campaign",spend:n(x[2]),imp:n(x[3]),clicks:n(x[4]),leads:n(x[5]),revenue:n(x[6])}));
+}
+let selectedPeriod="7";
+
+function getPeriodRows(data, period){
+ const dated=data.filter(x=>x.date && !isNaN(new Date(x.date).getTime()));
+ if(!dated.length) return data;
+ const latest=new Date(Math.max(...dated.map(x=>new Date(x.date).getTime())));
+ latest.setHours(23,59,59,999);
+ let start=new Date(latest);
+
+ if(period==="7") start.setDate(start.getDate()-6);
+ else if(period==="30") start.setDate(start.getDate()-29);
+ else if(period==="90") start.setDate(start.getDate()-89);
+ else if(period==="14") start.setDate(start.getDate()-13);
+ else if(period==="month") start=new Date(latest.getFullYear(),latest.getMonth(),1);
+ else if(period==="prevmonth") {
+   const y=latest.getMonth()===0?latest.getFullYear()-1:latest.getFullYear();
+   const m=latest.getMonth()===0?11:latest.getMonth()-1;
+   const first=new Date(y,m,1), last=new Date(y,m+1,0);
+   return {current:dated.filter(x=>{const d=new Date(x.date);return d>=first&&d<=last}), previous:dated.filter(x=>{const d=new Date(x.date);const ppFirst=new Date(y,m-1,1);const ppLast=new Date(y,m,0);return d>=ppFirst&&d<=ppLast})};
+ } else return {current:dated,previous:[]};
+
+ const current=dated.filter(x=>{const d=new Date(x.date);return d>=start&&d<=latest});
+ const prevStart=new Date(start); const days=Math.max(1,Math.round((latest-start)/86400000)+1);
+ prevStart.setDate(prevStart.getDate()-days);
+ const prevEnd=new Date(start); prevEnd.setDate(prevEnd.getDate()-1);
+ const previous=dated.filter(x=>{const d=new Date(x.date);return d>=prevStart&&d<=prevEnd});
+ return {current,previous};
+}
+
+function applyPeriod(){
+ const result=getPeriodRows(rows,selectedPeriod);
+ current=result.current; previous=result.previous;
+ const dated=current.filter(x=>x.date).map(x=>x.date).sort();
+ const label={7:"Last 7 Days",14:"Last 14 Days",30:"Last 30 Days",90:"Last 90 Days",month:"This Month",prevmonth:"Previous Month",all:"All Data"}[selectedPeriod]||"Custom Period";
+ document.getElementById("periodModeTitle").textContent=label;
+ document.getElementById("periodRange").textContent=dated.length?`${dated[0]} → ${dated[dated.length-1]} · ${current.length} rows`:"No dated rows available";
+ document.getElementById("periodLabel").textContent=dated.length?`${dated[0]} → ${dated[dated.length-1]}`:"—";
+ document.getElementById("periodMeta").textContent=`${current.length} selected rows · ${previous.length} comparison rows`;
+ render();
+}
+
+function setData(data,label){
+ rows=parseRows(data);
+ document.getElementById("fileStatus").textContent=label;
+ document.getElementById("status").textContent=rows.length+" campaign rows loaded locally.";
+ applyPeriod();
+}
+function render(){
+ if(!current.length) return;
+ const m=metric(current), p=metric(previous);
+ document.getElementById("spend").textContent=money(m.spend);
+ document.getElementById("leads").textContent=m.leads.toLocaleString();
+ document.getElementById("cpl").textContent=money(m.cpl);
+ document.getElementById("roas").textContent=m.roas.toFixed(2)+"x";
+ document.getElementById("ctr").textContent=pct(m.ctr);
+ document.getElementById("revenue").textContent=money(m.rev);
+
+ const ds=[["spendDelta",m.spend,p.spend,false],["leadsDelta",m.leads,p.leads,false],["cplDelta",m.cpl,p.cpl,true],["roasDelta",m.roas,p.roas,false],["ctrDelta",m.ctr,p.ctr,false],["revenueDelta",m.rev,p.rev,false]];
+ ds.forEach(([id,a,b,inv])=>{const el=document.getElementById(id),d=delta(a,b,inv);el.textContent=d.text+(b?" vs previous period":"");el.className="delta "+d.cls});
+
+ const allDates=rows.map(x=>x.date).filter(Boolean);
+ const min=allDates.slice().sort()[0]||"—", max=allDates.slice().sort().slice(-1)[0]||"—";
+ document.getElementById("periodLabel").textContent=min+" → "+max;
+ document.getElementById("periodMeta").textContent=current.length+" current rows · "+previous.length+" comparison rows";
+
+ const cplChange=p.cpl?((m.cpl-p.cpl)/p.cpl):null;
+ const leadChange=p.leads?((m.leads-p.leads)/p.leads):null;
+ let title="Performance overview";
+ let text=`The account generated ${m.leads.toLocaleString()} leads from ${money(m.spend)} spend`;
+ if(m.rev) text+=` and ${money(m.rev)} revenue`;
+ text+=".";
+ if(leadChange!==null) text+=` Lead volume ${leadChange>=0?"increased":"decreased"} ${Math.abs(leadChange*100).toFixed(1)}% versus the comparison period.`;
+ if(cplChange!==null) text+=` CPL ${cplChange<=0?"improved":"increased"} ${Math.abs(cplChange*100).toFixed(1)}%.`;
+ document.getElementById("summaryTitle").textContent=title;
+ document.getElementById("summaryText").textContent=text;
+ document.getElementById("dataNote").textContent=previous.length?"Current vs comparison-period analysis is available. Recommendations use observed campaign metrics.":"Only one period is available, so no period-over-period claim is made.";
+
+ renderInsights(m,p);
+ renderChart(current);
+ renderFunnel(m);
+ renderCampaigns(m);
+ renderActions(m);
+}
+function renderInsights(m,p){
+ const arr=[];
+ const best=[...current].sort((a,b)=>(b.revenue/(b.spend||1))-(a.revenue/(a.spend||1)))[0];
+ const high=[...current].sort((a,b)=>(b.leads?b.spend/b.leads:Infinity)-(a.leads?a.spend/a.leads:Infinity))[0];
+ const leadChange=p.leads?((m.leads-p.leads)/p.leads):null;
+ const cplChange=p.cpl?((m.cpl-p.cpl)/p.cpl):null;
+ if(leadChange!==null) arr.push({tag:leadChange>=0?"positive":"watch",title:`Leads ${leadChange>=0?"increased":"decreased"} ${Math.abs(leadChange*100).toFixed(1)}%`,text:`${m.leads.toLocaleString()} leads in the current period versus ${p.leads.toLocaleString()} previously.`});
+ else arr.push({tag:"positive",title:"Scale signal",text:`${m.leads.toLocaleString()} leads were generated from ${money(m.spend)} spend.`});
+ if(cplChange!==null) arr.push({tag:cplChange<=0?"positive":"watch",title:`CPL ${cplChange<=0?"improved":"increased"} ${Math.abs(cplChange*100).toFixed(1)}%`,text:`Current CPL is ${money(m.cpl)}.`});
+ else arr.push({tag:"watch",title:"Efficiency baseline",text:`Current blended CPL is ${money(m.cpl)}. Add another period for change analysis.`});
+ arr.push({tag:"positive",title:`Top ROAS: ${esc(best.campaign)}`,text:`${(best.revenue/(best.spend||1)).toFixed(2)}x ROAS on ${money(best.spend)} spend.`});
+ document.getElementById("insights").innerHTML=arr.map(x=>`<div class="panel insight"><div class="tag ${x.tag==="positive"?"good":"warn"}">${x.tag==="positive"?"Signal":"Watch"}</div><h3>${x.title}</h3><p>${x.text}</p></div>`).join("");
+}
+function renderChart(data){
+ const max=Math.max(...data.map(x=>x.leads),1);
+ document.getElementById("chart").innerHTML=data.map(x=>`<div class="barwrap" title="${esc(x.campaign)}: ${x.leads} leads"><div class="bar" style="height:${Math.max(5,x.leads/max*100)}%"></div><div class="barlabel">${esc(x.campaign)}</div></div>`).join("");
+}
+function renderFunnel(m){
+ const vals=[["Impressions",m.imp],["Clicks",m.clicks],["Leads",m.leads]];
+ const base=Math.max(m.imp,1);
+ document.getElementById("funnel").innerHTML=vals.map(x=>`<div class="funnelrow"><span>${x[0]}</span><div class="track"><div class="fill" style="width:${Math.max(2,x[1]/base*100)}%"></div></div><b>${x[1].toLocaleString()}</b></div>`).join("")+
+ `<div class="confidence"><b>CTR</b> ${pct(m.ctr)} · <b>Lead CVR</b> ${pct(m.cvr)} · <b>CPL</b> ${money(m.cpl)}</div>`;
+}
+function campaignStatus(x,avg){
+ const c=x.leads?x.spend/x.leads:Infinity, r=x.spend?x.revenue/x.spend:0;
+ if(r>=avg.roas*1.15 || c<=avg.cpl*.85) return ["Scale candidate","good"];
+ if(c>=avg.cpl*1.3 || r<=avg.roas*.7) return ["Watch","bad"];
+ return ["Stable","warn"];
+}
+function renderCampaigns(m){
+ const avg=m;
+ document.getElementById("rows").innerHTML=current.map(x=>{
+  const c=x.leads?x.spend/x.leads:0,r=x.spend?x.revenue/x.spend:0,ctr=x.imp?x.clicks/x.imp:0,s=campaignStatus(x,avg);
+  return `<tr><td><strong>${esc(x.campaign)}</strong></td><td>${money(x.spend)}</td><td>${x.leads.toLocaleString()}</td><td>${money(c)}</td><td>${pct(ctr)}</td><td>${r.toFixed(2)}x</td><td><span class="badge ${s[1]}">${s[0]}</span></td></tr>`;
+ }).join("");
+}
+function renderActions(m){
+ const sorted=[...current].sort((a,b)=>(a.leads? a.spend/a.leads:Infinity)-(b.leads?b.spend/b.leads:Infinity));
+ const best=sorted[0], worst=sorted[sorted.length-1];
+ const actions=[];
+ if(best) actions.push(["Scale / protect",`${esc(best.campaign)} has the lowest CPL in the current dataset. Review capacity and consider controlled incremental budget.`]);
+ if(worst && worst!==best) actions.push(["Optimize / investigate",`${esc(worst.campaign)} has the highest CPL. Review audience, creative, offer and landing-page conversion before adding spend.`]);
+ const highSpend=[...current].sort((a,b)=>b.spend-a.spend)[0];
+ if(highSpend) actions.push(["Validate spend concentration",`${esc(highSpend.campaign)} has the highest spend. Check that its lead quality and downstream value justify the allocation.`]);
+ document.getElementById("actions").innerHTML=actions.slice(0,3).map(x=>`<div class="action"><strong>${x[0]}</strong><span>${x[1]}</span></div>`).join("");
+}
+function parseCSV(t){
+ const lines=t.trim().split(/\r?\n/); if(lines.length<2)return[];
+ const h=lines[0].split(",").map(x=>x.trim().toLowerCase());
+ const find=a=>{const i=h.findIndex(v=>a.some(k=>v.includes(k)));return i<0?0:i};
+ const ix={date:find(["date"]),campaign:find(["campaign","ad set","ad name"]),spend:find(["spend","cost"]),imp:find(["impression"]),clicks:find(["click"]),leads:find(["lead","conversion"]),revenue:find(["revenue","value"])};
+ return lines.slice(1).map(l=>l.split(",")).filter(x=>x.length>=2).map(x=>[x[ix.date],x[ix.campaign],x[ix.spend],x[ix.imp],x[ix.clicks],x[ix.leads],x[ix.revenue]]);
+}
+document.querySelectorAll(".periodBtn").forEach(btn=>{
+ btn.onclick=()=>{
+   selectedPeriod=btn.dataset.period;
+   document.querySelectorAll(".periodBtn").forEach(b=>b.classList.remove("active"));
+   btn.classList.add("active");
+   document.getElementById("customDays").value="";
+   applyPeriod();
+ };
+});
+document.getElementById("customDays").onchange=e=>{
+ if(!e.target.value)return;
+ selectedPeriod=e.target.value;
+ document.querySelectorAll(".periodBtn").forEach(b=>b.classList.remove("active"));
+ applyPeriod();
+};
+
+function demoLoad(){setData(demo,"Demo Data");document.querySelector(".workspace").scrollIntoView({behavior:"smooth"});}
+document.getElementById("demoBtn").onclick=demoLoad;
+document.getElementById("generateBtn").onclick=()=>{if(!rows.length)demoLoad();else render();};
+document.getElementById("pdfBtn").onclick=()=>{if(!rows.length)demoLoad();setTimeout(()=>window.print(),150)};
+document.getElementById("csv").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>setData(parseCSV(r.result),f.name);r.readAsText(f)};
+
+document.getElementById("loginBtn").onclick=()=>document.getElementById("authModal").classList.remove("hidden");
+document.getElementById("closeAuth").onclick=()=>document.getElementById("authModal").classList.add("hidden");
+document.getElementById("googleBtn").onclick=async()=>{
+ try{
+   const result=await window.ARK.signInWithPopup(window.ARK.auth,window.ARK.provider);
+   const u=result.user;
+   await window.ARK.setDoc(window.ARK.doc(window.ARK.db,"users",u.uid),{uid:u.uid,name:u.displayName||"",email:u.email||"",photoURL:u.photoURL||"",lastLogin:window.ARK.serverTimestamp()},{merge:true});
+   await window.ARK.addDoc(window.ARK.collection(window.ARK.db,"events"),{event:"login",userId:u.uid,email:u.email||"",page:location.pathname,timestamp:window.ARK.serverTimestamp()});
+   document.getElementById("authModal").classList.add("hidden");
+ }catch(e){alert("Google sign-in could not be completed: "+e.message)}
+};
+window.ARK.onAuthStateChanged(window.ARK.auth,u=>{
+ user=u;
+ document.getElementById("loginBtn").classList.toggle("hidden",!!u);
+ document.getElementById("logoutBtn").classList.toggle("hidden",!u);
+ document.getElementById("userBox").style.display=u?"flex":"none";
+ if(u){document.getElementById("userName").textContent=u.displayName||u.email||"Signed in";document.getElementById("userPhoto").src=u.photoURL||""}
+});
+document.getElementById("logoutBtn").onclick=()=>window.ARK.signOut(window.ARK.auth);
+
+demoLoad();
+</script>
+</body>
+</html>
