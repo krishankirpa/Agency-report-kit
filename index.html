@@ -6,29 +6,7 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>Agency Report Kit — Data → Insight → Action</title>
 <meta content="Turn marketing campaign data into client-ready insights and next actions." name="description"/>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDqMGnYC2bNDd-LCzWK5o8uajIFgbjVd9E",
-  authDomain: "agency-report-kit.firebaseapp.com",
-  projectId: "agency-report-kit",
-  storageBucket: "agency-report-kit.firebasestorage.app",
-  messagingSenderId: "66001938149",
-  appId: "1:66001938149:web:764dd195581404bf46b134",
-  measurementId: "G-37MVERRVEH"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
-provider.setCustomParameters({prompt: "select_account"});
-
-window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectResult,signOut,onAuthStateChanged,doc,setDoc,addDoc,collection,serverTimestamp};
-</script>
 <style>
 :root{--bg:#f5f7fb;--surface:#fff;--ink:#101828;--muted:#667085;--line:#e4e7ec;--brand:#6d5dfc;--brand2:#8d7fff;--good:#12b76a;--warn:#f79009;--bad:#f04438;--nav:#17152b;--shadow:0 18px 55px rgba(16,24,40,.08)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer}
@@ -78,8 +56,8 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 <div class="brand"><span class="logo">AR</span>Agency Report Kit</div>
 <div class="navright">
 <div class="user" id="userBox"><img id="userPhoto"/><span id="userName"></span></div>
-<button class="btn outline google-nav-btn" id="loginBtn"><svg aria-hidden="true" class="google-icon" viewbox="0 0 24 24"><path d="M21.35 12.27c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.44h3.14c1.84-1.69 2.91-4.18 2.91-7.21z" fill="#4285F4"></path><path d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.75 9.75 0 0 0 12 21.75z" fill="#34A853"></path><path d="M6.54 13.84A5.86 5.86 0 0 1 6.23 12c0-.64.11-1.27.31-1.84V7.64H3.3A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.05 4.36l3.24-2.52z" fill="#FBBC05"></path><path d="M12 6.13c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.14 14.63 2.25 12 2.25A9.75 9.75 0 0 0 3.3 7.64l3.24 2.52C7.31 7.85 9.46 6.13 12 6.13z" fill="#EA4335"></path></svg><span>Sign in with Google</span></button>
-<button class="btn outline hidden" id="logoutBtn">Logout</button>
+<button type="button" class="btn outline google-nav-btn" id="loginBtn"><svg aria-hidden="true" class="google-icon" viewbox="0 0 24 24"><path d="M21.35 12.27c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.44h3.14c1.84-1.69 2.91-4.18 2.91-7.21z" fill="#4285F4"></path><path d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.75 9.75 0 0 0 12 21.75z" fill="#34A853"></path><path d="M6.54 13.84A5.86 5.86 0 0 1 6.23 12c0-.64.11-1.27.31-1.84V7.64H3.3A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.05 4.36l3.24-2.52z" fill="#FBBC05"></path><path d="M12 6.13c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.14 14.63 2.25 12 2.25A9.75 9.75 0 0 0 3.3 7.64l3.24 2.52C7.31 7.85 9.46 6.13 12 6.13z" fill="#EA4335"></path></svg><span>Sign in with Google</span></button>
+<button type="button" class="btn outline hidden" id="logoutBtn">Logout</button>
 </div>
 </nav>
 <header class="hero">
@@ -164,9 +142,9 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 <div class="actionRow">
 <label class="btn outline uploadBtn" for="csvInput">Upload CSV</label>
 <input accept=".csv,text/csv" id="csvInput" style="display:none" type="file">
-<button class="btn outline" id="demoBtn">Demo Data</button>
-<button class="btn purple" id="generateBtn">Generate Report</button>
-<button class="btn outline" id="pdfBtn">Export PDF</button>
+<button type="button" class="btn outline" id="demoBtn">Demo Data</button>
+<button type="button" class="btn purple" id="generateBtn">Generate Report</button>
+<button type="button" class="btn outline" id="pdfBtn">Export PDF</button>
 <button class="btn primary" id="shareBtn" type="button">Share Report</button>
 <button class="btn outline" id="sharePdfBtn" type="button">Share PDF</button>
 <button class="btn outline gmailBtn" id="shareClientBtn" type="button">Gmail</button>
@@ -195,11 +173,11 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 <div class="notice" id="currencyLabel" style="font-weight:700">Currency: INR — Indian Rupee (₹)</div>
 </div>
 <div class="periodcontrols">
-<button class="btn purple periodBtn active" data-period="7">7 Days</button>
-<button class="btn outline periodBtn" data-period="30">30 Days</button>
-<button class="btn outline periodBtn" data-period="month">This Month</button>
-<button class="btn outline periodBtn" data-period="prevmonth">Previous Month</button>
-<button class="btn outline periodBtn" data-period="all">All Data</button>
+<button type="button" class="btn purple periodBtn active" data-period="7">7 Days</button>
+<button type="button" class="btn outline periodBtn" data-period="30">30 Days</button>
+<button type="button" class="btn outline periodBtn" data-period="month">This Month</button>
+<button type="button" class="btn outline periodBtn" data-period="prevmonth">Previous Month</button>
+<button type="button" class="btn outline periodBtn" data-period="all">All Data</button>
 <select class="periodselect" id="customDays">
 <option value="">Custom</option>
 <option value="14">Last 14 Days</option>
@@ -285,11 +263,32 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 <div class="modalbox">
 <h2>Sign in to Agency Report Kit</h2>
 <p class="notice">Use Google to save your account activity and prepare the SaaS for client/report history.</p>
-<button class="google-signin" id="googleBtn"><svg aria-hidden="true" class="google-icon large" viewbox="0 0 24 24"><path d="M21.35 12.27c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.44h3.14c1.84-1.69 2.91-4.18 2.91-7.21z" fill="#4285F4"></path><path d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.75 9.75 0 0 0 12 21.75z" fill="#34A853"></path><path d="M6.54 13.84A5.86 5.86 0 0 1 6.23 12c0-.64.11-1.27.31-1.84V7.64H3.3A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.05 4.36l3.24-2.52z" fill="#FBBC05"></path><path d="M12 6.13c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.14 14.63 2.25 12 2.25A9.75 9.75 0 0 0 3.3 7.64l3.24 2.52C7.31 7.85 9.46 6.13 12 6.13z" fill="#EA4335"></path></svg><span>Continue with Google</span></button>
-<button class="btn outline" id="closeAuth" style="width:100%;margin-top:10px">Cancel</button>
+<button type="button" class="google-signin" id="googleBtn"><svg aria-hidden="true" class="google-icon large" viewbox="0 0 24 24"><path d="M21.35 12.27c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.44h3.14c1.84-1.69 2.91-4.18 2.91-7.21z" fill="#4285F4"></path><path d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.75 9.75 0 0 0 12 21.75z" fill="#34A853"></path><path d="M6.54 13.84A5.86 5.86 0 0 1 6.23 12c0-.64.11-1.27.31-1.84V7.64H3.3A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.05 4.36l3.24-2.52z" fill="#FBBC05"></path><path d="M12 6.13c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.14 14.63 2.25 12 2.25A9.75 9.75 0 0 0 3.3 7.64l3.24 2.52C7.31 7.85 9.46 6.13 12 6.13z" fill="#EA4335"></path></svg><span>Continue with Google</span></button>
+<button type="button" class="btn outline" id="closeAuth" style="width:100%;margin-top:10px">Cancel</button>
 </div>
 </div>
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDqMGnYC2bNDd-LCzWK5o8uajIFgbjVd9E",
+  authDomain: "agency-report-kit.firebaseapp.com",
+  projectId: "agency-report-kit",
+  storageBucket: "agency-report-kit.firebasestorage.app",
+  messagingSenderId: "66001938149",
+  appId: "1:66001938149:web:764dd195581404bf46b134",
+  measurementId: "G-37MVERRVEH"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({prompt: "select_account"});
+window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectResult,signOut,onAuthStateChanged,doc,setDoc,addDoc,collection,serverTimestamp};
+
 let rows=[], current=[], previous=[], user=null;
 
 const demo = [
@@ -902,12 +901,15 @@ document.getElementById("status").textContent="Waiting for CSV or Demo Data.";
 function getShareRows(){ return (current && current.length) ? current : rows; }
 function buildClientEmail(){
  const shareRows=getShareRows();
- if(!shareRows.length){ alert("Load Demo Data before sharing a report."); return null; }
+ if(!shareRows.length){ alert("Load a CSV or click Demo Data before sharing a report."); return null; }
  const period=document.getElementById("periodLabel")?.textContent||"Current reporting period";
  const spend=shareRows.reduce((a,x)=>a+x.spend,0), leads=shareRows.reduce((a,x)=>a+x.leads,0), rev=shareRows.reduce((a,x)=>a+x.revenue,0);
- const cpl=leads?spend/leads:0, roas=spend?rev/spend:0;
- const campaigns=[...shareRows].sort((a,b)=>b.spend-a.spend).slice(0,5).map(x=>`• ${x.campaign} (${x.platform||"Custom"}): ${money(x.spend)} spend, ${x.leads.toLocaleString()} leads, ${money(x.leads?x.spend/x.leads:0)} CPL`).join("\n");
- return {period,subject:`Agency Report Kit — Performance Report | ${period}`,body:`Hi,\n\nPlease find the latest performance report for ${period}.\n\nPERFORMANCE SUMMARY\n• Ad Spend: $${spend.toFixed(0)}\n• Leads: ${leads.toLocaleString()}\n• CPL: $${cpl.toFixed(2)}\n• ROAS: ${roas.toFixed(2)}x\n\nTOP CAMPAIGNS\n${campaigns || "No campaign data available."}\n\nThe report was prepared with Agency Report Kit.\n\nRegards`};
+ const revenueAvailable=shareRows.some(x=>x.revenueProvided);
+ const cpl=leads?spend/leads:0, roas=spend&&revenueAvailable?rev/spend:null;
+ const currencyLabel=`${(CURRENCIES[selectedCurrency]||CURRENCIES.INR).code} ${(CURRENCIES[selectedCurrency]||CURRENCIES.INR).symbol}`;
+ const campaigns=[...shareRows].sort((a,b)=>b.spend-a.spend).slice(0,5).map(x=>`• ${x.campaign} (${x.platform||"Custom"}): ${money(x.spend)} spend, ${x.leads.toLocaleString()} results, ${money(x.leads?x.spend/x.leads:0)} CPL`).join("\n");
+ const revenueLine=revenueAvailable?`• Revenue: ${money(rev)}\n• ROAS: ${roas.toFixed(2)}x`:`• Revenue / ROAS: Not available in the uploaded data`;
+ return {period,subject:`Agency Report Kit — Performance Report | ${period}`,body:`Hi,\n\nPlease find the latest performance report for ${period}.\n\nPERFORMANCE SUMMARY\n• Ad Spend: ${money(spend)} (${currencyLabel})\n• Results / Conversions: ${leads.toLocaleString()}\n• CPL: ${money(cpl)}\n${revenueLine}\n\nTOP CAMPAIGNS\n${campaigns || "No campaign data available."}\n\nThe report was prepared with Agency Report Kit.\n\nRegards`};
 }
 document.getElementById("shareClientBtn").onclick=async()=>{
  const data=buildClientEmail(); if(!data)return;
@@ -923,7 +925,7 @@ document.getElementById("shareClientBtn").onclick=async()=>{
 
 let selectedTemplate=localStorage.getItem("ark_template")||"executive";
 function templateName(v){return ({executive:"Executive Overview",multiplatform:"Multi-Platform Performance",leadgen:"Lead Generation",ecommerce:"E-commerce ROAS",deepdive:"Performance Deep Dive"}[v]||"Executive Overview");}
-function applyTemplate(v){selectedTemplate=v||"executive";localStorage.setItem("ark_template",selectedTemplate);const sel=document.getElementById("templateSelect");if(sel)sel.value=selectedTemplate;document.querySelectorAll(".templateCard").forEach(x=>x.classList.toggle("active",x.dataset.template===selectedTemplate));const content=document.querySelector(".content");if(content)content.dataset.template=selectedTemplate;const hidden={executive:[],multiplatform:[],leadgen:["revenueDonut"],ecommerce:["funnel"],deepdive:[]};["executiveSection","platformSection","efficiencySection","insightSection","trendSection","funnelSection","campaignSection","actionSection"].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display="";});if(selectedTemplate==="leadgen"){const e=document.getElementById("platformSection");if(e)e.style.display="none";}if(selectedTemplate==="ecommerce"){const e=document.getElementById("funnelSection");if(e)e.style.display="none";}const pt=document.getElementById("summaryTitle");if(pt&&current&&current.length){const labels={executive:"Performance report",multiplatform:"Multi-platform performance report",leadgen:"Lead generation performance report",ecommerce:"E-commerce profitability report",deepdive:"Performance deep dive report"};pt.textContent=labels[selectedTemplate]||labels.executive;}updatePrintHeader();}
+function applyTemplate(v){selectedTemplate=v||"executive";localStorage.setItem("ark_template",selectedTemplate);const sel=document.getElementById("templateSelect");if(sel)sel.value=selectedTemplate;document.querySelectorAll(".templateCard").forEach(x=>x.classList.toggle("active",x.dataset.template===selectedTemplate));const content=document.querySelector(".content");if(content)content.dataset.template=selectedTemplate;const hidden={executive:[],multiplatform:[],leadgen:["revenueDonut"],ecommerce:["funnel"],deepdive:[]};["executiveSection","platformSection","efficiencySection","insightSection","trendSection","funnelSection","campaignSection","actionSection"].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display="";});if(selectedTemplate==="leadgen"){const e=document.getElementById("platformSection");if(e)e.style.display="none";}if(selectedTemplate==="ecommerce"){const e=document.querySelector("#trendSection .funnel");if(e)e.style.display="none";}const pt=document.getElementById("summaryTitle");if(pt&&current&&current.length){const labels={executive:"Performance report",multiplatform:"Multi-platform performance report",leadgen:"Lead generation performance report",ecommerce:"E-commerce profitability report",deepdive:"Performance deep dive report"};pt.textContent=labels[selectedTemplate]||labels.executive;}updatePrintHeader();}
 function updatePrintHeader(){const el=document.getElementById("printMeta");if(el)el.textContent=`${templateName(selectedTemplate)} · ${document.getElementById("periodRange")?.textContent||""} · ${document.getElementById("currencyLabel")?.textContent||""}`;const t=document.getElementById("printTitle");if(t)t.textContent=templateName(selectedTemplate);}
 function initTemplates(){const sel=document.getElementById("templateSelect");if(sel)sel.addEventListener("change",()=>{applyTemplate(sel.value);if(current&&current.length)render();});document.querySelectorAll(".templateCard").forEach(c=>c.addEventListener("click",()=>{applyTemplate(c.dataset.template);if(current&&current.length)render();}));applyTemplate(selectedTemplate);}
 initTemplates();
