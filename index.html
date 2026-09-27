@@ -853,60 +853,126 @@ function buildTextPdfBlob(){
     alert("Load a CSV or click Demo Data before sharing a PDF.");
     return null;
   }
+
+  const W=595.28,H=841.89,M=42;
+  const pages=[]; let cmds=[]; let y=H-48;
+  const ink=[0.07,0.10,0.16],muted=[0.38,0.42,0.50],brand=[0.33,0.27,0.86],soft=[0.96,0.97,0.99],line=[0.86,0.88,0.92],green=[0.10,0.55,0.35],orange=[0.93,0.50,0.08],red=[0.78,0.20,0.20],blue=[0.08,0.53,0.70];
+  const pdfMoney=v=>`${(CURRENCIES[selectedCurrency]||CURRENCIES.INR).code} ${Number(v||0).toLocaleString((CURRENCIES[selectedCurrency]||CURRENCIES.INR).locale,{minimumFractionDigits:0,maximumFractionDigits:0})}`;
+  const safeAscii=v=>String(v??"").replace(/[₹₨€£¥₱₩₺₪฿﷼د.إد.ك]/g,(m)=>({"₹":"INR ","₨":"INR ","€":"EUR ","£":"GBP ","¥":"JPY ","₱":"PHP ","₩":"KRW ","₺":"TRY ","₪":"ILS ","฿":"THB ","﷼":"SAR ","د.إ":"AED ","د.ك":"KWD "}[m]||""));
+  const escT=v=>pdfEscapeText(safeAscii(v));
+  const add=o=>cmds.push(o);
+  const setFill=c=>add(`${c[0]} ${c[1]} ${c[2]} rg`);
+  const setStroke=c=>add(`${c[0]} ${c[1]} ${c[2]} RG`);
+  const rect=(x,yy,w,h,fill,stroke=fill,lw=1)=>{setFill(fill);setStroke(stroke);add(`${lw} w ${x} ${yy} ${w} ${h} re B`);};
+  const fillRect=(x,yy,w,h,fill)=>{setFill(fill);add(`${x} ${yy} ${w} ${h} re f`);};
+  const pdfLine=(x1,y1,x2,y2,c=line,lw=1)=>{setStroke(c);add(`${lw} w ${x1} ${y1} m ${x2} ${y2} l S`);};
+  const text=(x,yy,value,size=9,c=ink,bold=false)=>{setFill(c);add(`BT /${bold?'F2':'F1'} ${size} Tf 1 0 0 1 ${x} ${yy} Tm (${escT(value)}) Tj ET`);};
+  const textWrap=(x,yy,value,size=9,maxChars=92,c=ink,leading=size+3,bold=false)=>{
+    const lines=pdfWrapText(safeAscii(value),maxChars);
+    lines.forEach((ln,i)=>text(x,yy-i*leading,ln,size,c,bold));
+    return yy-lines.length*leading;
+  };
+  const nextPage=()=>{if(cmds.length)pages.push(cmds);cmds=[];y=H-48;};
+  const ensure=need=>{if(y-need<48)nextPage();};
+  const roundedCard=(x,yy,w,h,fill= [1,1,1],stroke=line)=>{rect(x,yy,w,h,fill,stroke,0.8)};
+
   const title=templateName(selectedTemplate)+" - Agency Report Kit";
-  const currencyCode=(CURRENCIES[selectedCurrency]||CURRENCIES.INR).code;
-  const meta=[
-    document.getElementById("periodRange")?.textContent||"Current reporting period",
-    `Currency: ${currencyCode}`
-  ].filter(Boolean).join(" | ");
-  const content=document.querySelector(".content");
-  const lines=[title,meta,""];
-  if(content){
-    const clone=content.cloneNode(true);
-    clone.querySelector("#templateGallery")?.remove();
-    clone.querySelector("#printHeader")?.remove();
-    clone.style.position="fixed";clone.style.left="-100000px";clone.style.top="0";clone.style.width="900px";clone.style.visibility="hidden";
-    document.body.appendChild(clone);
-    const reportText=clone.innerText||clone.textContent||"";
-    clone.remove();
-    for(const raw of reportText.split(/\r?\n/)){
-      const line=raw.trim();
-      if(!line){ if(lines[lines.length-1]!=="") lines.push(""); continue; }
-      lines.push(...pdfWrapText(line,96));
-    }
+  const period=document.getElementById("periodLabel")?.textContent?.trim()||document.getElementById("periodRange")?.textContent?.trim()||"Current reporting period";
+  const currency=(CURRENCIES[selectedCurrency]||CURRENCIES.INR).code;
+  const platform=(selectedPlatform&&selectedPlatform!=="all")?selectedPlatform:"All Platforms";
+  const m=metric(current||[]);
+  const campaigns=[...(current||[])].sort((a,b)=>b.spend-a.spend).slice(0,8);
+  const insights=[...document.querySelectorAll("#insights .insight")].slice(0,4).map(el=>({title:el.querySelector("h3")?.textContent||"Insight",text:el.querySelector("p")?.textContent||""}));
+  const actions=[...document.querySelectorAll("#actions .action")].slice(0,4).map(el=>({title:el.querySelector("strong")?.textContent||"Action",text:el.querySelector("span")?.textContent||""}));
+
+  // Branded report header — no app controls, selectors, upload UI or template gallery are exported.
+  fillRect(M,H-92,W-2*M,44,[0.08,0.10,0.17]);
+  text(M+16,H-66,"AGENCY REPORT KIT",9,[0.74,0.70,1],true);
+  text(M+16,H-84,title,17,[1,1,1],true);
+  text(W-M-210,H-66,period,8,[0.86,0.88,0.94]);
+  text(W-M-210,H-82,`${platform} · ${currency}`,8,[0.86,0.88,0.94]);
+  y=H-116;
+
+  // KPI row
+  const kpis=[
+    ["AD SPEND",pdfMoney(m.spend),blue],
+    ["RESULTS / CONVERSIONS",m.leads.toLocaleString(),brand],
+    ["CPL",pdfMoney(m.cpl),orange],
+    ["ROAS",m.revenueAvailable?m.roas.toFixed(2)+"x":"N/A",green]
+  ];
+  const gap=9,cardW=(W-2*M-3*gap)/4;
+  kpis.forEach((k,i)=>{const x=M+i*(cardW+gap);roundedCard(x,y-68,cardW,68,[1,1,1],line);fillRect(x,y-68,4,68,k[2]);text(x+12,y-28,k[0],7,muted,true);text(x+12,y-49,k[1],17,ink,true);});
+  y-=84;
+
+  // Executive summary block
+  ensure(92);
+  text(M,y,"EXECUTIVE SUMMARY",8,brand,true); y-=16;
+  const summary=safeTextFromId("summaryText",`The account generated ${m.leads.toLocaleString()} results from ${pdfMoney(m.spend)} spend.`);
+  roundedCard(M,y-68,W-2*M,68,[0.98,0.98,1],line);
+  y=textWrap(M+14,y-20,summary,10,96,ink,14,false)-16;
+  const note=safeTextFromId("dataNote","");
+  if(note){textWrap(M+14,y,note,8,100,muted,11,false);y-=12;}
+
+  // Template-specific focus section.
+  ensure(170);
+  const focus={executive:"PERFORMANCE OVERVIEW",multiplatform:"PLATFORM PERFORMANCE",leadgen:"LEAD GENERATION",ecommerce:"REVENUE & PROFITABILITY",deepdive:"PERFORMANCE DEEP DIVE"}[selectedTemplate]||"PERFORMANCE OVERVIEW";
+  text(M,y,focus,8,brand,true); y-=15;
+
+  if(selectedTemplate==="multiplatform"){
+    const groups={};
+    current.forEach(r=>{const p=r.platform||"Custom";groups[p]??={platform:p,spend:0,leads:0,revenue:0};groups[p].spend+=r.spend;groups[p].leads+=r.leads;groups[p].revenue+=r.revenue;});
+    const arr=Object.values(groups).sort((a,b)=>b.spend-a.spend);
+    roundedCard(M,y-18,226,18,[0.97,0.98,1],line);text(M+10,y-12,"Platform",8,muted,true);text(M+105,y-12,"Spend",8,muted,true);text(M+158,y-12,"Results",8,muted,true);text(M+198,y-12,"CPL",8,muted,true);y-=30;
+    arr.slice(0,7).forEach(g=>{ensure(18);text(M,y,g.platform,8,ink);text(M+105,y,pdfMoney(g.spend),8,ink);text(M+158,y,String(g.leads),8,ink);text(M+198,y,pdfMoney(g.leads?g.spend/g.leads:0),8,ink);pdfLine(M,y-5,W-M,y-5,line,.5);y-=16;});
+    y-=6;
+  } else if(selectedTemplate==="leadgen"){
+    const funnel=[
+      ["Impressions",m.imp.toLocaleString()],
+      ["Clicks",m.clicks.toLocaleString()],
+      ["Results / Conversions",m.leads.toLocaleString()],
+      ["CPL",pdfMoney(m.cpl)]
+    ];
+    funnel.forEach((f,i)=>{const x=M+i*((W-2*M-18)/4);const w=(W-2*M-18)/4;roundedCard(x,y-56,w,56,[0.98,0.99,1],line);text(x+10,y-22,f[0],7,muted,true);text(x+10,y-42,f[1],13,ink,true);});
+    y-=70;
+  } else if(selectedTemplate==="ecommerce"){
+    roundedCard(M,y-62,250,62,[0.98,0.99,1],line);text(M+12,y-21,"REVENUE",7,muted,true);text(M+12,y-43,m.revenueAvailable?pdfMoney(m.rev):"Not available in source",15,ink,true);
+    roundedCard(M+264,y-62,250,62,[0.98,0.99,1],line);text(M+276,y-21,"ROAS",7,muted,true);text(M+276,y-43,m.revenueAvailable?m.roas.toFixed(2)+"x":"Not available in source",15,ink,true);
+    y-=76;
+  } else {
+    // Campaign contribution bar / mix for executive and deep-dive.
+    const raw=campaigns.map(x=>({name:x.campaign||"Campaign",value:m.revenueAvailable?x.revenue:x.leads})).filter(x=>x.value>0);
+    const total=raw.reduce((a,b)=>a+b.value,0);
+    text(M,y,"Campaign contribution",8,muted,true); y-=12;
+    const palette=[[0.04,0.64,0.78],[0.96,0.65,0.00],[0.13,0.76,0.71],[0.90,0.42,0.21],[0.36,0.39,0.81],[0.70,0.36,0.82]];
+    raw.slice(0,6).forEach((x,i)=>{ensure(19);const share=total?x.value/total:0;const bw=(W-2*M)*share;fillRect(M,y-10,Math.max(2,bw),10,palette[i%palette.length]);text(M,y-22,(i+1)+". "+x.name,7,ink);text(W-M-58,y-22,m.revenueAvailable?pdfMoney(x.value):x.value.toLocaleString(),7,muted);y-=36;});
+    y-=2;
   }
-  while(lines.length && lines[lines.length-1]==="") lines.pop();
-  const pageW=595.28,pageH=841.89,margin=42,lineH=14,top=790,bottom=52;
-  const linesPerPage=Math.max(1,Math.floor((top-bottom)/lineH));
-  const pages=[];
-  for(let i=0;i<lines.length;i+=linesPerPage) pages.push(lines.slice(i,i+linesPerPage));
-  if(!pages.length) pages.push([title]);
-  const objects=[]; const add=o=>{objects.push(o);return objects.length;};
-  const catalogId=add(null),pagesId=add(null),fontId=add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
+
+  // Campaign table — actual selected-period data only.
+  ensure(150);
+  text(M,y,"TOP CAMPAIGNS",8,brand,true); y-=14;
+  const cols=[M, M+255, M+350, M+405, M+465];
+  text(cols[0],y,"Campaign",7,muted,true); text(cols[1],y,"Spend",7,muted,true); text(cols[2],y,"Results",7,muted,true); text(cols[3],y,"CPL",7,muted,true); text(cols[4],y,"ROAS",7,muted,true); y-=8;
+  pdfLine(M,y,W-M,y,line,.7); y-=12;
+  campaigns.slice(0,7).forEach(c=>{ensure(26);const cpl=c.leads?c.spend/c.leads:0;const roas=m.revenueAvailable&&c.spend?c.revenue/c.spend:null;text(M,y,String(c.campaign||"Campaign").slice(0,48),7.5,ink);text(cols[1],y,pdfMoney(c.spend),7.5,ink);text(cols[2],y,c.leads.toLocaleString(),7.5,ink);text(cols[3],y,pdfMoney(cpl),7.5,ink);text(cols[4],y,roas===null?"—":roas.toFixed(2)+"x",7.5,ink);pdfLine(M,y-5,W-M,y-5,line,.4);y-=18;});
+
+  // Insights and actions.
+  if(insights.length){ensure(112);text(M,y,"KEY INSIGHTS",8,brand,true);y-=14;insights.forEach(it=>{ensure(27);text(M,y,"• "+it.title,8,ink,true);y=textWrap(M+10,y-11,it.text,7.5,96,muted,10,false)-6;});}
+  if(actions.length){ensure(112);text(M,y,"NEXT ACTIONS",8,brand,true);y-=14;actions.forEach(it=>{ensure(27);text(M,y,"• "+it.title,8,ink,true);y=textWrap(M+10,y-11,it.text,7.5,96,muted,10,false)-6;});}
+
+  // Footer note; no app UI is exported.
+  ensure(26); pdfLine(M,38,W-M,38,line,.7); text(M,25,"Agency Report Kit",7,muted,false); text(W-M-130,25,`${templateName(selectedTemplate)} · ${currency}`,7,muted,false);
+  if(cmds.length)pages.push(cmds);
+
+  const objects=[]; const addObj=o=>{objects.push(o);return objects.length;};
+  const catalogId=addObj(null),pagesId=addObj(null),fontId=addObj("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"),fontBoldId=addObj("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
   const pageIds=[];
-  for(let pi=0;pi<pages.length;pi++){
-    const arr=["q","0.96 0.97 0.99 rg",`0 0 ${pageW} ${pageH} re f`,"0.10 0.13 0.20 rg","BT /F1 18 Tf",`1 0 0 1 ${margin} ${top+4} Tm (${pdfEscapeText(title)}) Tj ET`,"0.35 0.39 0.49 rg","BT /F1 8 Tf",`1 0 0 1 ${margin} ${top-12} Tm (${pdfEscapeText(meta)}) Tj ET`,"0.86 0.88 0.92 RG",`1 w ${margin} ${top-22} m ${pageW-margin} ${top-22} l S`];
-    let y=top-42;
-    for(const line of pages[pi]){
-      const isHeading=/^(\d+\.|DATA|INSIGHT|ACTION|EXECUTIVE|PERFORMANCE|NEXT ACTIONS|WHAT CHANGED|CAMPAIGN|FUNNEL|PLATFORM|AD SPEND|RESULTS|CPL|ROAS)/i.test(line);
-      const size=isHeading?10:9;
-      arr.push(isHeading?"0.08 0.10 0.16 rg":"0.22 0.26 0.34 rg");
-      arr.push(`BT /F1 ${size} Tf 1 0 0 1 ${margin} ${y} Tm (${pdfEscapeText(line)}) Tj ET`);
-      y-=lineH;
-    }
-    arr.push("0.45 0.48 0.55 rg",`BT /F1 8 Tf 1 0 0 1 ${margin} 28 Tm (Agency Report Kit  |  Page ${pi+1} of ${pages.length}) Tj ET`,"Q");
-    const stream=arr.join("\n");
-    const streamId=add(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);
-    const pageId=add(null); pageIds.push(pageId);
-    objects[pageId-1]=`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${pageW} ${pageH}] /Resources << /Font << /F1 ${fontId} 0 R >> >> /Contents ${streamId} 0 R >>`;
-  }
+  pages.forEach(pg=>{const stream=pg.join("\n");const streamId=addObj(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);const pageId=addObj(null);pageIds.push(pageId);objects[pageId-1]=`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 ${fontId} 0 R /F2 ${fontBoldId} 0 R >> >> /Contents ${streamId} 0 R >>`;});
   objects[pagesId-1]=`<< /Type /Pages /Count ${pageIds.length} /Kids [${pageIds.map(id=>id+" 0 R").join(" ")}] >>`;
   objects[catalogId-1]=`<< /Type /Catalog /Pages ${pagesId} 0 R >>`;
-  let pdf="%PDF-1.4\n%\xFF\xFF\xFF\xFF\n"; const offsets=[0];
-  for(let i=0;i<objects.length;i++){ offsets.push(pdf.length); pdf+=`${i+1} 0 obj\n${objects[i]}\nendobj\n`; }
-  const xref=pdf.length; pdf+=`xref\n0 ${objects.length+1}\n0000000000 65535 f \n`;
-  for(let i=1;i<offsets.length;i++) pdf+=String(offsets[i]).padStart(10,"0")+" 00000 n \n";
-  pdf+=`trailer\n<< /Size ${objects.length+1} /Root ${catalogId} 0 R >>\nstartxref\n${xref}\n%%EOF`;
+  let pdf="%PDF-1.4\n%\xFF\xFF\xFF\xFF\n";const offsets=[0];
+  for(let i=0;i<objects.length;i++){offsets.push(pdf.length);pdf+=`${i+1} 0 obj\n${objects[i]}\nendobj\n`;}
+  const xref=pdf.length;pdf+=`xref\n0 ${objects.length+1}\n0000000000 65535 f \n`;for(let i=1;i<offsets.length;i++)pdf+=String(offsets[i]).padStart(10,"0")+" 00000 n \n";pdf+=`trailer\n<< /Size ${objects.length+1} /Root ${catalogId} 0 R >>\nstartxref\n${xref}\n%%EOF`;
   return new Blob([pdf],{type:"application/pdf"});
 }
 function reportFileName(){
