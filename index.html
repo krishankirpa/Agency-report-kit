@@ -362,10 +362,27 @@ const platformSelect=document.getElementById("platformSelect");
 platformSelect.value=selectedPlatform;
 platformSelect.addEventListener("change",()=>{selectedPlatform=platformSelect.value;localStorage.setItem("ark_platform",selectedPlatform);if(rows.length)applyPeriod();});
 
+function parseReportDate(value){
+ const raw=String(value??"").trim();
+ if(!raw) return null;
+ // ISO / native formats first.
+ let d=new Date(raw);
+ if(!isNaN(d.getTime())) return d;
+ // DD/MM/YYYY or DD-MM-YYYY (common ad-platform exports).
+ let m=raw.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+ if(m){ d=new Date(Number(m[3]),Number(m[2])-1,Number(m[1])); return isNaN(d.getTime())?null:d; }
+ // YYYY/MM/DD or YYYY-MM-DD with unusual separators.
+ m=raw.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);
+ if(m){ d=new Date(Number(m[1]),Number(m[2])-1,Number(m[3])); return isNaN(d.getTime())?null:d; }
+ // DD Mon YYYY / DD-Mon-YYYY.
+ m=raw.match(/^(\d{1,2})[-\s]([A-Za-z]{3,9})[-\s](\d{4})$/);
+ if(m){ d=new Date(`${m[1]} ${m[2]} ${m[3]}`); return isNaN(d.getTime())?null:d; }
+ return null;
+}
 function getPeriodRows(data, period){
- const dated=data.filter(x=>x.date && !isNaN(new Date(x.date).getTime()));
- if(!dated.length) return data;
- const latest=new Date(Math.max(...dated.map(x=>new Date(x.date).getTime())));
+ const dated=data.map(x=>({...x,_date:parseReportDate(x.date)})).filter(x=>x._date);
+ if(!dated.length) return {current:data,previous:[]};
+ const latest=new Date(Math.max(...dated.map(x=>x._date.getTime())));
  latest.setHours(23,59,59,999);
  let start=new Date(latest);
 
@@ -375,17 +392,21 @@ function getPeriodRows(data, period){
  else if(period==="14") start.setDate(start.getDate()-13);
  else if(period==="month") start=new Date(latest.getFullYear(),latest.getMonth(),1);
  else if(period==="prevmonth") {
-   const y=latest.getMonth()===0?latest.getFullYear()-1:latest.getFullYear();
-   const m=latest.getMonth()===0?11:latest.getMonth()-1;
-   const first=new Date(y,m,1), last=new Date(y,m+1,0);
-   return {current:dated.filter(x=>{const d=new Date(x.date);return d>=first&&d<=last}), previous:dated.filter(x=>{const d=new Date(x.date);const ppFirst=new Date(y,m-1,1);const ppLast=new Date(y,m,0);return d>=ppFirst&&d<=ppLast})};
- } else return {current:dated,previous:[]};
+   const first=new Date(latest.getFullYear(),latest.getMonth()-1,1);
+   const last=new Date(latest.getFullYear(),latest.getMonth(),0,23,59,59,999);
+   const ppFirst=new Date(latest.getFullYear(),latest.getMonth()-2,1);
+   const ppLast=new Date(latest.getFullYear(),latest.getMonth()-1,0,23,59,59,999);
+   return {
+     current:dated.filter(x=>x._date>=first&&x._date<=last).map(({_date,...x})=>x),
+     previous:dated.filter(x=>x._date>=ppFirst&&x._date<=ppLast).map(({_date,...x})=>x)
+   };
+ } else if(period==="all") return {current:data,previous:[]};
 
- const current=dated.filter(x=>{const d=new Date(x.date);return d>=start&&d<=latest});
- const prevStart=new Date(start); const days=Math.max(1,Math.round((latest-start)/86400000)+1);
- prevStart.setDate(prevStart.getDate()-days);
- const prevEnd=new Date(start); prevEnd.setDate(prevEnd.getDate()-1);
- const previous=dated.filter(x=>{const d=new Date(x.date);return d>=prevStart&&d<=prevEnd});
+ const current=dated.filter(x=>x._date>=start&&x._date<=latest).map(({_date,...x})=>x);
+ const days=Math.max(1,Math.round((latest-start)/86400000)+1);
+ const prevStart=new Date(start); prevStart.setDate(prevStart.getDate()-days);
+ const prevEnd=new Date(start); prevEnd.setDate(prevEnd.getDate()-1); prevEnd.setHours(23,59,59,999);
+ const previous=dated.filter(x=>x._date>=prevStart&&x._date<=prevEnd).map(({_date,...x})=>x);
  return {current,previous};
 }
 
@@ -393,11 +414,12 @@ function applyPeriod(){
  const result=getPeriodRows(rows,selectedPeriod);
  current=selectedPlatform==="all"?result.current:result.current.filter(x=>x.platform===selectedPlatform);
  previous=selectedPlatform==="all"?result.previous:result.previous.filter(x=>x.platform===selectedPlatform);
- const dated=current.filter(x=>x.date).map(x=>x.date).sort();
+ const dated=current.map(x=>parseReportDate(x.date)).filter(Boolean).sort((a,b)=>a-b);
+ const fmtDate=d=>d?d.toLocaleDateString(undefined,{day:"2-digit",month:"short",year:"numeric"}):"";
  const label={7:"Last 7 Days",14:"Last 14 Days",30:"Last 30 Days",90:"Last 90 Days",month:"This Month",prevmonth:"Previous Month",all:"All Data"}[selectedPeriod]||"Custom Period";
  document.getElementById("periodModeTitle").textContent=label;
- document.getElementById("periodRange").textContent=dated.length?`${dated[0]} → ${dated[dated.length-1]} · ${current.length} rows`:"No dated rows available";
- document.getElementById("periodLabel").textContent=dated.length?`${dated[0]} → ${dated[dated.length-1]}`:"—";
+ document.getElementById("periodRange").textContent=dated.length?`${fmtDate(dated[0])} → ${fmtDate(dated[dated.length-1])} · ${current.length} rows`:"No dated rows available";
+ document.getElementById("periodLabel").textContent=dated.length?`${fmtDate(dated[0])} → ${fmtDate(dated[dated.length-1])}`:"—";
  document.getElementById("periodMeta").textContent=`${current.length} selected rows · ${previous.length} comparison rows · ${selectedPlatform==="all"?"All platforms":selectedPlatform}`;
  render();
 }
@@ -405,7 +427,8 @@ function applyPeriod(){
 function setData(data,label){
  rows=parseRows(data);
  document.getElementById("fileStatus").textContent=label;
- document.getElementById("status").textContent=rows.length+" campaign rows loaded locally.";
+ const validDates=rows.filter(x=>parseReportDate(x.date)).length;
+ document.getElementById("status").textContent=rows.length+" campaign rows loaded locally · "+validDates+" valid date rows.";
  applyPeriod();
 }
 function renderPlatformVisuals(){
@@ -516,12 +539,30 @@ function renderActions(m){
  document.getElementById("actions").innerHTML=actions.slice(0,3).map(x=>`<div class="action"><strong>${x[0]}</strong><span>${x[1]}</span></div>`).join("");
 }
 function parseCSV(t){
- const lines=t.trim().split(/\r?\n/); if(lines.length<2)return[];
- const h=lines[0].split(",").map(x=>x.trim().toLowerCase());
- const find=a=>{const i=h.findIndex(v=>a.some(k=>v.includes(k)));return i<0?0:i};
- const ix={date:find(["date"]),platform:find(["platform","channel","source"]),campaign:find(["campaign","ad set","ad name"]),spend:find(["spend","cost","amount spent"]),imp:find(["impression"]),clicks:find(["click"]),leads:find(["lead","conversion","result"]),revenue:find(["revenue","value","conversion value"])};
- return lines.slice(1).map(l=>l.split(",")).filter(x=>x.length>=2).map(x=>[x[ix.date],x[ix.campaign],x[ix.spend],x[ix.imp],x[ix.clicks],x[ix.leads],x[ix.revenue],x[ix.platform]]);
+ const text=String(t||"").replace(/^\uFEFF/,"");
+ const rows=[]; let row=[]; let cell=""; let quoted=false;
+ for(let i=0;i<text.length;i++){
+   const ch=text[i], next=text[i+1];
+   if(ch==="\""){
+     if(quoted && next==="\""){cell+="\""; i++;}
+     else quoted=!quoted;
+   } else if(ch==="," && !quoted){row.push(cell);cell="";}
+   else if((ch==="\n" || ch==="\r") && !quoted){
+     if(ch==="\r" && next==="\n") i++;
+     row.push(cell); cell="";
+     if(row.some(v=>String(v).trim()!=="")) rows.push(row);
+     row=[];
+   } else cell+=ch;
+ }
+ row.push(cell); if(row.some(v=>String(v).trim()!=="")) rows.push(row);
+ if(rows.length<2) return [];
+ const h=rows[0].map(x=>String(x).trim().toLowerCase());
+ const find=a=>{const i=h.findIndex(v=>a.some(k=>v===k||v.includes(k)));return i<0?-1:i};
+ const ix={date:find(["date","day","date range"]),platform:find(["platform","channel","source","network"]),campaign:find(["campaign","campaign name","ad set","ad name","campaigns"]),spend:find(["spend","cost","amount spent","amount spend"]),imp:find(["impressions","impression"]),clicks:find(["clicks","click"]),leads:find(["leads","conversions","conversion","results","purchases"]),revenue:find(["revenue","value","conversion value","purchase value"])};
+ const val=(r,i)=>i>=0?(r[i]??""):"";
+ return rows.slice(1).map(r=>[val(r,ix.date),val(r,ix.campaign),val(r,ix.spend),val(r,ix.imp),val(r,ix.clicks),val(r,ix.leads),val(r,ix.revenue),val(r,ix.platform)]).filter(r=>r.slice(1).some(v=>String(v).trim()!==""));
 }
+
 document.querySelectorAll(".periodBtn").forEach(btn=>{
  btn.onclick=()=>{
    selectedPeriod=btn.dataset.period;
@@ -540,7 +581,12 @@ document.getElementById("customDays").onchange=e=>{
 
 function demoLoad(){setData(demo,"Demo Data");document.querySelector(".workspace").scrollIntoView({behavior:"smooth"});}
 document.getElementById("demoBtn").onclick=demoLoad;
-document.getElementById("generateBtn").onclick=()=>{if(!rows.length){alert("No report data loaded. Please upload your CSV first, or click Demo Data to test the app.");return;} render();};
+document.getElementById("generateBtn").onclick=()=>{
+ if(!rows.length){alert("No report data loaded. Please upload your CSV first, or click Demo Data to test the app.");return;}
+ applyPeriod();
+ if(!current.length){alert("Your CSV loaded successfully, but there are no rows in the selected reporting period. Choose All Data, This Month, or another period that contains your uploaded dates.");return;}
+ render();
+};
 document.getElementById("pdfBtn").onclick=()=>{if(!rows.length){alert("No report data loaded. Please upload your CSV first, or click Demo Data to test the app.");return;} setTimeout(()=>window.print(),150)};
 document.getElementById("csv").onchange=e=>{
  const f=e.target.files[0];
