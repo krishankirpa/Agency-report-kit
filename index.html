@@ -360,7 +360,9 @@ const initialCurrency=CURRENCIES[selectedCurrency]||CURRENCIES.INR;
 document.getElementById("currencyLabel").textContent=`Currency: ${initialCurrency.code} — ${currencySelect.options[currencySelect.selectedIndex].text.replace(/^\S+\s+[^—]+—\s*/,"")}`;
 
 let selectedPeriod="7";
+const VALID_PLATFORMS=["all","Meta","Google","YouTube","GPT","Reddit","Pinterest","TikTok","Instagram","Custom"];
 let selectedPlatform=localStorage.getItem("ark_platform")||"all";
+if(!VALID_PLATFORMS.includes(selectedPlatform)) selectedPlatform="all";
 const platformSelect=document.getElementById("platformSelect");
 platformSelect.value=selectedPlatform;
 platformSelect.addEventListener("change",()=>{selectedPlatform=platformSelect.value;localStorage.setItem("ark_platform",selectedPlatform);if(rows.length)applyPeriod();});
@@ -425,6 +427,20 @@ function getPeriodRows(data, period){
 
 function applyPeriod(){
  const result=getPeriodRows(rows,selectedPeriod);
+ const availablePlatforms=[...new Set(result.current.map(x=>x.platform).filter(Boolean))];
+ // A newly uploaded single-platform export should always work without forcing the user to pick All Platforms.
+ // If a stale platform preference does not exist in the current upload, automatically switch to the detected platform.
+ if(selectedPlatform!=="all" && !availablePlatforms.includes(selectedPlatform)){
+   if(availablePlatforms.length===1){
+     selectedPlatform=availablePlatforms[0];
+     platformSelect.value=selectedPlatform;
+     localStorage.setItem("ark_platform",selectedPlatform);
+   } else {
+     selectedPlatform="all";
+     platformSelect.value="all";
+     localStorage.setItem("ark_platform","all");
+   }
+ }
  current=selectedPlatform==="all"?result.current:result.current.filter(x=>x.platform===selectedPlatform);
  previous=selectedPlatform==="all"?result.previous:result.previous.filter(x=>x.platform===selectedPlatform);
  if(result.dateFallback){
@@ -655,9 +671,28 @@ document.getElementById("generateBtn").onclick=()=>{
  btn.textContent="Generating…";
  try{
    applyPeriod();
+   // Final safety net: if a platform filter still produces zero rows while the selected period has data,
+   // remove the filter automatically instead of asking the user to choose All Platforms.
    if(!current.length){
-     document.getElementById("status").textContent="Your CSV is loaded, but the selected period/platform has no matching rows. Try All Data or All Platforms.";
-     alert("No rows match the selected reporting period/platform. Try All Data and All Platforms.");
+     const unfiltered=getPeriodRows(rows,selectedPeriod).current;
+     if(unfiltered.length){
+       const detected=[...new Set(unfiltered.map(x=>x.platform).filter(Boolean))];
+       if(detected.length===1){
+         selectedPlatform=detected[0];
+         platformSelect.value=selectedPlatform;
+         localStorage.setItem("ark_platform",selectedPlatform);
+         applyPeriod();
+       } else {
+         selectedPlatform="all";
+         platformSelect.value="all";
+         localStorage.setItem("ark_platform","all");
+         applyPeriod();
+       }
+     }
+   }
+   if(!current.length){
+     document.getElementById("status").textContent="Your CSV is loaded, but no rows are available for the selected reporting period.";
+     document.getElementById("periodRange").textContent="No rows available for this period. Choose another reporting period.";
      return;
    }
    render();
