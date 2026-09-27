@@ -60,6 +60,7 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 @media(max-width:560px){.actionRow .btn{flex:1 1 100%}.controlRow .currencyControl{width:100%}.tools .currencyControl select{max-width:none;flex:1}.workspace{padding:0 10px}.content{padding:16px}.head h1{font-size:21px}}
 .uploadBtn{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;user-select:none}
 .uploadBtn:hover{transform:translateY(-1px)}
+#uploadFileName{font-weight:700;max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 @media print{.nav,.hero,.sidebar,.import,.tools{display:none!important}.workspace{margin:0;padding:0}.app{display:block;border:0;box-shadow:none}.content{background:#fff;padding:10px}.section{break-inside:avoid}.panel,.card{box-shadow:none}.tablewrap{overflow:visible}}
 .google-nav-btn{display:inline-flex;align-items:center;gap:8px}.google-signin{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#202124;border:1px solid #dadce0;border-radius:10px;padding:12px 14px;font-weight:750;box-shadow:0 1px 2px rgba(0,0,0,.05)}.google-signin:hover{background:#f8f9fa}.google-signin:disabled{opacity:.65;cursor:wait}.google-icon{width:18px;height:18px;flex:0 0 18px}.google-icon.large{width:20px;height:20px;flex-basis:20px}.modalbox .notice{margin-bottom:16px}
@@ -174,6 +175,17 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 <div class="status" id="status">Waiting for CSV or Demo Data.</div>
 </div>
 </div>
+<div class="import" id="csvImportPanel">
+  <div class="importline">
+    <div style="flex:1;min-width:220px">
+      <div class="kicker">IMPORT CAMPAIGN DATA</div>
+      <strong style="display:block;font-size:15px;margin-top:2px">Upload your marketing CSV</strong>
+      <small>Upload Meta Ads, Google Ads, YouTube, TikTok, Reddit, Pinterest or compatible CSV exports.</small>
+    </div>
+    <label class="btn purple uploadBtn" for="csvInput">Choose CSV File</label>
+    <span class="notice" id="uploadFileName">No file selected</span>
+  </div>
+  <div class="notice" style="margin-top:8px">Supported fields can include Date, Platform, Campaign, Spend/Cost, Impressions, Clicks, Leads/Conversions and Revenue.</div>
 </div>
 <div class="periodbar panel">
 <div>
@@ -669,6 +681,8 @@ if(csvInput){
         const label=`${file.name} · ${parsed.data.length} campaign rows`;
         setData(parsed.data,label,parsed.sourceHint||file.name);
         document.getElementById("fileStatus").textContent=`Loaded: ${file.name}`;
+        const uploadName=document.getElementById("uploadFileName");
+        if(uploadName) uploadName.textContent=`Selected: ${file.name}`;
         document.getElementById("status").textContent=`CSV loaded successfully · ${rows.length} campaign rows · ${selectedPlatform==="all"?"All platforms":selectedPlatform}`;
         document.querySelector(".workspace")?.scrollIntoView({behavior:"smooth"});
       }catch(err){
@@ -880,7 +894,9 @@ window.ARK.onAuthStateChanged(window.ARK.auth,u=>{
 document.getElementById("logoutBtn").onclick=()=>window.ARK.signOut(window.ARK.auth);
 
 // Do not auto-load demo data. Reports must always be generated from the user's uploaded CSV unless Demo Data is explicitly clicked.
-document.getElementById("fileStatus").textContent="No report loaded — upload a CSV or click Demo Data";
+document.getElementById("fileStatus").textContent="No report loaded — choose a CSV file or click Demo Data";
+const uploadNameInit=document.getElementById("uploadFileName");
+if(uploadNameInit) uploadNameInit.textContent="No file selected";
 document.getElementById("status").textContent="Waiting for CSV or Demo Data.";
 // Client sharing: prepares the selected reporting-period summary and opens a reliable email composer.
 function getShareRows(){ return (current && current.length) ? current : rows; }
