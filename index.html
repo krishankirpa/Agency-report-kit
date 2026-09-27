@@ -7,7 +7,7 @@
 <meta name="description" content="Turn marketing campaign data into client-ready insights and next actions.">
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -25,7 +25,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-window.ARK = {auth,db,provider,signInWithPopup,signOut,onAuthStateChanged,doc,setDoc,addDoc,collection,serverTimestamp};
+window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectResult,signOut,onAuthStateChanged,doc,setDoc,addDoc,collection,serverTimestamp};
 </script>
 <style>
 :root{--bg:#f5f7fb;--surface:#fff;--ink:#101828;--muted:#667085;--line:#e4e7ec;--brand:#6d5dfc;--brand2:#8d7fff;--good:#12b76a;--warn:#f79009;--bad:#f04438;--nav:#17152b;--shadow:0 18px 55px rgba(16,24,40,.08)}
@@ -90,6 +90,7 @@ window.ARK = {auth,db,provider,signInWithPopup,signOut,onAuthStateChanged,doc,se
       <button class="btn outline" id="demoBtn">Demo Data</button>
       <button class="btn purple" id="generateBtn">Generate Report</button>
       <button class="btn outline" id="pdfBtn">Export PDF</button>
+      <button class="btn primary" id="shareClientBtn">Share to Client</button>
     </div>
   </div>
 
@@ -381,15 +382,48 @@ document.getElementById("csv").onchange=e=>{const f=e.target.files[0];if(!f)retu
 
 document.getElementById("loginBtn").onclick=()=>document.getElementById("authModal").classList.remove("hidden");
 document.getElementById("closeAuth").onclick=()=>document.getElementById("authModal").classList.add("hidden");
+async function finishGoogleLogin(result){
+ const u=result?.user;
+ if(!u)return;
+ document.getElementById("authModal").classList.add("hidden");
+ document.getElementById("loginBtn").classList.add("hidden");
+ document.getElementById("logoutBtn").classList.remove("hidden");
+ document.getElementById("userBox").style.display="flex";
+ document.getElementById("userName").textContent=u.displayName||u.email||"Signed in";
+ document.getElementById("userPhoto").src=u.photoURL||"";
+ // Analytics/profile writes must never make a successful login look like a failed login.
+ try{await window.ARK.setDoc(window.ARK.doc(window.ARK.db,"users",u.uid),{uid:u.uid,name:u.displayName||"",email:u.email||"",photoURL:u.photoURL||"",lastLogin:window.ARK.serverTimestamp()},{merge:true});}catch(err){console.warn("User profile save skipped:",err.code||err.message);}
+ try{await window.ARK.addDoc(window.ARK.collection(window.ARK.db,"events"),{event:"login",userId:u.uid,email:u.email||"",page:location.pathname,timestamp:window.ARK.serverTimestamp()});}catch(err){console.warn("Login event save skipped:",err.code||err.message);}
+}
+
 document.getElementById("googleBtn").onclick=async()=>{
+ const btn=document.getElementById("googleBtn");
+ const old=btn.textContent;
+ btn.disabled=true; btn.textContent="Opening Google…";
  try{
    const result=await window.ARK.signInWithPopup(window.ARK.auth,window.ARK.provider);
-   const u=result.user;
-   await window.ARK.setDoc(window.ARK.doc(window.ARK.db,"users",u.uid),{uid:u.uid,name:u.displayName||"",email:u.email||"",photoURL:u.photoURL||"",lastLogin:window.ARK.serverTimestamp()},{merge:true});
-   await window.ARK.addDoc(window.ARK.collection(window.ARK.db,"events"),{event:"login",userId:u.uid,email:u.email||"",page:location.pathname,timestamp:window.ARK.serverTimestamp()});
-   document.getElementById("authModal").classList.add("hidden");
- }catch(e){alert("Google sign-in could not be completed: "+e.message)}
+   await finishGoogleLogin(result);
+ }catch(e){
+   console.error("Google sign-in error",e);
+   const popupBlocked=["auth/popup-blocked","auth/popup-closed-by-user","auth/cancelled-popup-request"].includes(e.code);
+   if(popupBlocked){
+     try{await window.ARK.signInWithRedirect(window.ARK.auth,window.ARK.provider);return;}catch(redir){
+       alert("Google sign-in could not start. Firebase error: "+(redir.code||redir.message));
+     }
+   }else{
+     alert("Google sign-in could not be completed. "+(e.code?e.code+": ":"")+e.message);
+   }
+ }finally{btn.disabled=false;btn.textContent=old;}
 };
+
+// Complete a redirect-based login if popup sign-in was blocked.
+window.ARK.getRedirectResult(window.ARK.auth).then(async result=>{
+ if(result?.user)await finishGoogleLogin(result);
+}).catch(e=>{
+ console.error("Google redirect error",e);
+ alert("Google sign-in redirect failed. "+(e.code?e.code+": ":"")+e.message);
+});
+
 window.ARK.onAuthStateChanged(window.ARK.auth,u=>{
  user=u;
  document.getElementById("loginBtn").classList.toggle("hidden",!!u);
@@ -400,6 +434,17 @@ window.ARK.onAuthStateChanged(window.ARK.auth,u=>{
 document.getElementById("logoutBtn").onclick=()=>window.ARK.signOut(window.ARK.auth);
 
 demoLoad();
+// One-click client email sharing. Uses the user's mail client so no email API is required.
+document.getElementById("shareClientBtn").onclick=()=>{
+ const email=prompt("Enter client email address:","");
+ if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return;
+ const period=document.getElementById("periodLabel")?.textContent||"Current reporting period";
+ const spend=rows.reduce((a,x)=>a+x.spend,0), leads=rows.reduce((a,x)=>a+x.leads,0), rev=rows.reduce((a,x)=>a+x.revenue,0);
+ const cpl=leads?spend/leads:0, roas=spend?rev/spend:0;
+ const subject=encodeURIComponent(`Agency Report Kit — ${period}`);
+ const body=encodeURIComponent(`Hi,\n\nPlease find the latest performance report for ${period}.\n\nPerformance summary:\n• Ad Spend: $${spend.toFixed(0)}\n• Leads: ${leads.toLocaleString()}\n• CPL: $${cpl.toFixed(2)}\n• ROAS: ${roas.toFixed(2)}x\n\nRegards`);
+ window.location.href=`mailto:${encodeURIComponent(email.trim())}?subject=${subject}&body=${body}`;
+};
 </script>
 </body>
 </html>
