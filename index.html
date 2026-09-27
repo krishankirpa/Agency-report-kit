@@ -409,7 +409,9 @@ function parseReportDate(value){
  return null;
 }
 function getPeriodRows(data, period){
- const dated=data.map(x=>({...x,_date:parseReportDate(x.date)})).filter(x=>x._date);
+ // For exports with Reporting starts + Reporting ends, use the END date as the row's period anchor.
+ // This keeps a 20 Sep → 26 Sep export together in the 7-day window instead of collapsing it to 20 Sep.
+ const dated=data.map(x=>({...x,_date:parseReportDate(x.dateEnd||x.date)})).filter(x=>x._date);
  // If an export has no machine-readable dates, never blank the report. Use all uploaded rows.
  if(!dated.length) return {current:data,previous:[],dateFallback:true};
  const latest=new Date(Math.max(...dated.map(x=>x._date.getTime())));
@@ -534,9 +536,16 @@ function render(){
  const ds=[["spendDelta",m.spend,p.spend,false],["leadsDelta",m.leads,p.leads,false],["cplDelta",m.cpl,p.cpl,true],["roasDelta",m.roas,p.roas,false],["ctrDelta",m.ctr,p.ctr,false],["revenueDelta",m.rev,p.rev,false]];
  ds.forEach(([id,a,b,inv])=>{const el=document.getElementById(id),d=delta(a,b,inv);el.textContent=d.text+(b?" vs previous period":"");el.className="delta "+d.cls});
 
- const allDates=rows.map(x=>x.date).filter(Boolean);
- const min=allDates.slice().sort()[0]||"—", max=allDates.slice().sort().slice(-1)[0]||"—";
- document.getElementById("periodLabel").textContent=min+" → "+max;
+ // Keep the client-share period tied to the selected reporting window, not raw source-row dates.
+ // For Meta exports this preserves the full Reporting starts → Reporting ends range.
+ const startDates=current.map(x=>parseReportDate(x.date)).filter(Boolean).sort((a,b)=>a-b);
+ const endDates=current.map(x=>parseReportDate(x.dateEnd||x.date)).filter(Boolean).sort((a,b)=>a-b);
+ const fmt=d=>d?d.toLocaleDateString(undefined,{day:"2-digit",month:"short",year:"numeric"}):"";
+ const periodEl=document.getElementById("periodLabel");
+ if(periodEl && startDates.length){
+   const start=startDates[0], end=endDates[endDates.length-1]||start;
+   periodEl.textContent=`${fmt(start)} → ${fmt(end)}`;
+ }
  document.getElementById("periodMeta").textContent=current.length+" current rows · "+previous.length+" comparison rows";
 
  const cplChange=p.cpl?((m.cpl-p.cpl)/p.cpl):null;
@@ -637,16 +646,22 @@ function parseCSV(t){
    for(const k of a){const i=h.findIndex(v=>v.includes(k));if(i>=0)return i;}
    return -1;
  };
+ const firstMatch=(pred, fallbackCandidates=[])=>{
+   const i=h.findIndex(pred);
+   return i>=0?i:find(fallbackCandidates);
+ };
  const ix={
-   dateEnd:find(["reporting ends","reporting end","date end"]),
-   dateStart:find(["reporting starts","reporting start","date"]),
+   dateEnd:firstMatch(v=>/^reporting ends?(?:\s|$)/.test(v),["reporting ends","reporting end","date end"]),
+   dateStart:firstMatch(v=>/^reporting starts?(?:\s|$)/.test(v),["reporting starts","reporting start","date"]),
    platform:find(["platform","channel","source","network"]),
    campaign:find(["campaign name","campaign","ad set","ad name","campaigns"]),
-   spend:find(["amount spent","amount spend","spend","cost"]),
+   // IMPORTANT: Meta exports contain both "Amount spent (INR)" and "Cost per results".
+   // Match Amount Spent explicitly before any loose "spend"/"cost" fallback.
+   spend:firstMatch(v=>/^(?:amount spent|amount spend)(?:\s|\(|$)/.test(v),["spend"]),
    imp:find(["impressions","impression"]),
    clicks:find(["link clicks","clicks","click"]),
-   leads:find(["leads","conversions","conversion","results","purchases"]),
-   revenue:find(["revenue","value","conversion value","purchase value"])
+   leads:firstMatch(v=>/^(?:results|results? \(|leads|conversions?|purchases?)(?:\s|\(|$)/.test(v),["leads","conversions","conversion","results","purchases"]),
+   revenue:find(["revenue","conversion value","purchase value","value"])
  };
  const val=(r,i)=>i>=0?(r[i]??""):"";
  const sample=rows.slice(1,Math.min(rows.length,6)).flat().join(" ").toLowerCase();
@@ -982,8 +997,8 @@ function buildClientEmail(){
  const cpl=leads?spend/leads:0, roas=spend&&revenueAvailable?rev/spend:null;
  const currencyLabel=`${(CURRENCIES[selectedCurrency]||CURRENCIES.INR).code} ${(CURRENCIES[selectedCurrency]||CURRENCIES.INR).symbol}`;
  const campaigns=[...shareRows].sort((a,b)=>b.spend-a.spend).slice(0,5).map(x=>`• ${x.campaign} (${x.platform||"Custom"}): ${money(x.spend)} spend, ${x.leads.toLocaleString()} results, ${money(x.leads?x.spend/x.leads:0)} CPL`).join("\n");
- const revenueLine=revenueAvailable?`• Revenue: ${money(rev)}\n• ROAS: ${roas.toFixed(2)}x`:`• Revenue / ROAS: Not available in the uploaded data`;
- return {period,subject:`Agency Report Kit — Performance Report | ${period}`,body:`Hi,\n\nPlease find the latest performance report for ${period}.\n\nPERFORMANCE SUMMARY\n• Ad Spend: ${money(spend)} (${currencyLabel})\n• Results / Conversions: ${leads.toLocaleString()}\n• CPL: ${money(cpl)}\n${revenueLine}\n\nTOP CAMPAIGNS\n${campaigns || "No campaign data available."}\n\nThe report was prepared with Agency Report Kit.\n\nRegards`};
+ const revenueLine=revenueAvailable?`• Revenue: ${money(rev)}\n• ROAS: ${roas.toFixed(2)}x`:"";
+ return {period,subject:`Agency Report Kit — Performance Report | ${period}`,body:`Hi,\n\nPlease find the latest performance report for ${period}.\n\nPERFORMANCE SUMMARY\n• Ad Spend: ${money(spend)} (${currencyLabel})\n• Results / Conversions: ${leads.toLocaleString()}\n• CPL: ${money(cpl)}${revenueLine?`\n${revenueLine}`:""}\n\nTOP CAMPAIGNS\n${campaigns || "No campaign data available."}\n\nThe report was prepared with Agency Report Kit.\n\nRegards`};
 }
 document.getElementById("shareClientBtn").onclick=async()=>{
  const data=buildClientEmail(); if(!data)return;
