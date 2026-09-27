@@ -90,7 +90,7 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
       <button class="btn outline" id="demoBtn">Demo Data</button>
       <button class="btn purple" id="generateBtn">Generate Report</button>
       <button class="btn outline" id="pdfBtn">Export PDF</button>
-      <button class="btn primary" id="shareClientBtn">Share to Client</button>
+      <button class="btn primary" id="shareClientBtn">Share to Client</button><span style="font-size:11px;color:var(--muted);display:block;margin-top:4px">Opens Gmail with the report pre-filled</span>
     </div>
   </div>
 
@@ -434,16 +434,28 @@ window.ARK.onAuthStateChanged(window.ARK.auth,u=>{
 document.getElementById("logoutBtn").onclick=()=>window.ARK.signOut(window.ARK.auth);
 
 demoLoad();
-// One-click client email sharing. Uses the user's mail client so no email API is required.
-document.getElementById("shareClientBtn").onclick=()=>{
- const email=prompt("Enter client email address:","");
- if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return;
+// Client sharing: prepares the selected reporting-period summary and opens a reliable email composer.
+function getShareRows(){ return (current && current.length) ? current : rows; }
+function buildClientEmail(){
+ const shareRows=getShareRows();
+ if(!shareRows.length){ alert("Load Demo Data or a CSV before sharing a report."); return null; }
  const period=document.getElementById("periodLabel")?.textContent||"Current reporting period";
- const spend=rows.reduce((a,x)=>a+x.spend,0), leads=rows.reduce((a,x)=>a+x.leads,0), rev=rows.reduce((a,x)=>a+x.revenue,0);
+ const spend=shareRows.reduce((a,x)=>a+x.spend,0), leads=shareRows.reduce((a,x)=>a+x.leads,0), rev=shareRows.reduce((a,x)=>a+x.revenue,0);
  const cpl=leads?spend/leads:0, roas=spend?rev/spend:0;
- const subject=encodeURIComponent(`Agency Report Kit — ${period}`);
- const body=encodeURIComponent(`Hi,\n\nPlease find the latest performance report for ${period}.\n\nPerformance summary:\n• Ad Spend: $${spend.toFixed(0)}\n• Leads: ${leads.toLocaleString()}\n• CPL: $${cpl.toFixed(2)}\n• ROAS: ${roas.toFixed(2)}x\n\nRegards`);
- window.location.href=`mailto:${encodeURIComponent(email.trim())}?subject=${subject}&body=${body}`;
+ const campaigns=[...shareRows].sort((a,b)=>b.spend-a.spend).slice(0,5).map(x=>`• ${x.campaign}: $${x.spend.toFixed(0)} spend, ${x.leads.toLocaleString()} leads, $${(x.leads?x.spend/x.leads:0).toFixed(2)} CPL`).join("\n");
+ return {period,subject:`Agency Report Kit — Performance Report | ${period}`,body:`Hi,\n\nPlease find the latest performance report for ${period}.\n\nPERFORMANCE SUMMARY\n• Ad Spend: $${spend.toFixed(0)}\n• Leads: ${leads.toLocaleString()}\n• CPL: $${cpl.toFixed(2)}\n• ROAS: ${roas.toFixed(2)}x\n\nTOP CAMPAIGNS\n${campaigns || "No campaign data available."}\n\nThe report was prepared with Agency Report Kit.\n\nRegards`};
+}
+document.getElementById("shareClientBtn").onclick=()=>{
+ const data=buildClientEmail(); if(!data)return;
+ const email=prompt("Enter client email address:","");
+ if(email===null)return;
+ const clean=email.trim();
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean)){alert("Please enter a valid client email address.");return;}
+ const to=encodeURIComponent(clean), subject=encodeURIComponent(data.subject), body=encodeURIComponent(data.body);
+ // Gmail compose works even when the browser has no default mail application.
+ const gmail=`https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`;
+ const win=window.open(gmail,"_blank","noopener,noreferrer");
+ if(!win){ window.location.href=`mailto:${to}?subject=${subject}&body=${body}`; }
 };
 </script>
 </body>
