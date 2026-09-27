@@ -58,6 +58,9 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 @media(max-width:1100px){.head{align-items:flex-start}.tools{width:100%}.controlRow .currencyControl{flex:1 1 240px}}
 @media(max-width:850px){.head{flex-direction:column}.headIntro{width:100%}.tools{width:100%}.controlRow .currencyControl{flex:1 1 100%}.actionRow .btn{flex:1 1 150px}.shareHint{display:none}}
 @media(max-width:560px){.actionRow .btn{flex:1 1 100%}.controlRow .currencyControl{width:100%}.tools .currencyControl select{max-width:none;flex:1}.workspace{padding:0 10px}.content{padding:16px}.head h1{font-size:21px}}
+.uploadBtn{display:inline-flex;align-items:center;justify-content:center;cursor:pointer;user-select:none}
+.uploadBtn:hover{transform:translateY(-1px)}
+
 @media print{.nav,.hero,.sidebar,.import,.tools{display:none!important}.workspace{margin:0;padding:0}.app{display:block;border:0;box-shadow:none}.content{background:#fff;padding:10px}.section{break-inside:avoid}.panel,.card{box-shadow:none}.tablewrap{overflow:visible}}
 .google-nav-btn{display:inline-flex;align-items:center;gap:8px}.google-signin{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#202124;border:1px solid #dadce0;border-radius:10px;padding:12px 14px;font-weight:750;box-shadow:0 1px 2px rgba(0,0,0,.05)}.google-signin:hover{background:#f8f9fa}.google-signin:disabled{opacity:.65;cursor:wait}.google-icon{width:18px;height:18px;flex:0 0 18px}.google-icon.large{width:20px;height:20px;flex-basis:20px}.modalbox .notice{margin-bottom:16px}
 
@@ -98,7 +101,7 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 <div class="headIntro">
 <div class="kicker">Report Workspace</div>
 <h1>Performance Report</h1>
-<p id="fileStatus">No report loaded — use Demo Data to preview the report.</p>
+<p id="fileStatus">No report loaded — upload a CSV or use Demo Data to preview the report.</p>
 </div>
 <div class="tools">
 <div class="controlRow">
@@ -158,6 +161,8 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 </div>
 </div>
 <div class="actionRow">
+<label class="btn outline uploadBtn" for="csvInput">Upload CSV</label>
+<input accept=".csv,text/csv" id="csvInput" style="display:none" type="file">
 <button class="btn outline" id="demoBtn">Demo Data</button>
 <button class="btn purple" id="generateBtn">Generate Report</button>
 <button class="btn outline" id="pdfBtn">Export PDF</button>
@@ -166,7 +171,7 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 <button class="btn outline gmailBtn" id="shareClientBtn" type="button">Gmail</button>
 </div>
 <div class="shareHint" id="shareHint">Share Report uses your device share menu. Share PDF creates a PDF; Gmail opens a pre-filled client email.</div>
-<div class="status" id="status">Waiting for Demo Data.</div>
+<div class="status" id="status">Waiting for CSV or Demo Data.</div>
 </div>
 </div>
 </div>
@@ -643,6 +648,46 @@ function parseCSV(t){
  return {data:out,sourceHint};
 }
 
+// CSV upload: read the user's campaign export locally, detect platform/currency, and load it into the report.
+const csvInput=document.getElementById("csvInput");
+if(csvInput){
+  csvInput.addEventListener("change",()=>{
+    const file=csvInput.files&&csvInput.files[0];
+    if(!file) return;
+    const reader=new FileReader();
+    reader.onload=()=>{
+      try{
+        const text=String(reader.result||"");
+        const parsed=parseCSV(text);
+        if(!parsed.data.length){
+          document.getElementById("status").textContent="No usable campaign rows were found in this CSV.";
+          alert("No usable campaign rows were found in this CSV. Please check the column headers and try again.");
+          return;
+        }
+        const detectedCurrency=detectCurrency(text);
+        if(detectedCurrency) setDetectedCurrency(detectedCurrency);
+        const label=`${file.name} · ${parsed.data.length} campaign rows`;
+        setData(parsed.data,label,parsed.sourceHint||file.name);
+        document.getElementById("fileStatus").textContent=`Loaded: ${file.name}`;
+        document.getElementById("status").textContent=`CSV loaded successfully · ${rows.length} campaign rows · ${selectedPlatform==="all"?"All platforms":selectedPlatform}`;
+        document.querySelector(".workspace")?.scrollIntoView({behavior:"smooth"});
+      }catch(err){
+        console.error("CSV upload failed",err);
+        document.getElementById("status").textContent="CSV upload failed: "+(err.message||err);
+        alert("CSV upload failed. Please check the file format and try again.\n\n"+(err.message||err));
+      }finally{
+        csvInput.value="";
+      }
+    };
+    reader.onerror=()=>{
+      document.getElementById("status").textContent="Could not read the selected CSV file.";
+      alert("Could not read the selected CSV file.");
+      csvInput.value="";
+    };
+    reader.readAsText(file);
+  });
+}
+
 document.querySelectorAll(".periodBtn").forEach(btn=>{
  btn.onclick=()=>{
    selectedPeriod=btn.dataset.period;
@@ -835,8 +880,8 @@ window.ARK.onAuthStateChanged(window.ARK.auth,u=>{
 document.getElementById("logoutBtn").onclick=()=>window.ARK.signOut(window.ARK.auth);
 
 // Do not auto-load demo data. Reports must always be generated from the user's uploaded CSV unless Demo Data is explicitly clicked.
-document.getElementById("fileStatus").textContent="No report loaded — click Demo Data";
-document.getElementById("status").textContent="Waiting for Demo Data.";
+document.getElementById("fileStatus").textContent="No report loaded — upload a CSV or click Demo Data";
+document.getElementById("status").textContent="Waiting for CSV or Demo Data.";
 // Client sharing: prepares the selected reporting-period summary and opens a reliable email composer.
 function getShareRows(){ return (current && current.length) ? current : rows; }
 function buildClientEmail(){
