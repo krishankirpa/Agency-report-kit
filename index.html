@@ -24,6 +24,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
+provider.setCustomParameters({prompt: "select_account"});
 
 window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectResult,signOut,onAuthStateChanged,doc,setDoc,addDoc,collection,serverTimestamp};
 </script>
@@ -49,6 +50,7 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
 @media(max-width:850px){.periodbar{align-items:flex-start;flex-direction:column}.app{grid-template-columns:1fr}.sidebar{display:none}.head{align-items:flex-start;flex-direction:column}.insightgrid{grid-template-columns:1fr}.navlinks{display:none}}
 @media(max-width:560px){.cards{grid-template-columns:1fr 1fr}.hero{padding-top:30px}.tools{width:100%}.tools .btn{flex:1}.user{display:none!important}}
 @media print{.nav,.hero,.sidebar,.import,.tools{display:none!important}.workspace{margin:0;padding:0}.app{display:block;border:0;box-shadow:none}.content{background:#fff;padding:10px}.section{break-inside:avoid}.panel,.card{box-shadow:none}.tablewrap{overflow:visible}}
+.google-nav-btn{display:inline-flex;align-items:center;gap:8px}.google-signin{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#202124;border:1px solid #dadce0;border-radius:10px;padding:12px 14px;font-weight:750;box-shadow:0 1px 2px rgba(0,0,0,.05)}.google-signin:hover{background:#f8f9fa}.google-signin:disabled{opacity:.65;cursor:wait}.google-icon{width:18px;height:18px;flex:0 0 18px}.google-icon.large{width:20px;height:20px;flex-basis:20px}.modalbox .notice{margin-bottom:16px}
 </style>
 </head>
 <body>
@@ -57,7 +59,7 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
   <div class="brand"><span class="logo">AR</span>Agency Report Kit</div>
   <div class="navright">
     <div class="user" id="userBox"><img id="userPhoto"><span id="userName"></span></div>
-    <button class="btn outline" id="loginBtn">Sign in with Google</button>
+    <button class="btn outline google-nav-btn" id="loginBtn"><svg class="google-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.35 12.27c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.44h3.14c1.84-1.69 2.91-4.18 2.91-7.21z"/><path fill="#34A853" d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.75 9.75 0 0 0 12 21.75z"/><path fill="#FBBC05" d="M6.54 13.84A5.86 5.86 0 0 1 6.23 12c0-.64.11-1.27.31-1.84V7.64H3.3A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.05 4.36l3.24-2.52z"/><path fill="#EA4335" d="M12 6.13c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.14 14.63 2.25 12 2.25A9.75 9.75 0 0 0 3.3 7.64l3.24 2.52C7.31 7.85 9.46 6.13 12 6.13z"/></svg><span>Sign in with Google</span></button>
     <button class="btn outline hidden" id="logoutBtn">Logout</button>
   </div>
 </nav>
@@ -186,7 +188,7 @@ window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectRes
   <div class="modalbox">
     <h2>Sign in to Agency Report Kit</h2>
     <p class="notice">Use Google to save your account activity and prepare the SaaS for client/report history.</p>
-    <button class="btn purple" style="width:100%" id="googleBtn">Continue with Google</button>
+    <button class="google-signin" id="googleBtn"><svg class="google-icon large" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.35 12.27c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.44h3.14c1.84-1.69 2.91-4.18 2.91-7.21z"/><path fill="#34A853" d="M12 21.75c2.63 0 4.84-.87 6.45-2.36l-3.14-2.44c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.52A9.75 9.75 0 0 0 12 21.75z"/><path fill="#FBBC05" d="M6.54 13.84A5.86 5.86 0 0 1 6.23 12c0-.64.11-1.27.31-1.84V7.64H3.3A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.05 4.36l3.24-2.52z"/><path fill="#EA4335" d="M12 6.13c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.84 3.14 14.63 2.25 12 2.25A9.75 9.75 0 0 0 3.3 7.64l3.24 2.52C7.31 7.85 9.46 6.13 12 6.13z"/></svg><span>Continue with Google</span></button>
     <button class="btn outline" style="width:100%;margin-top:10px" id="closeAuth">Cancel</button>
   </div>
 </div>
@@ -376,8 +378,8 @@ document.getElementById("customDays").onchange=e=>{
 
 function demoLoad(){setData(demo,"Demo Data");document.querySelector(".workspace").scrollIntoView({behavior:"smooth"});}
 document.getElementById("demoBtn").onclick=demoLoad;
-document.getElementById("generateBtn").onclick=()=>{if(!rows.length)demoLoad();else render();};
-document.getElementById("pdfBtn").onclick=()=>{if(!rows.length)demoLoad();setTimeout(()=>window.print(),150)};
+document.getElementById("generateBtn").onclick=()=>{if(!rows.length){alert("No report data loaded. Please upload your CSV first, or click Demo Data to test the app.");return;} render();};
+document.getElementById("pdfBtn").onclick=()=>{if(!rows.length){alert("No report data loaded. Please upload your CSV first, or click Demo Data to test the app.");return;} setTimeout(()=>window.print(),150)};
 document.getElementById("csv").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>setData(parseCSV(r.result),f.name);r.readAsText(f)};
 
 document.getElementById("loginBtn").onclick=()=>document.getElementById("authModal").classList.remove("hidden");
@@ -405,7 +407,7 @@ document.getElementById("googleBtn").onclick=async()=>{
    await finishGoogleLogin(result);
  }catch(e){
    console.error("Google sign-in error",e);
-   const popupBlocked=["auth/popup-blocked","auth/popup-closed-by-user","auth/cancelled-popup-request"].includes(e.code);
+   const popupBlocked=e.code==="auth/popup-blocked";
    if(popupBlocked){
      try{await window.ARK.signInWithRedirect(window.ARK.auth,window.ARK.provider);return;}catch(redir){
        alert("Google sign-in could not start. Firebase error: "+(redir.code||redir.message));
@@ -433,7 +435,9 @@ window.ARK.onAuthStateChanged(window.ARK.auth,u=>{
 });
 document.getElementById("logoutBtn").onclick=()=>window.ARK.signOut(window.ARK.auth);
 
-demoLoad();
+// Do not auto-load demo data. Reports must always be generated from the user's uploaded CSV unless Demo Data is explicitly clicked.
+document.getElementById("fileStatus").textContent="No report loaded — upload your CSV or click Demo Data";
+document.getElementById("status").textContent="Waiting for your campaign CSV.";
 // Client sharing: prepares the selected reporting-period summary and opens a reliable email composer.
 function getShareRows(){ return (current && current.length) ? current : rows; }
 function buildClientEmail(){
