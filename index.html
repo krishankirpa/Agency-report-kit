@@ -365,23 +365,33 @@ platformSelect.addEventListener("change",()=>{selectedPlatform=platformSelect.va
 function parseReportDate(value){
  const raw=String(value??"").trim();
  if(!raw) return null;
- // ISO / native formats first.
- let d=new Date(raw);
- if(!isNaN(d.getTime())) return d;
- // DD/MM/YYYY or DD-MM-YYYY (common ad-platform exports).
- let m=raw.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
- if(m){ d=new Date(Number(m[3]),Number(m[2])-1,Number(m[1])); return isNaN(d.getTime())?null:d; }
- // YYYY/MM/DD or YYYY-MM-DD with unusual separators.
- m=raw.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);
+ // Remove common wrappers and parse the first date when the export contains a date range.
+ const cleaned=raw.replace(/\u00a0/g," ").replace(/\s+/g," ").trim();
+ const firstDate=cleaned.split(/\s+(?:to|through|until|[-–—])\s+/i)[0].trim();
+ let d;
+ // YYYY-MM-DD / YYYY/MM/DD.
+ let m=firstDate.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})/);
  if(m){ d=new Date(Number(m[1]),Number(m[2])-1,Number(m[3])); return isNaN(d.getTime())?null:d; }
- // DD Mon YYYY / DD-Mon-YYYY.
- m=raw.match(/^(\d{1,2})[-\s]([A-Za-z]{3,9})[-\s](\d{4})$/);
- if(m){ d=new Date(`${m[1]} ${m[2]} ${m[3]}`); return isNaN(d.getTime())?null:d; }
+ // DD/MM/YYYY or DD-MM-YYYY.
+ m=firstDate.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);
+ if(m){ d=new Date(Number(m[3]),Number(m[2])-1,Number(m[1])); return isNaN(d.getTime())?null:d; }
+ // DD Mon YYYY / DD-Mon-YYYY / DD Month YYYY.
+ m=firstDate.match(/^(\d{1,2})[-\s]([A-Za-z]{3,12})[-,\s]+(\d{4})/);
+ if(m){ d=new Date(`${m[1]} ${m[2]} ${m[3]}`); if(!isNaN(d.getTime())) return d; }
+ // Month DD, YYYY / Month DD YYYY.
+ m=firstDate.match(/^([A-Za-z]{3,12})\s+(\d{1,2}),?\s+(\d{4})/);
+ if(m){ d=new Date(`${m[1]} ${m[2]} ${m[3]}`); if(!isNaN(d.getTime())) return d; }
+ // Native parser fallback for timestamps and other standard exports.
+ d=new Date(firstDate);
+ if(!isNaN(d.getTime())) return d;
+ // Excel serial date fallback.
+ if(/^\d+(?:\.\d+)?$/.test(firstDate)){ const serial=Number(firstDate); if(serial>20000&&serial<80000){ d=new Date(Date.UTC(1899,11,30)+serial*86400000); if(!isNaN(d.getTime())) return d; }}
  return null;
 }
 function getPeriodRows(data, period){
  const dated=data.map(x=>({...x,_date:parseReportDate(x.date)})).filter(x=>x._date);
- if(!dated.length) return {current:data,previous:[]};
+ // If an export has no machine-readable dates, never blank the report. Use all uploaded rows.
+ if(!dated.length) return {current:data,previous:[],dateFallback:true};
  const latest=new Date(Math.max(...dated.map(x=>x._date.getTime())));
  latest.setHours(23,59,59,999);
  let start=new Date(latest);
@@ -414,6 +424,9 @@ function applyPeriod(){
  const result=getPeriodRows(rows,selectedPeriod);
  current=selectedPlatform==="all"?result.current:result.current.filter(x=>x.platform===selectedPlatform);
  previous=selectedPlatform==="all"?result.previous:result.previous.filter(x=>x.platform===selectedPlatform);
+ if(result.dateFallback){
+   document.getElementById("periodRange").textContent=`Dates not recognized in this export · using all ${current.length} uploaded rows`;
+ }
  const dated=current.map(x=>parseReportDate(x.date)).filter(Boolean).sort((a,b)=>a-b);
  const fmtDate=d=>d?d.toLocaleDateString(undefined,{day:"2-digit",month:"short",year:"numeric"}):"";
  const label={7:"Last 7 Days",14:"Last 14 Days",30:"Last 30 Days",90:"Last 90 Days",month:"This Month",prevmonth:"Previous Month",all:"All Data"}[selectedPeriod]||"Custom Period";
@@ -582,10 +595,32 @@ document.getElementById("customDays").onchange=e=>{
 function demoLoad(){setData(demo,"Demo Data");document.querySelector(".workspace").scrollIntoView({behavior:"smooth"});}
 document.getElementById("demoBtn").onclick=demoLoad;
 document.getElementById("generateBtn").onclick=()=>{
- if(!rows.length){alert("No report data loaded. Please upload your CSV first, or click Demo Data to test the app.");return;}
- applyPeriod();
- if(!current.length){alert("Your CSV loaded successfully, but there are no rows in the selected reporting period. Choose All Data, This Month, or another period that contains your uploaded dates.");return;}
- render();
+ const btn=document.getElementById("generateBtn");
+ if(!rows.length){
+   document.getElementById("status").textContent="No report data loaded. Upload a CSV first or click Demo Data.";
+   alert("No report data loaded. Please upload your CSV first, or click Demo Data to test the app.");
+   return;
+ }
+ btn.disabled=true;
+ btn.textContent="Generating…";
+ try{
+   applyPeriod();
+   if(!current.length){
+     document.getElementById("status").textContent="Your CSV is loaded, but the selected period/platform has no matching rows. Try All Data or All Platforms.";
+     alert("No rows match the selected reporting period/platform. Try All Data and All Platforms.");
+     return;
+   }
+   render();
+   document.getElementById("status").textContent=`Report generated successfully · ${current.length} rows analyzed · ${selectedPlatform==="all"?"All platforms":selectedPlatform}`;
+   document.getElementById("summaryTitle").scrollIntoView({behavior:"smooth",block:"start"});
+ }catch(err){
+   console.error("Report generation failed",err);
+   document.getElementById("status").textContent="Report generation failed: "+(err.message||err);
+   alert("Report generation failed. Check the CSV columns and try again.\n\n"+(err.message||err));
+ }finally{
+   btn.disabled=false;
+   btn.textContent="Generate Report";
+ }
 };
 document.getElementById("pdfBtn").onclick=()=>{if(!rows.length){alert("No report data loaded. Please upload your CSV first, or click Demo Data to test the app.");return;} setTimeout(()=>window.print(),150)};
 document.getElementById("csv").onchange=e=>{
