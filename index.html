@@ -771,73 +771,119 @@ async function ensureReportReady(){
  updatePrintHeader();
  return true;
 }
+function loadExternalScript(src,testFn){
+  if(testFn()) return Promise.resolve();
+  window.__arkScriptLoads=window.__arkScriptLoads||{};
+  if(window.__arkScriptLoads[src]) return window.__arkScriptLoads[src];
+  window.__arkScriptLoads[src]=new Promise((resolve,reject)=>{
+    const existing=[...document.scripts].find(x=>x.src===src);
+    const script=existing||document.createElement("script");
+    let settled=false;
+    const done=()=>{if(settled)return;settled=true;clearTimeout(timer);if(testFn())resolve();else reject(new Error("Loaded script but required library is unavailable."));};
+    const fail=()=>{if(settled)return;settled=true;clearTimeout(timer);reject(new Error("Could not load required PDF library."));};
+    const timer=setTimeout(fail,12000);
+    script.addEventListener("load",done,{once:true});
+    script.addEventListener("error",fail,{once:true});
+    if(!existing){script.src=src;script.async=true;document.head.appendChild(script);}
+    else if(testFn())done();
+  });
+  return window.__arkScriptLoads[src];
+}
+async function ensurePdfLibraries(){
+  await loadExternalScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js",()=>!!window.html2canvas);
+  await loadExternalScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js",()=>!!window.jspdf?.jsPDF);
+}
 async function buildPdfBlob(){
- if(!(await ensureReportReady())) return null;
- if(!window.html2canvas || !window.jspdf?.jsPDF){
-   alert("PDF tools are still loading. Please wait a moment and try again.");
-   return null;
- }
- const target=document.querySelector(".content");
- if(!target)return null;
- const oldOverflow=target.style.overflow;
- target.style.overflow="visible";
- try{
-   const canvas=await html2canvas(target,{scale:2,useCORS:true,backgroundColor:"#f8f9fc",logging:false,windowWidth:Math.max(document.documentElement.clientWidth,target.scrollWidth)});
-   const {jsPDF}=window.jspdf;
-   const pdf=new jsPDF("p","mm","a4");
-   const pageW=210,pageH=297,margin=8;
-   const imgW=pageW-margin*2;
-   const imgH=canvas.height*imgW/canvas.width;
-   let y=margin, remaining=imgH;
-   const pageCanvas=document.createElement("canvas");
-   const pxPerMm=canvas.width/imgW;
-   const pagePx=Math.floor((pageH-margin*2)*pxPerMm);
-   let sourceY=0, pageNo=0;
-   while(sourceY<canvas.height){
-     const sliceH=Math.min(pagePx,canvas.height-sourceY);
-     pageCanvas.width=canvas.width; pageCanvas.height=sliceH;
-     const ctx=pageCanvas.getContext("2d");
-     ctx.fillStyle="#f8f9fc"; ctx.fillRect(0,0,pageCanvas.width,sliceH);
-     ctx.drawImage(canvas,0,sourceY,canvas.width,sliceH,0,0,canvas.width,sliceH);
-     if(pageNo>0)pdf.addPage();
-     const renderedH=sliceH/pxPerMm;
-     pdf.addImage(pageCanvas.toDataURL("image/jpeg",0.92),"JPEG",margin,margin,imgW,renderedH,"","FAST");
-     sourceY+=sliceH; pageNo++;
-   }
-   const blob=pdf.output("blob");
-   return blob;
- }finally{target.style.overflow=oldOverflow;}
+  if(!(await ensureReportReady())) return null;
+  try{await ensurePdfLibraries();}
+  catch(err){
+    console.error("PDF libraries unavailable",err);
+    alert("The PDF engine could not load. Please check your internet connection and try Share PDF again, or use Export PDF.");
+    return null;
+  }
+  const target=document.querySelector(".content");
+  if(!target){alert("Report area not found.");return null;}
+  const oldOverflow=target.style.overflow;
+  const oldMinHeight=target.style.minHeight;
+  target.style.overflow="visible";
+  target.style.minHeight="0";
+  updatePrintHeader();
+  try{
+    const canvas=await html2canvas(target,{scale:2,useCORS:true,backgroundColor:"#f8f9fc",logging:false,windowWidth:Math.max(document.documentElement.clientWidth,target.scrollWidth),scrollX:0,scrollY:-window.scrollY});
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF("p","mm","a4");
+    const pageW=210,pageH=297,margin=8;
+    const imgW=pageW-margin*2;
+    const pxPerMm=canvas.width/imgW;
+    const pagePx=Math.max(1,Math.floor((pageH-margin*2)*pxPerMm));
+    const pageCanvas=document.createElement("canvas");
+    let sourceY=0,pageNo=0;
+    while(sourceY<canvas.height){
+      const sliceH=Math.min(pagePx,canvas.height-sourceY);
+      pageCanvas.width=canvas.width;pageCanvas.height=sliceH;
+      const ctx=pageCanvas.getContext("2d");
+      ctx.fillStyle="#f8f9fc";ctx.fillRect(0,0,pageCanvas.width,sliceH);
+      ctx.drawImage(canvas,0,sourceY,canvas.width,sliceH,0,0,canvas.width,sliceH);
+      if(pageNo>0)pdf.addPage();
+      pdf.addImage(pageCanvas.toDataURL("image/jpeg",0.92),"JPEG",margin,margin,imgW,sliceH/pxPerMm,undefined,"FAST");
+      sourceY+=sliceH;pageNo++;
+    }
+    return pdf.output("blob");
+  }catch(err){
+    console.error("PDF generation failed",err);
+    alert("PDF generation failed. Please try Export PDF once, then try Share PDF again.\n\n"+(err.message||err));
+    return null;
+  }finally{
+    target.style.overflow=oldOverflow;
+    target.style.minHeight=oldMinHeight;
+  }
 }
 function reportFileName(){
- const base=(document.getElementById("fileStatus")?.textContent||"Agency-Report-Kit-Report").replace(/[^a-z0-9]+/gi,"-").replace(/^-+|-+$/g,"").slice(0,70)||"Agency-Report-Kit-Report";
- return base+".pdf";
+  const base=(document.getElementById("fileStatus")?.textContent||"Agency-Report-Kit-Report").replace(/[^a-z0-9]+/gi,"-").replace(/^-+|-+$/g,"").slice(0,70)||"Agency-Report-Kit-Report";
+  return base+".pdf";
+}
+function downloadBlob(blob,name){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=name;a.rel="noopener";
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),2500);
 }
 document.getElementById("pdfBtn").onclick=async()=>{
- if(!(await ensureReportReady()))return;
- updatePrintHeader();
- setTimeout(()=>window.print(),150);
+  if(!(await ensureReportReady()))return;
+  updatePrintHeader();
+  setTimeout(()=>window.print(),150);
 };
 document.getElementById("shareBtn").onclick=async()=>{
- if(!(await ensureReportReady()))return;
- const data=buildClientEmail();
- const text=data?`${data.subject}\n\n${data.body}`:"Agency Report Kit — client performance report";
- if(navigator.share){
-   try{await navigator.share({title:data?.subject||"Agency Report Kit Report",text});return;}catch(e){if(e?.name==="AbortError")return;}
- }
- await navigator.clipboard?.writeText(text).catch(()=>{});
- alert("Report summary copied. Your device/browser does not support native sharing here.");
+  if(!(await ensureReportReady()))return;
+  const data=buildClientEmail();
+  if(!data)return;
+  const text=`${data.subject}\n\n${data.body}`;
+  if(typeof navigator.share==="function"){
+    try{await navigator.share({title:data.subject,text});return;}
+    catch(e){if(e?.name==="AbortError")return;console.warn("Native share unavailable",e);}
+  }
+  try{await navigator.clipboard.writeText(text);alert("Report summary copied to your clipboard.");}
+  catch(e){window.prompt("Copy this report summary:",text);}
 };
 document.getElementById("sharePdfBtn").onclick=async()=>{
- const blob=await buildPdfBlob();
- if(!blob)return;
- const file=new File([blob],reportFileName(),{type:"application/pdf"});
- if(navigator.share && (!navigator.canShare || navigator.canShare({files:[file]}))){
-   try{await navigator.share({title:"Agency Report Kit — PDF Report",text:"Client performance report",files:[file]});return;}catch(e){if(e?.name==="AbortError")return;}
- }
- const url=URL.createObjectURL(blob);
- const a=document.createElement("a");a.href=url;a.download=file.name;document.body.appendChild(a);a.click();a.remove();
- setTimeout(()=>URL.revokeObjectURL(url),2000);
- alert("PDF created and downloaded. You can attach this PDF in Gmail.");
+  const btn=document.getElementById("sharePdfBtn");
+  const old=btn.textContent;
+  btn.disabled=true;btn.textContent="Creating PDF…";
+  try{
+    const blob=await buildPdfBlob();
+    if(!blob)return;
+    const file=new File([blob],reportFileName(),{type:"application/pdf"});
+    const canNativeShare=typeof navigator.share==="function" && (!navigator.canShare || navigator.canShare({files:[file]}));
+    if(canNativeShare){
+      try{await navigator.share({title:"Agency Report Kit — PDF Report",text:"Client performance report",files:[file]});return;}
+      catch(e){if(e?.name==="AbortError")return;console.warn("PDF share unavailable; downloading instead",e);}
+    }
+    downloadBlob(blob,file.name);
+    document.getElementById("shareHint").textContent="PDF downloaded successfully. Attach the downloaded PDF to Gmail or any client email.";
+  }finally{
+    btn.disabled=false;btn.textContent=old;
+  }
 };
 document.getElementById("loginBtn").onclick=()=>document.getElementById("authModal").classList.remove("hidden");
 document.getElementById("closeAuth").onclick=()=>document.getElementById("authModal").classList.add("hidden");
@@ -850,7 +896,6 @@ async function finishGoogleLogin(result){
  document.getElementById("userBox").style.display="flex";
  document.getElementById("userName").textContent=u.displayName||u.email||"Signed in";
  document.getElementById("userPhoto").src=u.photoURL||"";
- // Analytics/profile writes must never make a successful login look like a failed login.
  try{await window.ARK.setDoc(window.ARK.doc(window.ARK.db,"users",u.uid),{uid:u.uid,name:u.displayName||"",email:u.email||"",photoURL:u.photoURL||"",lastLogin:window.ARK.serverTimestamp()},{merge:true});}catch(err){console.warn("User profile save skipped:",err.code||err.message);}
  try{await window.ARK.addDoc(window.ARK.collection(window.ARK.db,"events"),{event:"login",userId:u.uid,email:u.email||"",page:location.pathname,timestamp:window.ARK.serverTimestamp()});}catch(err){console.warn("Login event save skipped:",err.code||err.message);}
 }
@@ -875,7 +920,6 @@ document.getElementById("googleBtn").onclick=async()=>{
  }finally{btn.disabled=false;btn.textContent=old;}
 };
 
-// Complete a redirect-based login if popup sign-in was blocked.
 window.ARK.getRedirectResult(window.ARK.auth).then(async result=>{
  if(result?.user)await finishGoogleLogin(result);
 }).catch(e=>{
@@ -919,8 +963,8 @@ document.getElementById("shareClientBtn").onclick=async()=>{
  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean)){alert("Please enter a valid client email address.");return;}
  const to=encodeURIComponent(clean), subject=encodeURIComponent(data.subject), body=encodeURIComponent(data.body);
  const gmail=`https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`;
- const win=window.open(gmail,"_blank","noopener,noreferrer");
- if(!win) window.location.href=`mailto:${to}?subject=${subject}&body=${body}`;
+ // Direct navigation is more reliable than popup-based Gmail compose, which browsers often block.
+ try{window.location.assign(gmail);}catch(e){window.location.href=`mailto:${clean}?subject=${subject}&body=${body}`;}
 };
 
 let selectedTemplate=localStorage.getItem("ark_template")||"executive";
