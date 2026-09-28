@@ -12,7 +12,7 @@
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}button,input{font:inherit}button{cursor:pointer}
 .nav{height:68px;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:0 4%;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:30}.brand{display:flex;gap:10px;align-items:center;font-weight:850}.logo{width:35px;height:35px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;display:grid;place-items:center;font-weight:900}.navright{display:flex;align-items:center;gap:9px}.user{display:none;align-items:center;gap:8px;color:var(--muted);font-size:12px}.user img{width:28px;height:28px;border-radius:50%}
 .btn{border:0;border-radius:10px;padding:10px 15px;font-weight:760}.primary{background:var(--ink);color:#fff}.purple{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}.outline{background:#fff;color:var(--ink);border:1px solid var(--line)}
-.workspace{max-width:1450px;margin:26px auto 70px;padding:0 18px}.app{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);display:grid;grid-template-columns:215px 1fr;min-height:780px;overflow:hidden}.sidebar{padding:22px 14px;border-right:1px solid var(--line);background:#fcfcfe}.sidebar h3{font-size:13px;margin:0 0 22px}.navitem{padding:11px;border-radius:9px;color:var(--muted);margin:4px 0;font-size:13px}.navitem.active{background:#efedff;color:#5546dc;font-weight:800}
+.workspace{max-width:1450px;margin:26px auto 70px;padding:0 18px}.app{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);display:grid;grid-template-columns:215px 1fr;min-height:780px;overflow:hidden}.sidebar{padding:22px 14px;border-right:1px solid var(--line);background:#fcfcfe}.sidebar h3{font-size:13px;margin:0 0 22px}.navitem{cursor:pointer;user-select:none;padding:11px;border-radius:9px;color:var(--muted);margin:4px 0;font-size:13px}.navitem.active{background:#efedff;color:#5546dc;font-weight:800}
 .content{padding:27px;background:#f8f9fc}.head{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:18px}.head h1{font-size:24px;margin:0 0 3px;letter-spacing:-.03em}.head p{margin:0;color:var(--muted);font-size:12px}.tools{display:flex;gap:8px;flex-wrap:wrap}
 .import{padding:17px;background:#faf9ff;border:1px dashed #bdb6ff;border-radius:13px;margin-bottom:14px}.importline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.import small{color:var(--muted)}.status{font-size:12px;color:var(--muted);margin-top:7px}
 .kicker{font-size:10px;font-weight:850;letter-spacing:.08em;color:#5546dc;text-transform:uppercase}.cards{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.card,.panel{background:#fff;border:1px solid var(--line);border-radius:13px}.card{padding:15px}.label{font-size:10px;color:var(--muted);font-weight:850}.value{font-size:24px;font-weight:900;margin:5px 0}.delta{font-size:11px}.up{color:var(--good)}.down{color:var(--bad)}.neutral{color:var(--muted)}
@@ -50,7 +50,12 @@
 .templatePreviewModal{position:fixed;inset:0;z-index:10000;background:rgba(15,23,42,.58);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:24px}.templatePreviewModal.open{display:flex}.templatePreviewDialog{width:min(1120px,96vw);max-height:92vh;overflow:auto;background:#f7f8fb;border-radius:20px;box-shadow:0 28px 90px rgba(15,23,42,.28);border:1px solid rgba(255,255,255,.7)}.templatePreviewTop{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 20px;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border-bottom:1px solid #e4e7ec}.templatePreviewTop h3{margin:0;font-size:18px;color:#111827}.templatePreviewTop p{margin:4px 0 0;font-size:11px;color:#667085}.templatePreviewClose{appearance:none;border:1px solid #d0d5dd;background:#fff;border-radius:10px;padding:8px 12px;font-weight:800;cursor:pointer;color:#344054}.templatePreviewBody{padding:22px}.tpHead{background:linear-gradient(135deg,#171a2b,#4f46e5);color:#fff;border-radius:16px;padding:22px;margin-bottom:16px}.tpEyebrow{font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:900;opacity:.78}.tpTitle{font-size:25px;font-weight:900;margin-top:6px}.tpMeta{font-size:11px;opacity:.82;margin-top:5px}.tpGrid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}.tpKpi{background:#fff;border:1px solid #e4e7ec;border-radius:13px;padding:14px}.tpKpi small{display:block;font-size:9px;color:#667085;text-transform:uppercase;letter-spacing:.08em;font-weight:800}.tpKpi strong{display:block;font-size:20px;color:#101828;margin-top:6px}.tpKpi span{display:block;font-size:9px;color:#667085;margin-top:3px}.tpCols{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin-bottom:14px}.tpPanel{background:#fff;border:1px solid #e4e7ec;border-radius:13px;padding:15px}.tpPanel h4{margin:0 0 10px;font-size:12px;color:#101828}.tpSummary{font-size:11px;line-height:1.65;color:#344054}.tpList{display:grid;gap:8px}.tpItem{padding:9px 10px;border:1px solid #eef0f3;border-radius:9px;background:#fbfcfe}.tpItem strong{display:block;font-size:10px;color:#101828}.tpItem span{display:block;font-size:9px;color:#667085;margin-top:3px;line-height:1.45}.tpTable{width:100%;border-collapse:collapse;font-size:9px}.tpTable th,.tpTable td{text-align:left;padding:7px 6px;border-bottom:1px solid #eef0f3}.tpTable th{color:#667085;font-weight:800}.tpTable td{color:#344054}.tpTag{display:inline-flex;align-items:center;padding:3px 6px;border-radius:999px;background:#eef2ff;color:#4338ca;font-weight:800;font-size:8px}.tpFooter{display:flex;justify-content:flex-end;margin-top:12px;color:#667085;font-size:9px}@media(max-width:760px){.templatePreviewModal{padding:10px}.templatePreviewDialog{width:100%;max-height:96vh}.templatePreviewBody{padding:14px}.tpGrid4{grid-template-columns:1fr 1fr}.tpCols{grid-template-columns:1fr}.tpTitle{font-size:21px}}@media print{.templatePreviewModal{display:none!important}}
 
 .templateGrid{align-items:stretch}.templateCard{overflow:hidden;padding:0 0 13px}.templatePreview{display:block;width:100%;height:118px;object-fit:cover;border-bottom:1px solid var(--line);margin-bottom:11px}.templateCard strong,.templateCard span,.templateCard em{margin-left:13px;margin-right:13px}.templateCard em{display:block;margin-top:9px;font-size:10px;font-style:normal;font-weight:800;color:var(--brand)}.templateCard:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(16,24,40,.08)}
-.templateCard .templateUse{cursor:pointer;transition:.15s}.templateCard.active .templateUse{display:inline-block;padding:4px 8px;border-radius:999px;background:#5546dc;color:#fff}.templateCard:not(.active) .templateUse{display:inline-block;padding:4px 8px;border-radius:999px;background:#f2f0ff;color:#5546dc}.templateCard:focus-visible{outline:3px solid rgba(84,70,220,.25);outline-offset:2px}.templatePreviewActions{display:flex;gap:8px;align-items:center}.templatePreviewAction{appearance:none;border:1px solid #d0d5dd;background:#fff;color:#344054;border-radius:10px;padding:8px 12px;font-weight:800;cursor:pointer}.templatePreviewAction.primary{background:#5546dc;border-color:#5546dc;color:#fff}.templatePreviewAction:disabled{opacity:.6;cursor:not-allowed}</style>
+.templateCard .templateUse{cursor:pointer;transition:.15s}.templateCard.active .templateUse{display:inline-block;padding:4px 8px;border-radius:999px;background:#5546dc;color:#fff}.templateCard:not(.active) .templateUse{display:inline-block;padding:4px 8px;border-radius:999px;background:#f2f0ff;color:#5546dc}.templateCard:focus-visible{outline:3px solid rgba(84,70,220,.25);outline-offset:2px}.templatePreviewActions{display:flex;gap:8px;align-items:center}.templatePreviewAction{appearance:none;border:1px solid #d0d5dd;background:#fff;color:#344054;border-radius:10px;padding:8px 12px;font-weight:800;cursor:pointer}.templatePreviewAction.primary{background:#5546dc;border-color:#5546dc;color:#fff}.templatePreviewAction:disabled{opacity:.6;cursor:not-allowed}
+.brandingPanel{margin-bottom:16px;padding:18px}.brandingGrid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}.brandingFormBox,.brandingPreview{border:1px solid #e4e7ec;border-radius:14px;background:#fff;padding:16px}.brandingFields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.brandingFields label,.brandingLogoPicker label{display:block;font-size:11px;font-weight:800;color:#475467;margin-bottom:6px}.brandingFields input{width:100%;box-sizing:border-box;border:1px solid #dfe3f0;border-radius:10px;padding:10px 12px;background:#fff;font:inherit;color:#111827}.brandingLogoRow{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:14px;padding:12px;border:1px dashed #d9dced;border-radius:12px;background:#fbfbfe}.brandingLogoPicker{min-width:0}.brandingLogoPicker input{display:block;max-width:100%;margin-bottom:5px}.brandingLogoPicker small{display:block;color:#667085;font-size:10px}.brandingLogoMini{width:58px;height:58px;border-radius:13px;border:1px solid #e4e7ec;display:grid;place-items:center;overflow:hidden;background:linear-gradient(135deg,#f4f2ff,#eef2ff);flex:0 0 auto;font-weight:900;color:#5546dc}.brandingLogoMini img{width:100%;height:100%;object-fit:contain}.brandingActions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:14px}.brandingPreview{background:linear-gradient(145deg,#fafaff,#f5f7fb)}.brandingPreviewLabel{font-size:9px;letter-spacing:.12em;font-weight:900;color:#667085;margin-bottom:12px}.brandingPreviewHeader{display:flex;align-items:center;gap:11px;padding:14px;border-radius:13px;background:linear-gradient(135deg,#171a2b,#5546dc);color:#fff}.brandingPreviewLogo{width:44px;height:44px;border-radius:10px;background:#fff;display:grid;place-items:center;overflow:hidden;color:#5546dc;font-weight:900;flex:0 0 auto}.brandingPreviewLogo img{width:100%;height:100%;object-fit:contain}.brandingPreviewHeader strong{display:block;font-size:15px}.brandingPreviewHeader span{display:block;font-size:10px;opacity:.82;margin-top:3px}.brandingPreviewReport{margin-top:12px;padding:13px;border-radius:11px;background:#fff;border:1px solid #e4e7ec}.brandingPreviewReportTitle{font-weight:850;font-size:14px;color:#101828}.brandingPreviewMeta{font-size:10px;color:#667085;margin-top:4px}.printBrandRow{display:flex;align-items:center;gap:10px}.printBrandLogo{width:34px;height:34px;border-radius:8px;background:#fff;display:grid;place-items:center;overflow:hidden;color:#5546dc;font-weight:900;flex:0 0 auto}.printBrandLogo img{width:100%;height:100%;object-fit:contain}.printBrand{font-size:10px;letter-spacing:.12em;font-weight:900;color:#5546dc}.printTagline{font-size:9px;color:#667085;margin-top:2px}.brandingPanel{scroll-margin-top:24px}@media(max-width:850px){.brandingGrid{grid-template-columns:1fr}.brandingFields{grid-template-columns:1fr}.brandingLogoRow{align-items:flex-start}}@media print{.brandingPanel{display:none!important}.printBrandLogo{display:grid!important}}
+.clientControl{min-width:190px}.clientControl select{max-width:100%}
+.clientModalBox{width:min(980px,calc(100vw - 32px));max-height:88vh;overflow:auto}.clientModalHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:18px}.clientForm{background:#fbfbfe}.clientFormGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.clientFormGrid label{display:block;font-size:11px;font-weight:800;margin-bottom:5px;color:#4d5570}.clientFormGrid input{width:100%;box-sizing:border-box;border:1px solid #dfe3f0;border-radius:10px;padding:10px 12px;background:#fff;font:inherit;color:#111827}.clientFormActions{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}.clientsList{display:grid;gap:10px}.clientCard{border:1px solid #e2e5ef;border-radius:13px;padding:13px 14px;background:#fff;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}.clientCard.active{border-color:#6c5ce7;box-shadow:0 0 0 2px rgba(108,92,231,.08)}.clientMain strong{display:block;font-size:14px}.clientMain small{display:block;color:#68718a;margin-top:3px}.clientMeta{display:flex;gap:8px;flex-wrap:wrap;margin-top:7px}.clientTag{font-size:10px;font-weight:800;border-radius:999px;padding:4px 7px;background:#f2f1ff;color:#5546dc}.clientActions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.clientActions .btn{padding:8px 10px;font-size:11px}.clientHistoryList{display:grid;gap:8px}.historyItem{border:1px solid #e4e6ee;border-radius:10px;padding:10px 12px;background:#fff;display:flex;justify-content:space-between;gap:15px;align-items:center}.historyItem strong{display:block;font-size:12px}.historyItem small{display:block;color:#69748d;margin-top:2px}.historyMetrics{text-align:right;font-size:11px;color:#4d5570}.clientEmpty{padding:25px;border:1px dashed #d9dced;border-radius:12px;text-align:center;color:#68718a;background:#fbfbfe}.clientLocked{padding:20px;border:1px dashed #d9dced;border-radius:12px;background:#fbfbfe}.clientFormStatus{min-height:18px}
+@media(max-width:850px){.clientFormGrid{grid-template-columns:1fr}.clientCard{grid-template-columns:1fr}.clientActions{justify-content:flex-start}.clientControl{min-width:160px}}
+</style>
 </head>
 <body>
 <nav class="nav">
@@ -70,13 +75,35 @@
 <div class="app">
 <aside class="sidebar">
 <h3>Agency Report Kit</h3>
-<div class="navitem active">Overview</div>
-<div class="navitem">Clients</div>
-<div class="navitem">Reports</div>
-<div class="navitem">Templates</div>
-<div class="navitem">Branding</div>
+<div class="navitem active" id="navOverview" data-nav="overview">Overview</div>
+<div class="navitem" id="navClients" data-nav="clients">Clients</div>
+<div class="navitem" id="navReports" data-nav="reports">Reports</div>
+<div class="navitem" id="navTemplates" data-nav="templates">Templates</div>
+<div class="navitem" id="navBranding" data-nav="branding">Branding</div>
 </aside>
-<main class="content" data-template="executive"><div class="printHeader" id="printHeader"><div class="printBrand">AGENCY REPORT KIT</div><div class="printTitle" id="printTitle">Performance Marketing Report</div><div class="printMeta" id="printMeta"></div></div>
+<main class="content" data-template="executive"><div id="brandingSection" style="scroll-margin-top:24px"></div>
+<section class="panel brandingPanel" id="brandingPanel" aria-labelledby="brandingPanelTitle">
+  <div class="section-title"><div><div class="kicker">BRAND SETTINGS</div><h2 id="brandingPanelTitle">Your Report Branding</h2></div><p>Use your company logo, name and tagline on client-ready previews and exported reports.</p></div>
+  <div class="brandingGrid">
+    <div class="brandingFormBox">
+      <div class="brandingFields">
+        <div><label for="brandingNameInput">Company / Agency Name</label><input id="brandingNameInput" type="text" maxlength="80" placeholder="e.g. Digital Growth Agency"></div>
+        <div><label for="brandingTaglineInput">Tagline</label><input id="brandingTaglineInput" type="text" maxlength="120" placeholder="e.g. Performance Marketing & Growth"></div>
+      </div>
+      <div class="brandingLogoRow">
+        <div class="brandingLogoPicker"><label for="brandingLogoInput">Company Logo</label><input id="brandingLogoInput" type="file" accept="image/png,image/jpeg,image/webp"><small>PNG, JPG or WEBP · resized automatically for reports.</small></div>
+        <div class="brandingLogoMini" id="brandingLogoMini"><span id="brandingLogoMiniFallback">AR</span><img id="brandingLogoMiniImg" alt="Company logo preview" style="display:none"></div>
+      </div>
+      <div class="brandingActions"><button type="button" class="btn purple" id="saveBrandingBtn">Save Branding</button><button type="button" class="btn outline" id="removeBrandingLogoBtn">Remove Logo</button><span class="notice" id="brandingStatus">Branding is saved locally until you sign in.</span></div>
+    </div>
+    <div class="brandingPreview" id="brandingPreview">
+      <div class="brandingPreviewLabel">LIVE REPORT PREVIEW</div>
+      <div class="brandingPreviewHeader"><div class="brandingPreviewLogo" id="brandingPreviewLogo"><span id="brandingPreviewFallback">AR</span><img id="brandingPreviewLogoImg" alt="Company logo" style="display:none"></div><div><strong id="brandingPreviewName">Agency Report Kit</strong><span id="brandingPreviewTagline">Performance Marketing Reporting</span></div></div>
+      <div class="brandingPreviewReport"><div class="brandingPreviewReportTitle">Performance Marketing Report</div><div class="brandingPreviewMeta">Client-ready report · Data → Insight → Action</div></div>
+    </div>
+  </div>
+</section>
+<div class="printHeader" id="printHeader"><div class="printBrandRow"><div class="printBrandLogo" id="printBrandLogoWrap"><span id="printBrandLogoFallback">AR</span><img id="printBrandLogo" alt="Company logo" style="display:none"></div><div class="printBrandCopy"><div class="printBrand" id="printBrandName">AGENCY REPORT KIT</div><div class="printTagline" id="printBrandTagline"></div></div></div><div class="printTitle" id="printTitle">Performance Marketing Report</div><div class="printMeta" id="printMeta"></div></div>
 <div class="head">
 <div class="headIntro">
 <div class="kicker">Report Workspace</div>
@@ -139,12 +166,17 @@
 <label for="templateSelect">Template</label>
 <select aria-label="Report template" id="templateSelect"><option value="executive">Executive Overview</option><option value="multiplatform">Multi-Platform Performance</option><option value="leadgen">Lead Generation</option><option value="ecommerce">E-commerce ROAS</option><option value="deepdive">Performance Deep Dive</option></select>
 </div>
+<div class="currencyControl clientControl">
+<label for="clientSelect">Client</label>
+<select aria-label="Report client" id="clientSelect"><option value="">No client selected</option></select>
+</div>
 </div>
 <div class="actionRow">
 <label class="btn outline uploadBtn" for="csvInput">Upload CSV</label>
 <input accept=".csv,text/csv" id="csvInput" style="display:none" type="file">
 <button type="button" class="btn outline" id="demoBtn">Demo Data</button>
 <button type="button" class="btn purple" id="generateBtn">Generate Report</button>
+<button type="button" class="btn outline" id="saveClientReportBtn" disabled>Save to Client</button>
 <button type="button" class="btn outline" id="pdfBtn">Export PDF</button><button type="button" class="btn outline" id="downloadPdfAgainBtn" style="display:none">Download PDF Again</button>
 <button class="btn primary" id="shareBtn" type="button">Share Report</button>
 <button class="btn outline" id="sharePdfBtn" type="button">Share PDF</button>
@@ -260,6 +292,35 @@
 </main>
 </div>
 </section>
+<div class="modal hidden" id="clientModal" role="dialog" aria-modal="true" aria-labelledby="clientModalTitle">
+  <div class="modalbox clientModalBox">
+    <div class="clientModalHeader">
+      <div>
+        <div class="kicker">CLIENT MANAGEMENT</div>
+        <h2 id="clientModalTitle">Your Clients</h2>
+        <p class="notice">Add clients, attach reports, and keep a history of performance for each account.</p>
+      </div>
+      <button type="button" class="btn outline" id="closeClientModal">Close</button>
+    </div>
+    <div class="clientForm panel">
+      <div class="clientFormGrid">
+        <div><label for="clientNameInput">Client name *</label><input id="clientNameInput" type="text" placeholder="e.g. Acme Dental" autocomplete="organization"></div>
+        <div><label for="clientEmailInput">Client email</label><input id="clientEmailInput" type="email" placeholder="client@example.com" autocomplete="email"></div>
+        <div><label for="clientCompanyInput">Company / Brand</label><input id="clientCompanyInput" type="text" placeholder="e.g. Acme Dental Clinic" autocomplete="organization"></div>
+        <div><label for="clientNotesInput">Notes</label><input id="clientNotesInput" type="text" placeholder="Optional notes"></div>
+      </div>
+      <div class="clientFormActions"><button type="button" class="btn purple" id="addClientBtn">Add Client</button><span class="notice" id="clientFormStatus">Sign in with Google to save client records.</span></div>
+    </div>
+    <div class="clientListWrap">
+      <div class="section-title" style="margin:0 0 10px"><h2 style="font-size:16px">Client Accounts</h2><p>Clients linked to your signed-in account.</p></div>
+      <div id="clientsList" class="clientsList"></div>
+    </div>
+    <div class="clientHistoryWrap panel" id="clientHistoryWrap" style="display:none">
+      <div class="section-title" style="margin:0 0 10px"><h2 style="font-size:16px" id="clientHistoryTitle">Report History</h2><p id="clientHistorySub">Saved reports for this client.</p></div>
+      <div id="clientHistoryList" class="clientHistoryList"></div>
+    </div>
+  </div>
+</div>
 <div class="modal hidden" id="authModal">
 <div class="modalbox">
 <h2>Sign in to Agency Report Kit</h2>
@@ -271,7 +332,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, addDoc, getDocs, getDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDqMGnYC2bNDd-LCzWK5o8uajIFgbjVd9E",
@@ -283,14 +344,136 @@ const firebaseConfig = {
   measurementId: "G-37MVERRVEH"
 };
 
+const safeStorage = {
+  getItem(key){ try { return window.localStorage.getItem(key); } catch { return null; } },
+  setItem(key,value){ try { window.localStorage.setItem(key,value); } catch {} },
+  removeItem(key){ try { window.localStorage.removeItem(key); } catch {} }
+};
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({prompt: "select_account"});
-window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectResult,signOut,onAuthStateChanged,doc,setDoc,addDoc,collection,serverTimestamp};
+window.ARK = {auth,db,provider,signInWithPopup,signInWithRedirect,getRedirectResult,signOut,onAuthStateChanged,doc,setDoc,addDoc,getDocs,getDoc,collection,serverTimestamp};
 
 let rows=[], current=[], previous=[], user=null;
+let clients=[], selectedClientId=safeStorage.getItem("ark_client")||"";
+let branding={companyName:"Agency Report Kit",tagline:"Performance Marketing Reporting",logoData:"",logoW:0,logoH:0};
+function brandingKey(){return user?.uid?`ark_branding_${user.uid}`:"ark_branding_guest"}
+function initialsForBrand(name){const parts=String(name||"Agency Report Kit").trim().split(/\s+/).filter(Boolean);return (parts.slice(0,2).map(x=>x[0]).join("")||"AR").toUpperCase().slice(0,3);}
+function setBrandingStatus(msg){const el=document.getElementById("brandingStatus");if(el)el.textContent=msg||""}
+function applyBrandingUI(){
+  const name=branding.companyName||"Agency Report Kit", tag=branding.tagline||"Performance Marketing Reporting", initials=initialsForBrand(name);
+  const ni=document.getElementById("brandingNameInput"), ti=document.getElementById("brandingTaglineInput"); if(ni)ni.value=name; if(ti)ti.value=tag;
+  ["brandingLogoMiniFallback","brandingPreviewFallback","printBrandLogoFallback"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=initials;});
+  ["brandingLogoMiniImg","brandingPreviewLogoImg","printBrandLogo"].forEach(id=>{const img=document.getElementById(id);if(img){if(branding.logoData){img.src=branding.logoData;img.style.display="block";}else{img.removeAttribute("src");img.style.display="none";}}});
+  ["brandingLogoMiniFallback","brandingPreviewFallback","printBrandLogoFallback"].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=branding.logoData?"none":"inline";});
+  const pn=document.getElementById("brandingPreviewName");if(pn)pn.textContent=name;const pt=document.getElementById("brandingPreviewTagline");if(pt)pt.textContent=tag;
+}
+function loadLocalBranding(){try{const raw=safeStorage.getItem(brandingKey())||safeStorage.getItem("ark_branding_guest");if(raw){branding={...branding,...JSON.parse(raw)};}}catch{}applyBrandingUI()}
+async function loadBranding(){loadLocalBranding();if(!user){setBrandingStatus("Branding is saved locally until you sign in.");return;}try{const snap=await window.ARK.getDoc(window.ARK.doc(window.ARK.db,"users",user.uid));const remote=snap?.exists?snap.data().branding:null;if(remote){branding={...branding,...remote};safeStorage.setItem(brandingKey(),JSON.stringify(branding));applyBrandingUI();}setBrandingStatus("Branding is saved to your account.");}catch(err){console.warn("Branding load skipped:",err.code||err.message);setBrandingStatus("Branding is saved locally on this device.")}}
+async function saveBranding(){const name=(document.getElementById("brandingNameInput")?.value||"").trim()||"Agency Report Kit";const tag=(document.getElementById("brandingTaglineInput")?.value||"").trim()||"Performance Marketing Reporting";branding={...branding,companyName:name,tagline:tag};safeStorage.setItem(brandingKey(),JSON.stringify(branding));applyBrandingUI();if(user){try{await window.ARK.setDoc(window.ARK.doc(window.ARK.db,"users",user.uid),{branding,updatedAt:window.ARK.serverTimestamp()},{merge:true});setBrandingStatus("Branding saved to your account.")}catch(err){console.warn("Branding save skipped:",err.code||err.message);setBrandingStatus("Saved locally. Firestore could not be updated: "+(err.code||"permission error"))}}else{setBrandingStatus("Branding saved on this device. Sign in to sync it across your account.")}}
+function readBrandLogo(file){if(!file)return;if(!/^image\/(png|jpe?g|webp)$/i.test(file.type)){setBrandingStatus("Please choose a PNG, JPG or WEBP logo.");return;}const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{const max=700,scale=Math.min(1,max/Math.max(img.naturalWidth||img.width,1)),w=Math.max(1,Math.round((img.naturalWidth||img.width)*scale)),h=Math.max(1,Math.round((img.naturalHeight||img.height)*scale));const c=document.createElement("canvas");c.width=w;c.height=h;const ctx=c.getContext("2d");ctx.fillStyle="#ffffff";ctx.fillRect(0,0,w,h);ctx.drawImage(img,0,0,w,h);branding.logoData=c.toDataURL("image/jpeg",0.86);branding.logoW=w;branding.logoH=h;applyBrandingUI();setBrandingStatus("Logo ready. Click Save Branding to apply it.")};img.onerror=()=>setBrandingStatus("The selected logo could not be read.");img.src=reader.result};reader.readAsDataURL(file)}
+function removeBrandLogo(){branding={...branding,logoData:"",logoW:0,logoH:0};safeStorage.setItem(brandingKey(),JSON.stringify(branding));applyBrandingUI();setBrandingStatus("Logo removed. Click Save Branding to sync the change to your account.");if(user){window.ARK.setDoc(window.ARK.doc(window.ARK.db,"users",user.uid),{branding,updatedAt:window.ARK.serverTimestamp()},{merge:true}).catch(e=>console.warn("Logo removal sync skipped:",e.code||e.message));}}
+
+
+function clientPath(uid,id){return window.ARK.doc(window.ARK.db,"users",uid,"clients",id)}
+function clientReportsCollection(uid,id){return window.ARK.collection(window.ARK.db,"users",uid,"clients",id,"reports")}
+function selectedClient(){return clients.find(c=>c.id===selectedClientId)||null}
+function setClientStatus(msg){const el=document.getElementById("clientFormStatus");if(el)el.textContent=msg||""}
+function formatClientDate(ts){try{if(ts?.toDate)return ts.toDate().toLocaleDateString(undefined,{day:"2-digit",month:"short",year:"numeric"}); if(ts instanceof Date)return ts.toLocaleDateString(); return ts?new Date(ts).toLocaleDateString():"—"}catch{return "—"}}
+function reportPeriodText(){return document.getElementById("periodLabel")?.textContent||document.getElementById("periodRange")?.textContent||"Current period"}
+function renderClientSelect(){
+ const sel=document.getElementById("clientSelect"); if(!sel)return;
+ const valid=clients.some(c=>c.id===selectedClientId); if(!valid)selectedClientId="";
+ sel.innerHTML='<option value="">No client selected</option>'+clients.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}${c.company?` — ${esc(c.company)}`:""}</option>`).join("");
+ sel.value=selectedClientId;
+ const saveBtn=document.getElementById("saveClientReportBtn"); if(saveBtn)saveBtn.disabled=!(user&&selectedClientId&&rows.length);
+}
+async function loadClients(){
+ if(!user){clients=[];selectedClientId="";renderClientSelect();renderClientsList();return;}
+ try{
+   const snap=await window.ARK.getDocs(window.ARK.collection(window.ARK.db,"users",user.uid,"clients"));
+   clients=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>{
+     const av=a.updatedAt?.toMillis?.()||a.createdAt?.toMillis?.()||0; const bv=b.updatedAt?.toMillis?.()||b.createdAt?.toMillis?.()||0; return bv-av;
+   });
+   const stored=safeStorage.getItem(`ark_client_${user.uid}`)||selectedClientId;
+   selectedClientId=clients.some(c=>c.id===stored)?stored:"";
+   if(selectedClientId)safeStorage.setItem(`ark_client_${user.uid}`,selectedClientId);
+   renderClientSelect(); renderClientsList();
+   setClientStatus(clients.length?`${clients.length} client${clients.length===1?"":"s"} loaded.`:"No clients yet. Add your first client.");
+ }catch(err){
+   console.error("Client load failed",err);
+   clients=[]; selectedClientId=""; renderClientSelect(); renderClientsList();
+   setClientStatus("Could not load clients. Check Firebase Firestore rules and sign-in status.");
+ }
+}
+function renderClientsList(){
+ const wrap=document.getElementById("clientsList"); if(!wrap)return;
+ if(!user){wrap.innerHTML='<div class="clientLocked"><strong>Sign in to manage clients</strong><div class="notice" style="margin-top:5px">Client records are stored under your Firebase account so they follow you across sessions.</div><button type="button" class="btn purple" id="clientLoginPrompt" style="margin-top:12px">Sign in with Google</button></div>';
+   document.getElementById("clientLoginPrompt")?.addEventListener("click",()=>{hideClientModal();document.getElementById("loginBtn")?.click();}); return;}
+ if(!clients.length){wrap.innerHTML='<div class="clientEmpty"><strong>No clients added yet.</strong><div class="notice" style="margin-top:5px">Add a client above, then select that client before generating a report.</div></div>';return;}
+ wrap.innerHTML=clients.map(c=>`<div class="clientCard ${c.id===selectedClientId?"active":""}" data-client-card="${esc(c.id)}"><div class="clientMain"><strong>${esc(c.name)}</strong><small>${esc(c.email||c.company||"No email or company added")}</small><div class="clientMeta"><span class="clientTag">${Number(c.reportCount||0)} report${Number(c.reportCount||0)===1?"":"s"}</span><span class="clientTag">Last report: ${esc(formatClientDate(c.lastReportAt))}</span></div></div><div class="clientActions"><button type="button" class="btn outline" data-client-select="${esc(c.id)}">Use Client</button><button type="button" class="btn outline" data-client-history="${esc(c.id)}">Reports</button></div></div>`).join("");
+ wrap.querySelectorAll("[data-client-select]").forEach(b=>b.addEventListener("click",()=>selectClient(b.dataset.clientSelect,true)));
+ wrap.querySelectorAll("[data-client-history]").forEach(b=>b.addEventListener("click",()=>loadClientHistory(b.dataset.clientHistory)));
+}
+async function selectClient(id,closeModal=false){
+ if(!clients.some(c=>c.id===id))return; selectedClientId=id; safeStorage.setItem(`ark_client_${user?.uid||"local"}`,id); safeStorage.setItem("ark_client",id); renderClientSelect(); renderClientsList();
+ const c=selectedClient(); if(c)setClientStatus(`${c.name} selected. Generate a report to save it to this client.`);
+ if(closeModal)hideClientModal();
+}
+function openClientModal(){document.getElementById("clientModal")?.classList.remove("hidden");renderClientsList();renderClientSelect();}
+function hideClientModal(){document.getElementById("clientModal")?.classList.add("hidden");}
+async function addClient(){
+ if(!user){setClientStatus("Please sign in with Google before adding a client.");document.getElementById("loginBtn")?.click();return;}
+ const name=document.getElementById("clientNameInput")?.value.trim();
+ const email=document.getElementById("clientEmailInput")?.value.trim();
+ const company=document.getElementById("clientCompanyInput")?.value.trim();
+ const notes=document.getElementById("clientNotesInput")?.value.trim();
+ if(!name){setClientStatus("Client name is required.");document.getElementById("clientNameInput")?.focus();return;}
+ const btn=document.getElementById("addClientBtn"); if(btn){btn.disabled=true;btn.textContent="Saving…";}
+ try{
+   const ref=await window.ARK.addDoc(window.ARK.collection(window.ARK.db,"users",user.uid,"clients"),{name,email,company,notes,reportCount:0,createdAt:window.ARK.serverTimestamp(),updatedAt:window.ARK.serverTimestamp()});
+   clients.push({id:ref.id,name,email,company,notes,reportCount:0,createdAt:new Date(),updatedAt:new Date()});
+   selectedClientId=ref.id; safeStorage.setItem(`ark_client_${user.uid}`,ref.id); safeStorage.setItem("ark_client",ref.id);
+   document.getElementById("clientNameInput").value="";document.getElementById("clientEmailInput").value="";document.getElementById("clientCompanyInput").value="";document.getElementById("clientNotesInput").value="";
+   renderClientSelect();renderClientsList();
+   setClientStatus(`${name} added and selected.`);
+ }catch(err){console.error("Client save failed",err);setClientStatus("Could not save client: "+(err.code||err.message||"Firestore error"));}
+ finally{if(btn){btn.disabled=false;btn.textContent="Add Client";}}
+}
+async function saveCurrentReportToClient(showFeedback=true){
+ if(!user||!selectedClientId){if(showFeedback)setClientStatus("Select a client first.");return false;}
+ if(!current.length){if(showFeedback)setClientStatus("Generate a report before saving it to a client.");return false;}
+ const c=selectedClient(); if(!c)return false;
+ try{
+   const m=metric(current);
+   const topCampaigns=[...current].sort((a,b)=>b.spend-a.spend).slice(0,5).map(x=>({campaign:x.campaign||"Campaign",spend:x.spend||0,results:x.leads||0,cpl:x.leads?x.spend/x.leads:0,roas:x.spend&&x.revenueProvided?x.revenue/x.spend:null,platform:x.platform||"Custom"}));
+   const report={clientId:c.id,clientName:c.name,template:selectedTemplate,templateName:templateName(selectedTemplate),period:reportPeriodText(),periodMode:document.getElementById("periodModeTitle")?.textContent||selectedPeriod,currency:selectedCurrency,platform:selectedPlatform,sourceFile:document.getElementById("fileStatus")?.textContent||"",rowsAnalyzed:current.length,spend:m.spend,results:m.leads,cpl:m.cpl,revenue:m.revenueAvailable?m.rev:null,roas:m.revenueAvailable?m.roas:null,revenueAvailable:m.revenueAvailable,topCampaigns,dataRows:current.slice(0,2000),comparisonRows:previous.slice(0,2000),createdAt:window.ARK.serverTimestamp()};
+   const ref=await window.ARK.addDoc(clientReportsCollection(user.uid,c.id),report);
+   const updated={...c,reportCount:Number(c.reportCount||0)+1,lastReportAt:new Date(),updatedAt:new Date()};
+   clients=clients.map(x=>x.id===c.id?updated:x);
+   await window.ARK.setDoc(clientPath(user.uid,c.id),{reportCount:updated.reportCount,lastReportAt:window.ARK.serverTimestamp(),updatedAt:window.ARK.serverTimestamp()},{merge:true});
+   renderClientsList();renderClientSelect();
+   if(showFeedback)setClientStatus(`Saved ${templateName(selectedTemplate)} to ${c.name}.`);
+   return true;
+ }catch(err){
+   console.error("Report save failed",err);if(showFeedback)setClientStatus("Could not save report to client: "+(err.code||err.message||"Firestore error"));return false;
+ }
+}
+async function loadClientHistory(clientId){
+ if(!user)return; const c=clients.find(x=>x.id===clientId); if(!c)return;
+ await selectClient(clientId,false);
+ const wrap=document.getElementById("clientHistoryWrap"),list=document.getElementById("clientHistoryList"),title=document.getElementById("clientHistoryTitle"),sub=document.getElementById("clientHistorySub");
+ if(!wrap||!list)return; wrap.style.display="block"; title.textContent=`${c.name} · Report History`; sub.textContent=`Saved reports for ${c.email||c.company||"this client"}.`; list.innerHTML='<div class="notice">Loading report history…</div>';
+ try{
+   const snap=await window.ARK.getDocs(clientReportsCollection(user.uid,clientId));
+   const reps=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
+   if(!reps.length){list.innerHTML='<div class="clientEmpty">No saved reports for this client yet.</div>';return;}
+   list.innerHTML=reps.slice(0,20).map(r=>`<div class="historyItem"><div><strong>${esc(r.templateName||"Performance Report")}</strong><small>${esc(r.period||"Current period")} · ${esc(formatClientDate(r.createdAt))} · ${Number(r.rowsAnalyzed||0)} rows</small></div><div class="historyMetrics"><div>${money(r.spend||0)} spend</div><div>${Number(r.results||0).toLocaleString()} results · ${money(r.cpl||0)} CPL</div></div></div>`).join("");
+ }catch(err){console.error("Report history load failed",err);list.innerHTML='<div class="clientEmpty">Could not load report history. Check Firestore rules.</div>';}
+}
+
 
 const demo = [
  ["2026-09-01","Search - High Intent",420,4200,310,72,980,"Google"],
@@ -311,7 +494,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",
 const CURRENCIES={
  INR:{symbol:"₹",code:"INR",locale:"en-IN",digits:0}, USD:{symbol:"$",code:"USD",locale:"en-US",digits:0}, EUR:{symbol:"€",code:"EUR",locale:"de-DE",digits:0}, GBP:{symbol:"£",code:"GBP",locale:"en-GB",digits:0}, AED:{symbol:"د.إ",code:"AED",locale:"en-AE",digits:0}, SAR:{symbol:"﷼",code:"SAR",locale:"en-SA",digits:0}, QAR:{symbol:"﷼",code:"QAR",locale:"en-QA",digits:0}, KWD:{symbol:"د.ك",code:"KWD",locale:"en-KW",digits:3}, CAD:{symbol:"C$",code:"CAD",locale:"en-CA",digits:0}, AUD:{symbol:"A$",code:"AUD",locale:"en-AU",digits:0}, SGD:{symbol:"S$",code:"SGD",locale:"en-SG",digits:0}, NZD:{symbol:"NZ$",code:"NZD",locale:"en-NZ",digits:0}, JPY:{symbol:"¥",code:"JPY",locale:"ja-JP",digits:0}, CNY:{symbol:"¥",code:"CNY",locale:"zh-CN",digits:0}, HKD:{symbol:"HK$",code:"HKD",locale:"en-HK",digits:0}, CHF:{symbol:"CHF",code:"CHF",locale:"de-CH",digits:0}, SEK:{symbol:"kr",code:"SEK",locale:"sv-SE",digits:0}, NOK:{symbol:"kr",code:"NOK",locale:"nb-NO",digits:0}, DKK:{symbol:"kr",code:"DKK",locale:"da-DK",digits:0}, ZAR:{symbol:"R",code:"ZAR",locale:"en-ZA",digits:0}, BRL:{symbol:"R$",code:"BRL",locale:"pt-BR",digits:0}, MXN:{symbol:"MX$",code:"MXN",locale:"es-MX",digits:0}, THB:{symbol:"฿",code:"THB",locale:"th-TH",digits:0}, MYR:{symbol:"RM",code:"MYR",locale:"ms-MY",digits:0}, IDR:{symbol:"Rp",code:"IDR",locale:"id-ID",digits:0}, PHP:{symbol:"₱",code:"PHP",locale:"en-PH",digits:0}, KRW:{symbol:"₩",code:"KRW",locale:"ko-KR",digits:0}, TRY:{symbol:"₺",code:"TRY",locale:"tr-TR",digits:0}, PLN:{symbol:"zł",code:"PLN",locale:"pl-PL",digits:0}, ILS:{symbol:"₪",code:"ILS",locale:"he-IL",digits:0}
 };
-let selectedCurrency=localStorage.getItem("ark_currency")||"INR";
+let selectedCurrency=safeStorage.getItem("ark_currency")||"INR";
 function money(v){const c=CURRENCIES[selectedCurrency]||CURRENCIES.INR;return c.symbol+Number(v||0).toLocaleString(c.locale,{minimumFractionDigits:c.digits,maximumFractionDigits:c.digits})}
 function pct(v){return (Number(v||0)*100).toFixed(2)+"%"}
 function metric(data){
@@ -343,7 +526,7 @@ function detectCurrency(text){
 function setDetectedCurrency(code){
  if(!code || !CURRENCIES[code]) return false;
  selectedCurrency=code;
- localStorage.setItem("ark_currency",code);
+ safeStorage.setItem("ark_currency",code);
  currencySelect.value=code;
  const c=CURRENCIES[code];
  document.getElementById("currencyLabel").textContent=`Currency: ${c.code} — ${currencySelect.options[currencySelect.selectedIndex].text.replace(/^\S+\s+[^—]+—\s*/,"")}`;
@@ -373,17 +556,17 @@ function parseRows(data,sourceHint){
 }
 const currencySelect=document.getElementById("currencySelect");
 currencySelect.value=selectedCurrency;
-currencySelect.addEventListener("change",()=>{selectedCurrency=currencySelect.value;localStorage.setItem("ark_currency",selectedCurrency);const c=CURRENCIES[selectedCurrency];document.getElementById("currencyLabel").textContent=`Currency: ${c.code} — ${currencySelect.options[currencySelect.selectedIndex].text.replace(/^\S+\s+[^—]+—\s*/,"")}`;if(rows.length)render();});
+currencySelect.addEventListener("change",()=>{selectedCurrency=currencySelect.value;safeStorage.setItem("ark_currency",selectedCurrency);const c=CURRENCIES[selectedCurrency];document.getElementById("currencyLabel").textContent=`Currency: ${c.code} — ${currencySelect.options[currencySelect.selectedIndex].text.replace(/^\S+\s+[^—]+—\s*/,"")}`;if(rows.length)render();});
 const initialCurrency=CURRENCIES[selectedCurrency]||CURRENCIES.INR;
 document.getElementById("currencyLabel").textContent=`Currency: ${initialCurrency.code} — ${currencySelect.options[currencySelect.selectedIndex].text.replace(/^\S+\s+[^—]+—\s*/,"")}`;
 
 let selectedPeriod="7";
 const VALID_PLATFORMS=["all","Meta","Google","YouTube","GPT","Reddit","Pinterest","TikTok","Instagram","Custom"];
-let selectedPlatform=localStorage.getItem("ark_platform")||"all";
+let selectedPlatform=safeStorage.getItem("ark_platform")||"all";
 if(!VALID_PLATFORMS.includes(selectedPlatform)) selectedPlatform="all";
 const platformSelect=document.getElementById("platformSelect");
 platformSelect.value=selectedPlatform;
-platformSelect.addEventListener("change",()=>{selectedPlatform=platformSelect.value;localStorage.setItem("ark_platform",selectedPlatform);if(rows.length)applyPeriod();});
+platformSelect.addEventListener("change",()=>{selectedPlatform=platformSelect.value;safeStorage.setItem("ark_platform",selectedPlatform);if(rows.length)applyPeriod();});
 
 function parseReportDate(value){
  const raw=String(value??"").trim();
@@ -454,11 +637,11 @@ function applyPeriod(){
    if(availablePlatforms.length===1){
      selectedPlatform=availablePlatforms[0];
      platformSelect.value=selectedPlatform;
-     localStorage.setItem("ark_platform",selectedPlatform);
+     safeStorage.setItem("ark_platform",selectedPlatform);
    } else {
      selectedPlatform="all";
      platformSelect.value="all";
-     localStorage.setItem("ark_platform","all");
+     safeStorage.setItem("ark_platform","all");
    }
  }
  current=selectedPlatform==="all"?result.current:result.current.filter(x=>x.platform===selectedPlatform);
@@ -485,12 +668,12 @@ function setData(data,label,sourceHint=""){
  if(hintText==="meta" && currencySelect.querySelector('option[value="INR"]')){
    selectedCurrency="INR";
    currencySelect.value="INR";
-   localStorage.setItem("ark_currency","INR");
+   safeStorage.setItem("ark_currency","INR");
  }
  if(detected.length===1 && ["Meta","Google","YouTube","TikTok","Reddit","Pinterest","Instagram","GPT"].includes(detected[0])){
    selectedPlatform=detected[0];
    platformSelect.value=selectedPlatform;
-   localStorage.setItem("ark_platform",selectedPlatform);
+   safeStorage.setItem("ark_platform",selectedPlatform);
  }
  document.getElementById("fileStatus").textContent=label;
  const validDates=rows.filter(x=>parseReportDate(x.date)).length;
@@ -777,7 +960,7 @@ document.getElementById("customDays").onchange=e=>{
 
 function demoLoad(){setData(demo,"Demo Data");document.querySelector(".workspace").scrollIntoView({behavior:"smooth"});}
 document.getElementById("demoBtn").onclick=demoLoad;
-document.getElementById("generateBtn").onclick=()=>{
+document.getElementById("generateBtn").onclick=async()=>{
  const btn=document.getElementById("generateBtn");
  if(!rows.length){
    
@@ -797,12 +980,12 @@ document.getElementById("generateBtn").onclick=()=>{
        if(detected.length===1){
          selectedPlatform=detected[0];
          platformSelect.value=selectedPlatform;
-         localStorage.setItem("ark_platform",selectedPlatform);
+         safeStorage.setItem("ark_platform",selectedPlatform);
          applyPeriod();
        } else {
          selectedPlatform="all";
          platformSelect.value="all";
-         localStorage.setItem("ark_platform","all");
+         safeStorage.setItem("ark_platform","all");
          applyPeriod();
        }
      }
@@ -814,6 +997,7 @@ document.getElementById("generateBtn").onclick=()=>{
    }
    render();
    document.getElementById("status").textContent=`Report generated successfully · ${current.length} rows analyzed · ${selectedPlatform==="all"?"All platforms":selectedPlatform}`;
+   if(selectedClientId&&user){await saveCurrentReportToClient(false);}
    document.getElementById("summaryTitle").scrollIntoView({behavior:"smooth",block:"start"});
  }catch(err){
    console.error("Report generation failed",err);
@@ -877,7 +1061,9 @@ function buildTextPdfBlob(){
   const roundedCard=(x,yy,w,h,fill= [1,1,1],stroke=line)=>{rect(x,yy,w,h,fill,stroke,0.8)};
 
   const templatePdfTheme={executive:{header:[0.08,0.10,0.17],accent:[0.33,0.27,0.86]},multiplatform:{header:[0.05,0.22,0.30],accent:[0.04,0.64,0.78]},leadgen:{header:[0.09,0.18,0.27],accent:[0.16,0.68,0.52]},ecommerce:{header:[0.19,0.12,0.25],accent:[0.88,0.47,0.10]},deepdive:{header:[0.14,0.11,0.25],accent:[0.59,0.32,0.84]}}[selectedTemplate]||{header:[0.08,0.10,0.17],accent:[0.33,0.27,0.86]};
-  const title=templateName(selectedTemplate)+" - Agency Report Kit";
+  const brandName=branding.companyName||"Agency Report Kit";
+  const brandTagline=branding.tagline||"Performance Marketing Reporting";
+  const title=templateName(selectedTemplate);
   const period=document.getElementById("periodLabel")?.textContent?.trim()||document.getElementById("periodRange")?.textContent?.trim()||"Current reporting period";
   const currency=(CURRENCIES[selectedCurrency]||CURRENCIES.INR).code;
   const platform=(selectedPlatform&&selectedPlatform!=="all")?selectedPlatform:"All Platforms";
@@ -886,13 +1072,19 @@ function buildTextPdfBlob(){
   const insights=[...document.querySelectorAll("#insights .insight")].slice(0,4).map(el=>({title:el.querySelector("h3")?.textContent||"Insight",text:el.querySelector("p")?.textContent||""}));
   const actions=[...document.querySelectorAll("#actions .action")].slice(0,4).map(el=>({title:el.querySelector("strong")?.textContent||"Action",text:el.querySelector("span")?.textContent||""}));
 
-  // Branded report header — no app controls, selectors, upload UI or template gallery are exported.
-  fillRect(M,H-92,W-2*M,44,templatePdfTheme.header);
-  text(M+16,H-66,"AGENCY REPORT KIT",9,templatePdfTheme.accent,true);
-  text(M+16,H-84,title,17,[1,1,1],true);
-  text(W-M-210,H-66,period,8,[0.86,0.88,0.94]);
-  text(W-M-210,H-82,`${platform} · ${currency}`,8,[0.86,0.88,0.94]);
-  y=H-116;
+  // Branded report header — only the selected template/data are exported.
+  fillRect(M,H-108,W-2*M,60,templatePdfTheme.header);
+  text(M+52,H-66,brandName,11,[1,1,1],true);
+  text(M+52,H-80,brandTagline,7.5,[0.86,0.88,0.94]);
+  text(M+52,H-96,title,10,[1,1,1],true);
+  text(W-M-205,H-66,period,8,[0.86,0.88,0.94]);
+  text(W-M-205,H-82,`${platform} · ${currency}`,8,[0.86,0.88,0.94]);
+  y=H-132;
+
+  // Company logo in the PDF header when one has been saved.
+  let pdfLogoHex="", pdfLogoW=0, pdfLogoH=0, pdfLogoObjId=null;
+  if(branding.logoData && /^data:image\/jpeg;base64,/i.test(branding.logoData)){try{const b64=branding.logoData.split(",")[1]||"";const bin=atob(b64);let hx="";for(let i=0;i<bin.length;i++)hx+=bin.charCodeAt(i).toString(16).padStart(2,"0");pdfLogoHex=hx+">";pdfLogoW=branding.logoW||64;pdfLogoH=branding.logoH||64;}catch(e){pdfLogoHex="";}}
+  if(pdfLogoHex){const lw=30,lh=Math.max(18,Math.min(36,lw*(pdfLogoH/Math.max(pdfLogoW,1))));add(`q ${lw} 0 0 ${lh} ${M+10} ${H-98} cm /Im1 Do Q`);}
 
   // KPI row
   const kpis=[
@@ -962,13 +1154,14 @@ function buildTextPdfBlob(){
   if(actions.length){ensure(112);text(M,y,"NEXT ACTIONS",8,brand,true);y-=14;actions.forEach(it=>{ensure(27);text(M,y,"• "+it.title,8,ink,true);y=textWrap(M+10,y-11,it.text,7.5,96,muted,10,false)-6;});}
 
   // Footer note; no app UI is exported.
-  ensure(26); pdfLine(M,38,W-M,38,line,.7); text(M,25,"Agency Report Kit",7,muted,false); text(W-M-130,25,`${templateName(selectedTemplate)} · ${currency}`,7,muted,false);
+  ensure(26); pdfLine(M,38,W-M,38,line,.7); text(M,25,brandName,7,muted,false); text(W-M-130,25,`${templateName(selectedTemplate)} · ${currency}`,7,muted,false);
   if(cmds.length)pages.push(cmds);
 
   const objects=[]; const addObj=o=>{objects.push(o);return objects.length;};
   const catalogId=addObj(null),pagesId=addObj(null),fontId=addObj("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"),fontBoldId=addObj("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
+  if(pdfLogoHex){pdfLogoObjId=addObj(`<< /Type /XObject /Subtype /Image /Width ${pdfLogoW} /Height ${pdfLogoH} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter [/ASCIIHexDecode /DCTDecode] /Length ${pdfLogoHex.length} >>\nstream\n${pdfLogoHex}\nendstream`);}
   const pageIds=[];
-  pages.forEach(pg=>{const stream=pg.join("\n");const streamId=addObj(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);const pageId=addObj(null);pageIds.push(pageId);objects[pageId-1]=`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 ${fontId} 0 R /F2 ${fontBoldId} 0 R >> >> /Contents ${streamId} 0 R >>`;});
+  pages.forEach(pg=>{const stream=pg.join("\n");const streamId=addObj(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);const pageId=addObj(null);pageIds.push(pageId);const xobj=pdfLogoObjId?` /XObject << /Im1 ${pdfLogoObjId} 0 R >>`:"";objects[pageId-1]=`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 ${fontId} 0 R /F2 ${fontBoldId} 0 R >>${xobj} >> /Contents ${streamId} 0 R >>`;});
   objects[pagesId-1]=`<< /Type /Pages /Count ${pageIds.length} /Kids [${pageIds.map(id=>id+" 0 R").join(" ")}] >>`;
   objects[catalogId-1]=`<< /Type /Catalog /Pages ${pagesId} 0 R >>`;
   let pdf="%PDF-1.4\n%\xFF\xFF\xFF\xFF\n";const offsets=[0];
@@ -1074,6 +1267,8 @@ async function finishGoogleLogin(result){
  document.getElementById("userPhoto").src=u.photoURL||"";
  try{await window.ARK.setDoc(window.ARK.doc(window.ARK.db,"users",u.uid),{uid:u.uid,name:u.displayName||"",email:u.email||"",photoURL:u.photoURL||"",lastLogin:window.ARK.serverTimestamp()},{merge:true});}catch(err){console.warn("User profile save skipped:",err.code||err.message);}
  try{await window.ARK.addDoc(window.ARK.collection(window.ARK.db,"events"),{event:"login",userId:u.uid,email:u.email||"",page:location.pathname,timestamp:window.ARK.serverTimestamp()});}catch(err){console.warn("Login event save skipped:",err.code||err.message);}
+ await loadBranding();
+ await loadClients();
 }
 
 document.getElementById("googleBtn").onclick=async()=>{
@@ -1103,15 +1298,32 @@ window.ARK.getRedirectResult(window.ARK.auth).then(async result=>{
  alert("Google sign-in redirect failed. "+(e.code?e.code+": ":"")+e.message);
 });
 
-window.ARK.onAuthStateChanged(window.ARK.auth,u=>{
+window.ARK.onAuthStateChanged(window.ARK.auth,async u=>{
  user=u;
  document.getElementById("loginBtn").classList.toggle("hidden",!!u);
  document.getElementById("logoutBtn").classList.toggle("hidden",!u);
  document.getElementById("userBox").style.display=u?"flex":"none";
- if(u){document.getElementById("userName").textContent=u.displayName||u.email||"Signed in";document.getElementById("userPhoto").src=u.photoURL||""}
+ if(u){document.getElementById("userName").textContent=u.displayName||u.email||"Signed in";document.getElementById("userPhoto").src=u.photoURL||"";await loadClients();}
+ else{clients=[];selectedClientId="";renderClientSelect();renderClientsList();}
 });
-document.getElementById("logoutBtn").onclick=()=>window.ARK.signOut(window.ARK.auth);
+document.getElementById("logoutBtn").onclick=async()=>{await window.ARK.signOut(window.ARK.auth);clients=[];selectedClientId="";renderClientSelect();renderClientsList();};
 
+// Client management UI
+const setActiveNav=id=>{document.querySelectorAll("[data-nav]").forEach(n=>n.classList.remove("active"));document.getElementById(id)?.classList.add("active");};
+document.getElementById("navClients")?.addEventListener("click",()=>{setActiveNav("navClients");openClientModal();});
+document.getElementById("navOverview")?.addEventListener("click",()=>{setActiveNav("navOverview");document.getElementById("templateGallery")?.scrollIntoView({behavior:"smooth",block:"start"});});
+document.getElementById("navReports")?.addEventListener("click",()=>{setActiveNav("navReports");openClientModal(); const c=selectedClient(); if(c)loadClientHistory(c.id);});
+document.getElementById("navTemplates")?.addEventListener("click",()=>{setActiveNav("navTemplates");document.getElementById("templateGallery")?.scrollIntoView({behavior:"smooth",block:"start"});});
+document.getElementById("navBranding")?.addEventListener("click",()=>{setActiveNav("navBranding");setTimeout(()=>document.getElementById("brandingPanel")?.scrollIntoView({behavior:"smooth",block:"start"}),20);});
+document.getElementById("saveBrandingBtn")?.addEventListener("click",saveBranding);
+document.getElementById("removeBrandingLogoBtn")?.addEventListener("click",removeBrandLogo);
+document.getElementById("brandingLogoInput")?.addEventListener("change",e=>readBrandLogo(e.target.files?.[0]));
+loadLocalBranding();
+document.getElementById("closeClientModal")?.addEventListener("click",hideClientModal);
+document.getElementById("addClientBtn")?.addEventListener("click",addClient);
+document.getElementById("clientSelect")?.addEventListener("change",e=>selectClient(e.target.value,false));
+document.getElementById("saveClientReportBtn")?.addEventListener("click",()=>saveCurrentReportToClient(true));
+document.getElementById("clientModal")?.addEventListener("click",e=>{if(e.target.id==="clientModal")hideClientModal();});
 // Do not auto-load demo data. Reports must always be generated from the user's uploaded CSV unless Demo Data is explicitly clicked.
 document.getElementById("fileStatus").textContent="No report loaded — choose a CSV file or click Demo Data";
 const uploadNameInit=document.getElementById("uploadFileName");
@@ -1129,7 +1341,7 @@ function buildClientEmail(){
  const currencyLabel=`${(CURRENCIES[selectedCurrency]||CURRENCIES.INR).code} ${(CURRENCIES[selectedCurrency]||CURRENCIES.INR).symbol}`;
  const campaigns=[...shareRows].sort((a,b)=>b.spend-a.spend).slice(0,5).map(x=>`• ${x.campaign} (${x.platform||"Custom"}): ${money(x.spend)} spend, ${x.leads.toLocaleString()} results, ${money(x.leads?x.spend/x.leads:0)} CPL`).join("\n");
  const revenueLine=revenueAvailable?`• Revenue: ${money(rev)}\n• ROAS: ${roas.toFixed(2)}x`:"";
- return {period,subject:`Agency Report Kit — Performance Report | ${period}`,body:`Hi,\n\nPlease find the latest performance report for ${period}.\n\nPERFORMANCE SUMMARY\n• Ad Spend: ${money(spend)} (${currencyLabel})\n• Results / Conversions: ${leads.toLocaleString()}\n• CPL: ${money(cpl)}${revenueLine?`\n${revenueLine}`:""}\n\nTOP CAMPAIGNS\n${campaigns || "No campaign data available."}\n\nThe report was prepared with Agency Report Kit.\n\nRegards`};
+ return {period,subject:`Agency Report Kit — Performance Report | ${period}`,body:`Hi,\n\nPlease find the latest performance report for ${period}.\n\nPERFORMANCE SUMMARY\n• Ad Spend: ${money(spend)} (${currencyLabel})\n• Results / Conversions: ${leads.toLocaleString()}\n• CPL: ${money(cpl)}${revenueLine?`\n${revenueLine}`:""}\n\nTOP CAMPAIGNS\n${campaigns || "No campaign data available."}\n\nThe report was prepared with ${branding.companyName||"Agency Report Kit"}.\n\nRegards`};
 }
 document.getElementById("shareClientBtn").onclick=async()=>{
  const data=buildClientEmail(); if(!data)return;
@@ -1152,11 +1364,12 @@ document.getElementById("shareClientBtn").onclick=async()=>{
  }
 };
 
-let selectedTemplate=localStorage.getItem("ark_template")||"executive";
+let selectedTemplate=safeStorage.getItem("ark_template")||"executive";
+applyBrandingUI();
 function templateName(v){return ({executive:"Executive Overview",multiplatform:"Multi-Platform Performance",leadgen:"Lead Generation",ecommerce:"E-commerce ROAS",deepdive:"Performance Deep Dive"}[v]||"Executive Overview");}
 function applyTemplate(v){
   selectedTemplate=v||"executive";
-  localStorage.setItem("ark_template",selectedTemplate);
+  safeStorage.setItem("ark_template",selectedTemplate);
   const sel=document.getElementById("templateSelect");
   if(sel) sel.value=selectedTemplate;
   document.querySelectorAll(".templateCard").forEach(card=>{
@@ -1187,7 +1400,7 @@ function applyTemplate(v){
   }
   updatePrintHeader();
 }
-function updatePrintHeader(){const el=document.getElementById("printMeta");if(el)el.textContent=`${templateName(selectedTemplate)} · ${document.getElementById("periodRange")?.textContent||""} · ${document.getElementById("currencyLabel")?.textContent||""}`;const t=document.getElementById("printTitle");if(t)t.textContent=templateName(selectedTemplate);}
+function updatePrintHeader(){const el=document.getElementById("printMeta");if(el)el.textContent=`${templateName(selectedTemplate)} · ${document.getElementById("periodRange")?.textContent||""} · ${document.getElementById("currencyLabel")?.textContent||""}`;const t=document.getElementById("printTitle");if(t)t.textContent=templateName(selectedTemplate);const n=document.getElementById("printBrandName");if(n)n.textContent=(branding.companyName||"Agency Report Kit").toUpperCase();const tg=document.getElementById("printBrandTagline");if(tg)tg.textContent=branding.tagline||"Performance Marketing Reporting";}
 function templatePreviewTitle(){
   return ({executive:"Executive Overview",multiplatform:"Multi-Platform Performance",leadgen:"Lead Generation",ecommerce:"E-commerce ROAS",deepdive:"Performance Deep Dive"}[selectedTemplate]||"Executive Overview");
 }
@@ -1217,7 +1430,7 @@ function showTemplatePreview(){
     if(selectedTemplate==="leadgen"){focusTitle="Lead generation snapshot";left=`<div class="tpPanel"><h4>Funnel</h4><div class="tpSummary">${esc(funnel.replace(/\s+/g," ").slice(0,420) || `Impressions ${m.imp.toLocaleString()} · Clicks ${m.clicks.toLocaleString()} · Results ${m.leads.toLocaleString()} · CPL ${money(m.cpl)}`)}</div></div>`;}
     if(selectedTemplate==="ecommerce"){focusTitle="Revenue & profitability";left=`<div class="tpPanel"><h4>Profitability</h4><div class="tpSummary">Spend ${money(m.spend)} · Revenue ${m.revenueAvailable?money(m.rev):"Not available"} · ROAS ${m.revenueAvailable?m.roas.toFixed(2)+"x":"Not available"}</div></div>`;}
     if(selectedTemplate==="deepdive"){focusTitle="Deep-dive campaign view";left=`<div class="tpPanel"><h4>Campaign detail</h4><table class="tpTable"><thead><tr><th>Campaign</th><th>Spend</th><th>Results</th><th>CPL</th><th>ROAS</th></tr></thead><tbody>${rows}</tbody></table></div>`;}
-    body.innerHTML=`<div class="tpHead"><div class="tpEyebrow">Agency Report Kit · ${esc(focusTitle)}</div><div class="tpTitle">${esc(templatePreviewTitle())}</div><div class="tpMeta">${esc(period)} · ${esc(currency)} · ${current.length} rows analyzed</div></div><div class="tpGrid4"><div class="tpKpi"><small>Ad Spend</small><strong>${money(m.spend)}</strong><span>${currency}</span></div><div class="tpKpi"><small>Results</small><strong>${m.leads.toLocaleString()}</strong><span>Conversions / leads</span></div><div class="tpKpi"><small>CPL</small><strong>${money(m.cpl)}</strong><span>Blended</span></div><div class="tpKpi"><small>ROAS</small><strong>${m.revenueAvailable?m.roas.toFixed(2)+"x":"—"}</strong><span>${m.revenueAvailable?"Revenue-based":"Revenue not in source"}</span></div></div><div class="tpCols">${left}${right}</div><div class="tpPanel"><h4>Top campaigns · actual uploaded data</h4><table class="tpTable"><thead><tr><th>Campaign</th><th>Spend</th><th>Results</th><th>CPL</th><th>ROAS</th></tr></thead><tbody>${rows||'<tr><td colspan="5">No campaign rows available.</td></tr>'}</tbody></table></div><div class="tpCols" style="margin-top:14px"><div class="tpPanel"><h4>Next actions</h4><div class="tpList">${actionItems||'<div class="tpItem"><strong>Generate report</strong><span>Your next actions will appear here after analysis.</span></div>'}</div></div><div class="tpPanel"><h4>Template mode</h4><div class="tpSummary">This preview uses the selected template while preserving the same underlying uploaded data and report controls.</div><div style="margin-top:10px"><span class="tpTag">✓ ${esc(templatePreviewTitle())} active</span></div></div></div><div class="tpFooter">Preview uses the current report data; export/share uses the same dataset.</div>`;
+    body.innerHTML=`<div class="tpHead"><div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:9px;background:#fff;display:grid;place-items:center;overflow:hidden;color:#5546dc;font-weight:900;flex:0 0 auto">${branding.logoData?`<img src="${branding.logoData}" alt="" style="width:100%;height:100%;object-fit:contain">`:`${esc(initialsForBrand(branding.companyName))}`}</div><div><div class="tpEyebrow">${esc(branding.companyName)} · ${esc(focusTitle)}</div><div class="tpTitle">${esc(templatePreviewTitle())}</div></div></div><div class="tpMeta">${esc(branding.tagline)} · ${esc(period)} · ${esc(currency)} · ${current.length} rows analyzed</div></div><div class="tpGrid4"><div class="tpKpi"><small>Ad Spend</small><strong>${money(m.spend)}</strong><span>${currency}</span></div><div class="tpKpi"><small>Results</small><strong>${m.leads.toLocaleString()}</strong><span>Conversions / leads</span></div><div class="tpKpi"><small>CPL</small><strong>${money(m.cpl)}</strong><span>Blended</span></div><div class="tpKpi"><small>ROAS</small><strong>${m.revenueAvailable?m.roas.toFixed(2)+"x":"—"}</strong><span>${m.revenueAvailable?"Revenue-based":"Revenue not in source"}</span></div></div><div class="tpCols">${left}${right}</div><div class="tpPanel"><h4>Top campaigns · actual uploaded data</h4><table class="tpTable"><thead><tr><th>Campaign</th><th>Spend</th><th>Results</th><th>CPL</th><th>ROAS</th></tr></thead><tbody>${rows||'<tr><td colspan="5">No campaign rows available.</td></tr>'}</tbody></table></div><div class="tpCols" style="margin-top:14px"><div class="tpPanel"><h4>Next actions</h4><div class="tpList">${actionItems||'<div class="tpItem"><strong>Generate report</strong><span>Your next actions will appear here after analysis.</span></div>'}</div></div><div class="tpPanel"><h4>Template mode</h4><div class="tpSummary">This preview uses the selected template while preserving the same underlying uploaded data and report controls.</div><div style="margin-top:10px"><span class="tpTag">✓ ${esc(templatePreviewTitle())} active</span></div></div></div><div class="tpFooter">Preview uses the current report data; export/share uses the same dataset.</div>`;
   }
   modal.classList.add("open");
   modal.setAttribute("aria-hidden","false");
@@ -1288,6 +1501,8 @@ function initTemplates(){
  applyTemplate(selectedTemplate);
 }
 initTemplates();
+renderClientSelect();
+renderClientsList();
 </script>
 
 <div aria-hidden="true" class="templatePreviewModal" id="templatePreviewModal" role="dialog" aria-modal="true" aria-labelledby="templatePreviewTitle"><div class="templatePreviewDialog"><div class="templatePreviewTop"><div><h3 id="templatePreviewTitle">Template Preview</h3><p id="templatePreviewSub">Your current report data in this template.</p></div><div class="templatePreviewActions"><button class="templatePreviewAction primary" id="templateDownloadBtn" type="button">Download Report</button><button class="templatePreviewAction" id="templateShareBtn" type="button">Share PDF</button><button class="templatePreviewClose" id="templatePreviewClose" type="button">Close Preview</button></div></div><div class="templatePreviewBody" id="templatePreviewBody"></div></div></div>
