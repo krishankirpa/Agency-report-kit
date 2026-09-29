@@ -525,7 +525,7 @@ body{overflow-x:hidden}
 <div class="card"><div class="label">AD SPEND</div><div class="value" id="spend">—</div><div class="delta" id="spendDelta">Current period</div></div>
 <div class="card"><div class="label">RESULTS / CONVERSIONS</div><div class="value" id="leads">—</div><div class="delta" id="leadsDelta">Current period</div></div>
 <div class="card"><div class="label">CPL</div><div class="value" id="cpl">—</div><div class="delta" id="cplDelta">Current period</div></div>
-<div class="card"><div class="label">ROAS</div><div class="value" id="roas">—</div><div class="delta" id="roasDelta">Current period</div></div>
+<div class="card"><div class="label">ROAS</div><div class="value" id="roas">N/A</div><div class="delta" id="roasDelta">Revenue / ROAS data required</div></div>
 <div class="card"><div class="label">CTR</div><div class="value" id="ctr">—</div><div class="delta" id="ctrDelta">Current period</div></div>
 <div class="card"><div class="label">REVENUE</div><div class="value" id="revenue">—</div><div class="delta" id="revenueDelta">Current period</div></div>
 </div>
@@ -873,9 +873,9 @@ function metric(data){
  return {spend,leads,rev,imp,clicks,revenueAvailable,roasAvailable,roasSource:revenueAvailable?"revenue":(roasRows.length?"platform":null),roas,cpl:leads?spend/leads:0,ctr:imp?clicks/imp:0,cvr:clicks?leads/clicks:0};
 }
 function delta(curr,prev,invert=false){
- if(!prev) return {text:"No comparison",cls:"neutral"};
- if(!prev) return {text:"—",cls:"neutral"};
- const d=(curr-prev)/Math.abs(prev);
+ if(curr===null || curr===undefined || !Number.isFinite(Number(curr))) return {text:"Unavailable",cls:"neutral"};
+ if(prev===null || prev===undefined || !Number.isFinite(Number(prev)) || Number(prev)===0) return {text:"No comparison",cls:"neutral"};
+ const d=(Number(curr)-Number(prev))/Math.abs(Number(prev));
  const positive=invert?d<0:d>0;
  return {text:(d>=0?"↑ ":"↓ ")+Math.abs(d*100).toFixed(1)+"%",cls:positive?"up":"down"};
 }
@@ -1131,7 +1131,7 @@ function render(){
  document.getElementById("spend").textContent=money(m.spend);
  document.getElementById("leads").textContent=m.leads.toLocaleString();
  document.getElementById("cpl").textContent=money(m.cpl);
- document.getElementById("roas").textContent=m.roas===null?"—":m.roas.toFixed(2)+"x";
+ document.getElementById("roas").textContent=m.roasAvailable?m.roas.toFixed(2)+"x":"N/A";
  document.getElementById("ctr").textContent=pct(m.ctr);
  document.getElementById("revenue").textContent=m.revenueAvailable?money(m.rev):"—";
 
@@ -1208,7 +1208,7 @@ function renderCampaigns(m){
  const avg=m;
  document.getElementById("rows").innerHTML=current.map(x=>{
   const c=x.leads?x.spend/x.leads:0,r=rowRoas(x),ctr=x.imp?x.clicks/x.imp:0,s=campaignStatus(x,avg);
-  return `<tr><td><strong>${esc(x.campaign)}</strong></td><td>${money(x.spend)}</td><td>${x.leads.toLocaleString()}</td><td>${money(c)}</td><td>${pct(ctr)}</td><td>${avg.roasAvailable&&r!==null?r.toFixed(2)+"x":"—"}</td><td><span class="badge ${s[1]}">${s[0]}</span></td></tr>`;
+  return `<tr><td><strong>${esc(x.campaign)}</strong></td><td>${money(x.spend)}</td><td>${x.leads.toLocaleString()}</td><td>${money(c)}</td><td>${pct(ctr)}</td><td>${avg.roasAvailable&&r!==null?r.toFixed(2)+"x":"N/A"}</td><td><span class="badge ${s[1]}">${s[0]}</span></td></tr>`;
  }).join("");
 }
 function renderActions(m){
@@ -1545,7 +1545,7 @@ function buildTextPdfBlob(){
   const cols=[M, M+255, M+350, M+405, M+465];
   text(cols[0],y,"Campaign",7,muted,true); text(cols[1],y,"Spend",7,muted,true); text(cols[2],y,"Results",7,muted,true); text(cols[3],y,"CPL",7,muted,true); text(cols[4],y,"ROAS",7,muted,true); y-=8;
   pdfLine(M,y,W-M,y,line,.7); y-=12;
-  campaigns.slice(0,7).forEach(c=>{ensure(26);const cpl=c.leads?c.spend/c.leads:0;const roas=m.roasAvailable?rowRoas(c):null;text(M,y,String(c.campaign||"Campaign").slice(0,48),7.5,ink);text(cols[1],y,pdfMoney(c.spend),7.5,ink);text(cols[2],y,c.leads.toLocaleString(),7.5,ink);text(cols[3],y,pdfMoney(cpl),7.5,ink);text(cols[4],y,roas===null?"—":roas.toFixed(2)+"x",7.5,ink);pdfLine(M,y-5,W-M,y-5,line,.4);y-=18;});
+  campaigns.slice(0,7).forEach(c=>{ensure(26);const cpl=c.leads?c.spend/c.leads:0;const roas=m.roasAvailable?rowRoas(c):null;text(M,y,String(c.campaign||"Campaign").slice(0,48),7.5,ink);text(cols[1],y,pdfMoney(c.spend),7.5,ink);text(cols[2],y,c.leads.toLocaleString(),7.5,ink);text(cols[3],y,pdfMoney(cpl),7.5,ink);text(cols[4],y,roas===null?"N/A":roas.toFixed(2)+"x",7.5,ink);pdfLine(M,y-5,W-M,y-5,line,.4);y-=18;});
 
   // Insights and actions.
   if(insights.length){ensure(112);text(M,y,"KEY INSIGHTS",8,brand,true);y-=14;insights.forEach(it=>{ensure(27);text(M,y,"• "+it.title,8,ink,true);y=textWrap(M+10,y-11,it.text,7.5,96,muted,10,false)-6;});}
@@ -1814,22 +1814,74 @@ function showTemplatePreview(){
     const m=metric(current);
     const period=safeTextFromId("periodLabel",safeTextFromId("periodRange","Current reporting period"));
     const currency=(CURRENCIES[selectedCurrency]||CURRENCIES.INR).code;
-    const campaigns=[...current].sort((a,b)=>b.spend-a.spend).slice(0,5);
+    const campaigns=[...current].sort((a,b)=>b.spend-a.spend).slice(0,7);
     const actionsEl=document.getElementById("actions");
     const insightsEl=document.getElementById("insights");
     const summary=safeTextFromId("summaryText",`The account generated ${m.leads.toLocaleString()} results from ${money(m.spend)} spend.`);
     const actionItems=actionsEl?[...actionsEl.querySelectorAll(".action")].slice(0,3).map(x=>{const strong=x.querySelector("strong")?.textContent||"Action";const span=x.querySelector("span")?.textContent||"";return `<div class="tpItem"><strong>${esc(strong)}</strong><span>${esc(span)}</span></div>`}).join(""):"";
     const insightItems=insightsEl?[...insightsEl.querySelectorAll(".insight")].slice(0,3).map(x=>{const h=x.querySelector("h3")?.textContent||"Insight";const p=x.querySelector("p")?.textContent||"";return `<div class="tpItem"><strong>${esc(h)}</strong><span>${esc(p)}</span></div>`}).join(""):"";
-    const rows=campaigns.map(x=>{const c=x.leads?x.spend/x.leads:0;const r=rowRoas(x);return `<tr><td>${esc(x.campaign)}</td><td>${money(x.spend)}</td><td>${x.leads.toLocaleString()}</td><td>${money(c)}</td><td>${m.roasAvailable&&r!==null?r.toFixed(2)+"x":"—"}</td></tr>`}).join("");
-    const funnel=safeTextFromId("funnel","");
+    const roasValue=m.roasAvailable?m.roas.toFixed(2)+"x":"N/A";
+    const roasSource=m.roasAvailable?(m.roasSource==="platform"?"Platform-reported ROAS":"Revenue ÷ ad spend"):"Revenue or platform ROAS not supplied in source";
+    const campaignRows=campaigns.map(x=>{
+      const c=x.leads?x.spend/x.leads:0;
+      const r=rowRoas(x);
+      const rText=r!==null?r.toFixed(2)+"x":"N/A";
+      return `<tr><td>${esc(x.campaign)}</td><td>${money(x.spend)}</td><td>${x.leads.toLocaleString()}</td><td>${money(c)}</td><td>${rText}</td></tr>`;
+    }).join("");
+    const funnelRows=[
+      ["Impressions",m.imp.toLocaleString()],
+      ["Link clicks",m.clicks.toLocaleString()],
+      ["Results / conversions",m.leads.toLocaleString()],
+      ["CPL",money(m.cpl)]
+    ];
+    const platformGroups={};
+    current.forEach(x=>{const p=x.platform||"Custom";platformGroups[p]??={platform:p,spend:0,leads:0,revenue:0};platformGroups[p].spend+=x.spend;platformGroups[p].leads+=x.leads;platformGroups[p].revenue+=x.revenue;});
+    const platformRows=Object.values(platformGroups).sort((a,b)=>b.spend-a.spend).map(g=>{
+      const cpl=g.leads?g.spend/g.leads:0;
+      const r=g.spend>0&&g.revenue>0?g.revenue/g.spend:null;
+      return `<div class="tpItem"><strong>${esc(g.platform)}</strong><span>${money(g.spend)} spend · ${g.leads.toLocaleString()} results · ${money(cpl)} CPL · ROAS ${r!==null?r.toFixed(2)+"x":"N/A"}</span></div>`;
+    }).join("");
+    const contributionRows=campaigns.slice(0,6).map((x,i)=>{
+      const val=m.revenueAvailable?x.revenue:x.leads;
+      const total=current.reduce((a,r)=>a+(m.revenueAvailable?r.revenue:r.leads),0);
+      const share=total>0?(val/total)*100:0;
+      return `<div class="tpItem"><strong>${i+1}. ${esc(x.campaign)}</strong><span>${m.revenueAvailable?money(val):val.toLocaleString()} · ${share.toFixed(1)}% contribution · ROAS ${rowRoas(x)!==null?rowRoas(x).toFixed(2)+"x":"N/A"}</span></div>`;
+    }).join("");
+    const scaleRows=[...current].filter(x=>x.spend>0).sort((a,b)=>{
+      const ra=rowRoas(a),rb=rowRoas(b);
+      if(m.roasAvailable && ra!==null && rb!==null) return rb-ra;
+      const ca=a.leads?a.spend/a.leads:Infinity,cb=b.leads?b.spend/b.leads:Infinity;
+      return ca-cb;
+    }).slice(0,3).map(x=>{
+      const r=rowRoas(x); const c=x.leads?x.spend/x.leads:0;
+      return `<div class="tpItem"><strong>${esc(x.campaign)}</strong><span>${r!==null?`${r.toFixed(2)}x ROAS`:`${money(c)} CPL`} · ${money(x.spend)} spend · ${x.leads.toLocaleString()} results</span></div>`;
+    }).join("");
+    const commonRoaBlock=`<div class="tpPanel"><h4>ROAS</h4><div class="tpSummary"><strong style="font-size:22px;color:#111827">${roasValue}</strong><br><span>${esc(roasSource)}</span></div></div>`;
     let focusTitle="Executive snapshot";
-    let left=`<div class="tpPanel"><h4>Summary</h4><div class="tpSummary">${esc(summary)}</div></div>`;
-    let right=`<div class="tpPanel"><h4>Key insights</h4><div class="tpList">${insightItems||'<div class="tpItem"><strong>Data insight</strong><span>Current report data is loaded.</span></div>'}</div></div>`;
-    if(selectedTemplate==="multiplatform") focusTitle="Channel performance";
-    if(selectedTemplate==="leadgen"){focusTitle="Lead generation snapshot";left=`<div class="tpPanel"><h4>Funnel</h4><div class="tpSummary">${esc(funnel.replace(/\s+/g," ").slice(0,420) || `Impressions ${m.imp.toLocaleString()} · Clicks ${m.clicks.toLocaleString()} · Results ${m.leads.toLocaleString()} · CPL ${money(m.cpl)}`)}</div></div>`;}
-    if(selectedTemplate==="ecommerce"){focusTitle="Revenue & profitability";left=`<div class="tpPanel"><h4>Profitability</h4><div class="tpSummary">Spend ${money(m.spend)} · Revenue ${m.revenueAvailable?money(m.rev):"Not available"} · ROAS ${m.roasAvailable?m.roas.toFixed(2)+"x":"Not available"}</div></div>`;}
-    if(selectedTemplate==="deepdive"){focusTitle="Deep-dive campaign view";left=`<div class="tpPanel"><h4>Campaign detail</h4><table class="tpTable"><thead><tr><th>Campaign</th><th>Spend</th><th>Results</th><th>CPL</th><th>ROAS</th></tr></thead><tbody>${rows}</tbody></table></div>`;}
-    body.innerHTML=`<div class="tpHead"><div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:9px;background:#fff;display:grid;place-items:center;overflow:hidden;color:#5546dc;font-weight:900;flex:0 0 auto">${branding.logoData?`<img src="${branding.logoData}" alt="" style="width:100%;height:100%;object-fit:contain">`:`${esc(initialsForBrand(branding.companyName))}`}</div><div><div class="tpEyebrow">${esc(branding.companyName)} · ${esc(focusTitle)}</div><div class="tpTitle">${esc(templatePreviewTitle())}</div></div></div><div class="tpMeta">${esc(branding.tagline)} · ${esc(period)} · ${esc(currency)} · ${current.length} rows analyzed</div></div><div class="tpGrid4"><div class="tpKpi"><small>Ad Spend</small><strong>${money(m.spend)}</strong><span>${currency}</span></div><div class="tpKpi"><small>Results</small><strong>${m.leads.toLocaleString()}</strong><span>Conversions / leads</span></div><div class="tpKpi"><small>CPL</small><strong>${money(m.cpl)}</strong><span>Blended</span></div><div class="tpKpi"><small>ROAS</small><strong>${m.roasAvailable?m.roas.toFixed(2)+"x":"—"}</strong><span>${m.roasAvailable?(m.roasSource==="platform"?"Platform-reported":"Revenue / spend"):"ROAS not in source"}</span></div></div><div class="tpCols">${left}${right}</div><div class="tpPanel"><h4>Top campaigns · actual uploaded data</h4><table class="tpTable"><thead><tr><th>Campaign</th><th>Spend</th><th>Results</th><th>CPL</th><th>ROAS</th></tr></thead><tbody>${rows||'<tr><td colspan="5">No campaign rows available.</td></tr>'}</tbody></table></div><div class="tpCols" style="margin-top:14px"><div class="tpPanel"><h4>Next actions</h4><div class="tpList">${actionItems||'<div class="tpItem"><strong>Generate report</strong><span>Your next actions will appear here after analysis.</span></div>'}</div></div><div class="tpPanel"><h4>Template mode</h4><div class="tpSummary">This preview uses the selected template while preserving the same underlying uploaded data and report controls.</div><div style="margin-top:10px"><span class="tpTag">✓ ${esc(templatePreviewTitle())} active</span></div></div></div><div class="tpFooter">Preview uses the current report data; export/share uses the same dataset.</div>`;
+    let left="";
+    let right="";
+    if(selectedTemplate==="executive"){
+      focusTitle="Executive overview";
+      left=`<div class="tpPanel"><h4>Executive summary</h4><div class="tpSummary">${esc(summary)}</div></div>`;
+      right=`<div class="tpPanel"><h4>Key insights</h4><div class="tpList">${insightItems||'<div class="tpItem"><strong>Data loaded</strong><span>Your current-period data is ready.</span></div>'}</div></div>`;
+    }else if(selectedTemplate==="multiplatform"){
+      focusTitle="Multi-platform performance";
+      left=`<div class="tpPanel"><h4>Platform breakdown</h4><div class="tpList">${platformRows||'<div class="tpItem"><strong>No platform breakdown</strong><span>Platform information was not present in the upload.</span></div>'}</div></div>`;
+      right=`<div class="tpPanel"><h4>Contribution mix</h4><div class="tpList">${contributionRows||'<div class="tpItem"><strong>No contribution data</strong><span>There is not enough source data for contribution analysis.</span></div>'}</div></div>`;
+    }else if(selectedTemplate==="leadgen"){
+      focusTitle="Lead generation snapshot";
+      left=`<div class="tpPanel"><h4>Acquisition funnel</h4><div class="tpGrid4">${funnelRows.map(f=>`<div class="tpKpi"><small>${esc(f[0])}</small><strong>${esc(f[1])}</strong></div>`).join("")}</div><div class="tpSummary">CPL is calculated from total ad spend divided by total results for this report period.</div></div>`;
+      right=`<div class="tpPanel"><h4>Lead efficiency</h4><div class="tpList">${campaigns.slice(0,5).map(x=>`<div class="tpItem"><strong>${esc(x.campaign)}</strong><span>${x.leads.toLocaleString()} results · ${money(x.leads?x.spend/x.leads:0)} CPL · ROAS ${rowRoas(x)!==null?rowRoas(x).toFixed(2)+"x":"N/A"}</span></div>`).join("")}</div></div>`;
+    }else if(selectedTemplate==="ecommerce"){
+      focusTitle="E-commerce profitability";
+      left=`<div class="tpPanel"><h4>Revenue & profitability</h4><div class="tpGrid4"><div class="tpKpi"><small>Revenue</small><strong>${m.revenueAvailable?money(m.rev):"N/A"}</strong><span>${m.revenueAvailable?"Source revenue":"Revenue not supplied"}</span></div><div class="tpKpi"><small>ROAS</small><strong>${roasValue}</strong><span>${m.roasAvailable?"Calculated / reported": "Needs revenue or ROAS field"}</span></div><div class="tpKpi"><small>Spend</small><strong>${money(m.spend)}</strong><span>${currency}</span></div><div class="tpKpi"><small>Results</small><strong>${m.leads.toLocaleString()}</strong><span>Conversions</span></div></div></div>`;
+      right=`<div class="tpPanel"><h4>Revenue contribution</h4><div class="tpList">${m.revenueAvailable?contributionRows:'<div class="tpItem"><strong>Revenue data required</strong><span>Add a revenue / conversion value column to calculate true revenue contribution and ROAS.</span></div>'}</div></div>`;
+    }else{
+      focusTitle="Performance deep dive";
+      left=`<div class="tpPanel"><h4>Campaign detail</h4><table class="tpTable"><thead><tr><th>Campaign</th><th>Spend</th><th>Results</th><th>CPL</th><th>ROAS</th></tr></thead><tbody>${campaignRows||'<tr><td colspan="5">No campaign rows available.</td></tr>'}</tbody></table></div>`;
+      right=`<div class="tpPanel"><h4>Scale / watchlist</h4><div class="tpList">${scaleRows||'<div class="tpItem"><strong>No scale signals</strong><span>Load campaign data to generate this section.</span></div>'}</div></div>`;
+    }
+    body.innerHTML=`<div class="tpHead"><div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:9px;background:#fff;display:grid;place-items:center;overflow:hidden;color:#5546dc;font-weight:900;flex:0 0 auto">${branding.logoData?`<img src="${branding.logoData}" alt="" style="width:100%;height:100%;object-fit:contain">`:`${esc(initialsForBrand(branding.companyName))}`}</div><div><div class="tpEyebrow">${esc(branding.companyName)} · ${esc(focusTitle)}</div><div class="tpTitle">${esc(templatePreviewTitle())}</div></div></div><div class="tpMeta">${esc(branding.tagline)} · ${esc(period)} · ${esc(currency)} · ${current.length} rows analyzed</div></div><div class="tpGrid4"><div class="tpKpi"><small>Ad Spend</small><strong>${money(m.spend)}</strong><span>${currency}</span></div><div class="tpKpi"><small>Results</small><strong>${m.leads.toLocaleString()}</strong><span>Conversions / leads</span></div><div class="tpKpi"><small>CPL</small><strong>${money(m.cpl)}</strong><span>Blended</span></div><div class="tpKpi"><small>ROAS</small><strong>${roasValue}</strong><span>${esc(roasSource)}</span></div></div><div class="tpCols">${left}${right}</div>${commonRoaBlock}<div class="tpPanel" style="margin-top:14px"><h4>Top campaigns · actual uploaded data</h4><table class="tpTable"><thead><tr><th>Campaign</th><th>Spend</th><th>Results</th><th>CPL</th><th>ROAS</th></tr></thead><tbody>${campaignRows||'<tr><td colspan="5">No campaign rows available.</td></tr>'}</tbody></table></div><div class="tpCols" style="margin-top:14px"><div class="tpPanel"><h4>Next actions</h4><div class="tpList">${actionItems||'<div class="tpItem"><strong>Generate report</strong><span>Your next actions will appear here after analysis.</span></div>'}</div></div><div class="tpPanel"><h4>Template mode</h4><div class="tpSummary">${esc(templatePreviewTitle())} uses the same uploaded dataset but emphasizes a different reporting workflow.</div><div style="margin-top:10px"><span class="tpTag">✓ ${esc(templatePreviewTitle())} active</span></div></div></div><div class="tpFooter">Preview uses the current report data; export/share uses the same dataset. ROAS is never inferred from result counts.</div>`;
   }
   modal.classList.add("open");
   modal.setAttribute("aria-hidden","false");
