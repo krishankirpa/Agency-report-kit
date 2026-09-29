@@ -839,22 +839,37 @@ function numericProvided(v){
  const value=n(s);
  return Number.isFinite(value);
 }
+function normalizeRoasValue(raw){
+ const s=String(raw??"").trim();
+ if(!s || /^(?:-|—|–|n\/a|na|null)$/i.test(s)) return null;
+ const value=n(s);
+ if(!Number.isFinite(value)) return null;
+ // Some exports express ROAS as a percentage (e.g. 350%). Convert to 3.50x.
+ if(/%/.test(s)) return value/100;
+ return value;
+}
 function rowRoas(x){
- if(x && x.spend>0){
-   if(x.roasProvided && Number.isFinite(x.roasDirect)) return x.roasDirect;
-   if(x.revenueProvided && Number.isFinite(x.revenue)) return x.revenue/x.spend;
- }
+ if(!x || x.spend<=0) return null;
+ // When both revenue and spend exist, revenue/spend is the canonical calculation.
+ if(x.revenueProvided && Number.isFinite(x.revenue)) return x.revenue/x.spend;
+ if(x.roasProvided && Number.isFinite(x.roasDirect)) return x.roasDirect;
  return null;
 }
 function metric(data){
  const spend=data.reduce((a,x)=>a+x.spend,0), leads=data.reduce((a,x)=>a+x.leads,0);
- const revenueRows=data.filter(x=>x.revenueProvided);
- const roasRows=data.filter(x=>x.roasProvided && x.spend>0);
+ const revenueRows=data.filter(x=>x.revenueProvided && x.spend>=0);
+ const roasRows=data.filter(x=>x.roasProvided && x.spend>0 && Number.isFinite(x.roasDirect));
  const rev=revenueRows.reduce((a,x)=>a+x.revenue,0);
  const imp=data.reduce((a,x)=>a+x.imp,0), clicks=data.reduce((a,x)=>a+x.clicks,0);
- const revenueAvailable=revenueRows.length>0;
- const roasAvailable=spend>0 && (revenueAvailable || roasRows.length>0);
- const roas=revenueAvailable ? rev/spend : (roasRows.length ? roasRows.reduce((a,x)=>a+(x.spend*x.roasDirect),0)/spend : null);
+ const revenueAvailable=revenueRows.length>0 && revenueRows.some(x=>Number.isFinite(x.revenue));
+ // Canonical ROAS formula: total revenue divided by total ad spend for the same report scope.
+ // Do not divide by only the rows that happen to contain a populated revenue value.
+ const revenueSpend=spend;
+ const roasAvailable=spend>0 && (revenueAvailable ? rev>=0 : roasRows.length>0);
+ const weightedRoasSpend=roasRows.reduce((a,x)=>a+x.spend,0);
+ const roas=revenueAvailable && spend>0
+   ? rev/spend
+   : (weightedRoasSpend>0 ? roasRows.reduce((a,x)=>a+(x.spend*x.roasDirect),0)/weightedRoasSpend : null);
  return {spend,leads,rev,imp,clicks,revenueAvailable,roasAvailable,roasSource:revenueAvailable?"revenue":(roasRows.length?"platform":null),roas,cpl:leads?spend/leads:0,ctr:imp?clicks/imp:0,cvr:clicks?leads/clicks:0};
 }
 function delta(curr,prev,invert=false){
@@ -917,8 +932,8 @@ function parseRows(data,sourceHint){
    leads:n(x[5]),
    revenue:n(x[6]),
    revenueProvided:numericProvided(x[6]),
-   roasDirect:n(x[9]),
-   roasProvided:numericProvided(x[9]),
+   roasDirect:normalizeRoasValue(x[9]),
+   roasProvided:normalizeRoasValue(x[9])!==null,
    platform:normalizePlatform(x[7],x[1],sourceHint)
  }));
 }
@@ -1118,7 +1133,7 @@ function render(){
  document.getElementById("cpl").textContent=money(m.cpl);
  document.getElementById("roas").textContent=m.roas===null?"—":m.roas.toFixed(2)+"x";
  document.getElementById("ctr").textContent=pct(m.ctr);
- document.getElementById("revenue").textContent=money(m.rev);
+ document.getElementById("revenue").textContent=m.revenueAvailable?money(m.rev):"—";
 
  const ds=[["spendDelta",m.spend,p.spend,false],["leadsDelta",m.leads,p.leads,false],["cplDelta",m.cpl,p.cpl,true],["roasDelta",m.roas,p.roas,false],["ctrDelta",m.ctr,p.ctr,false],["revenueDelta",m.rev,p.rev,false]];
  ds.forEach(([id,a,b,inv])=>{const el=document.getElementById(id),d=delta(a,b,inv);el.textContent=d.text+(b?" vs previous period":"");el.className="delta "+d.cls});
