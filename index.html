@@ -155,6 +155,194 @@
   .controlRow .currencyControl{width:100%;}
   .controlRow .currencyControl select{max-width:none;flex:1;}
 }
+
+/* Responsive QA pass: desktop, tablet and mobile layout consistency */
+html{scroll-behavior:smooth}
+*,*::before,*::after{box-sizing:border-box}
+body{overflow-x:hidden}
+.nav{min-height:66px;gap:14px;padding-inline:clamp(14px,4vw,56px)}
+.nav .brand{min-width:0}
+.nav .brand span{min-width:0}
+.navright{min-width:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.navright .btn{white-space:nowrap}
+.hero{width:100%;max-width:1450px}
+.hero h1{max-width:980px;text-wrap:balance}
+.hero p{max-width:760px}
+.workspace{width:100%;max-width:1450px}
+.app{width:100%;min-width:0}
+.content{min-width:0;width:100%}
+.head,.tools,.controlRow,.actionRow,.periodbar,.periodcontrols,.quickStart,.quickSteps,.templateGrid,.cards,.executive,.two,.platformgrid,.faqHeader,.faqGrid,.brandingGrid,.brandingFields{min-width:0}
+.headIntro{min-width:0}
+.headIntro h2{overflow-wrap:anywhere;word-break:normal}
+.headIntro p{overflow-wrap:anywhere}
+.controlRow,.actionRow{min-width:0}
+.controlRow>* ,.actionRow>*{min-width:0}
+.currencyControl{min-width:0}
+.currencyControl select{min-width:0;width:auto}
+.actionGroup{min-width:0}
+.actionGroup .btn,.actionGroup .uploadBtn{min-width:0}
+.quickStartIntro{min-width:0}
+.quickStep{min-width:0}
+.quickStep b,.quickStep small{overflow-wrap:anywhere}
+.tablewrap{-webkit-overflow-scrolling:touch}
+.table{min-width:680px}
+.chart,.chartwrap,.contributionChartWrap,.profitbar,.platformlist,.donutWrap{min-width:0;max-width:100%;overflow:hidden}
+.card,.panel,.section{min-width:0}
+.templateCard{min-width:0}
+.templatePreview{width:100%;object-fit:cover}
+.faqSection{width:100%;max-width:1200px}
+.faqHeader>div{min-width:0}
+.faqHeader h2{overflow-wrap:anywhere}
+.faqHeader p{min-width:0}
+.faqCta{min-width:0}
+.faqCta>div{min-width:0}
+
+/* Large desktop */
+@media (min-width:1200px){
+  .workspace{margin-top:24px}
+  .content{padding:28px}
+  .head{grid-template-columns:minmax(280px,.9fr) minmax(520px,1.35fr);align-items:start}
+  .head{display:grid}
+  .tools{width:100%}
+  .controlRow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .actionRow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .actionGroup{align-content:start}
+  .cards{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .templateGrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+
+/* Tablet: 768–1199px */
+@media (min-width:768px) and (max-width:1199px){
+  .nav{padding-inline:22px}
+  .navright{gap:6px}
+  .workspace{padding-inline:14px;margin-top:18px}
+  .app{display:block;overflow:visible}
+  .sidebar{position:static;display:flex;align-items:center;gap:6px;overflow-x:auto;overflow-y:hidden;height:auto;padding:8px 10px;border-right:0;border-bottom:1px solid var(--line);background:#fcfcfe;scrollbar-width:thin}
+  .sidebarBrand,.sidebarLabel,.sidebarTip{display:none}
+  .sidebar .navitem{flex:0 0 auto;min-width:112px;margin:0;padding:8px 10px;justify-content:flex-start}
+  .sidebar .navitem span:last-child{display:block}
+  .sidebar .navitem b{font-size:10px}
+  .sidebar .navitem small{font-size:8px}
+  .content{padding:20px}
+  .head{display:flex;flex-direction:column;align-items:stretch;gap:14px}
+  .headIntro{width:100%}
+  .headIntro h2{font-size:30px;max-width:780px}
+  .tools{width:100%}
+  .controlRow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .controlRow .currencyControl{width:100%}
+  .actionRow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .actionGroup{width:100%;align-items:stretch}
+  .actionGroup .btn,.actionGroup .uploadBtn{flex:1 1 calc(50% - 18px);min-height:38px}
+  .quickStart{flex-direction:column;align-items:stretch}
+  .quickStartIntro{width:100%}
+  .quickSteps{grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+  .cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .executive,.two,.platformgrid{grid-template-columns:1fr 1fr}
+  .scalegrid{grid-template-columns:1fr 1fr}
+  .templateGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .brandingGrid{grid-template-columns:1fr 1fr}
+  .brandingFields{grid-template-columns:1fr}
+  .periodbar{align-items:flex-start;flex-direction:column}
+  .periodcontrols{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .periodcontrols .btn,.periodcontrols .periodselect{width:100%;white-space:normal;min-height:38px}
+  .contributionPanel{grid-template-columns:minmax(0,1.1fr) minmax(180px,.9fr)}
+  .faqHeader{align-items:flex-start}
+  .faqGrid{grid-template-columns:1fr 1fr}
+}
+
+/* Mobile: up to 767px */
+@media (max-width:767px){
+  .nav{padding:10px 12px;min-height:58px;gap:8px}
+  .nav .brand{font-size:12px}
+  .navright .btn{padding:8px 10px;font-size:10px}
+  .hero{padding:28px 12px 4px}
+  .heroTopline{gap:6px}
+  .hero h1{font-size:clamp(34px,11vw,48px);line-height:.97;letter-spacing:-.05em}
+  .hero p{font-size:14px;line-height:1.5}
+  .heroChips{gap:6px}
+  .heroChips span,.heroChipLink{font-size:9px;padding:7px 9px}
+  .workspace{padding-inline:8px;margin-top:14px}
+  .app{display:block;overflow:visible;border-radius:16px}
+  .sidebar{position:static;display:flex;align-items:stretch;gap:6px;overflow-x:auto;overflow-y:hidden;height:auto;padding:8px;background:#fcfcfe;border-right:0;border-bottom:1px solid var(--line);scrollbar-width:none}
+  .sidebar::-webkit-scrollbar{display:none}
+  .sidebarBrand,.sidebarLabel,.sidebarTip{display:none}
+  .sidebar .navitem{flex:0 0 82px;min-width:82px;min-height:48px;margin:0;padding:7px 5px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;text-align:center}
+  .sidebar .navitem span:last-child{display:none}
+  .navIcon{width:29px;height:29px}
+  .content{padding:12px}
+  .head{padding:14px;border-radius:14px;display:flex;flex-direction:column;align-items:stretch;gap:12px}
+  .headIntro h2{font-size:25px;line-height:1.08;max-width:100%}
+  .headIntro p{font-size:11px;line-height:1.55}
+  .workspaceMeta{gap:6px}
+  .tools{width:100%}
+  .controlRow{display:grid;grid-template-columns:1fr;gap:8px}
+  .controlRow .currencyControl{width:100%;min-height:40px}
+  .controlRow .currencyControl label{font-size:9px}
+  .controlRow .currencyControl select{width:100%;max-width:none;flex:1;min-width:0}
+  .actionRow{display:grid;grid-template-columns:1fr;gap:8px}
+  .actionGroup{width:100%;padding:8px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .actionGroupLabel{grid-column:1/-1}
+  .actionGroup .btn,.actionGroup .uploadBtn{width:100%;min-height:40px;display:flex;align-items:center;justify-content:center;padding:9px 8px;font-size:11px;white-space:normal;text-align:center}
+  .shareHint{display:block;font-size:9px;line-height:1.4}
+  .quickStart{flex-direction:column;align-items:stretch;padding:10px}
+  .quickStartIntro{width:100%;min-width:0}
+  .quickSteps{grid-template-columns:1fr 1fr;gap:6px;width:100%}
+  .quickStep{padding:8px}
+  .quickStep b{font-size:9px}
+  .quickStep small{font-size:7px}
+  .periodbar{padding:12px;align-items:stretch;flex-direction:column}
+  .periodcontrols{display:grid;grid-template-columns:1fr 1fr;gap:7px;width:100%}
+  .periodcontrols .btn,.periodcontrols .periodselect{min-height:38px;width:100%;white-space:normal;font-size:10px;padding:8px}
+  .cards{grid-template-columns:1fr 1fr;gap:8px}
+  .card{padding:12px}
+  .card .value{font-size:21px}
+  .executive,.two,.platformgrid,.brandingGrid,.brandingFields{grid-template-columns:1fr}
+  .scalegrid{grid-template-columns:1fr}
+  .mix{grid-template-columns:1fr}
+  .platformrow,.profitrow{grid-template-columns:78px minmax(0,1fr) 60px}
+  .contributionPanel{grid-template-columns:1fr;padding:10px;min-height:0}
+  .contributionChartWrap{min-height:240px}
+  .templateGallery{padding:12px}
+  .templateGrid{grid-template-columns:1fr;gap:10px}
+  .templatePreview{height:150px}
+  .templatePreviewActions{flex-wrap:wrap}
+  .templatePreviewAction{flex:1 1 120px}
+  .brandingPanel{padding:12px}
+  .brandingLogoRow{flex-direction:column;align-items:stretch}
+  .brandingLogoMini{margin-left:auto}
+  .clientControl{min-width:0;width:100%}
+  .clientModalBox{width:calc(100vw - 20px);max-height:90vh;padding:14px}
+  .clientModalHeader{gap:10px}
+  .clientFormGrid{grid-template-columns:1fr}
+  .clientCard{grid-template-columns:1fr}
+  .clientActions{justify-content:flex-start}
+  .historyItem{align-items:flex-start;flex-direction:column}
+  .historyMetrics{text-align:left}
+  .faqSection{padding-inline:12px;margin-top:42px;margin-bottom:46px}
+  .faqHeader{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+  .faqHeader h2{font-size:30px;line-height:1.02}
+  .faqHeader p{font-size:12px;line-height:1.55}
+  .faqGrid{grid-template-columns:1fr;gap:9px}
+  .faqQuestion{padding:14px;font-size:13px}
+  .faqAnswer{padding:0 14px 14px;font-size:11px}
+  .faqCta{padding:16px;gap:12px}
+  .faqCta .btn{width:100%}
+  .tablewrap{overflow-x:auto}
+  .table{min-width:620px}
+}
+
+@media (max-width:360px){
+  .nav .brand{font-size:11px}
+  .navLogoImg{width:30px;height:30px;flex-basis:30px}
+  .navright .btn{padding:7px 8px;font-size:9px}
+  .hero h1{font-size:31px}
+  .sidebar .navitem{flex-basis:72px;min-width:72px}
+  .cards{grid-template-columns:1fr}
+  .periodcontrols{grid-template-columns:1fr}
+  .actionGroup{grid-template-columns:1fr}
+  .actionGroupLabel{grid-column:auto}
+}
+
 </style>
 </head>
 <body>
@@ -449,17 +637,32 @@
 </div>
 <script>
 
-(function initFAQ(){
-  document.querySelectorAll('.faqQuestion').forEach(btn=>btn.addEventListener('click',()=>{
-    const item=btn.closest('.faqItem');
-    const open=!item.classList.contains('open');
-    item.classList.toggle('open',open);
-    btn.setAttribute('aria-expanded',String(open));
-  }));
-  document.getElementById('faqGoWorkspace')?.addEventListener('click',()=>{
-    document.querySelector('.workspace')?.scrollIntoView({behavior:'smooth',block:'start'});
+function initFAQ(){
+  document.querySelectorAll('.faqQuestion').forEach(btn=>{
+    if(btn.dataset.faqBound==='1') return;
+    btn.dataset.faqBound='1';
+    btn.addEventListener('click',()=>{
+      const item=btn.closest('.faqItem');
+      if(!item) return;
+      const open=!item.classList.contains('open');
+      item.classList.toggle('open',open);
+      btn.setAttribute('aria-expanded',String(open));
+    });
   });
-})();
+  const workspaceBtn=document.getElementById('faqGoWorkspace');
+  if(workspaceBtn && workspaceBtn.dataset.faqBound!=='1'){
+    workspaceBtn.dataset.faqBound='1';
+    workspaceBtn.addEventListener('click',()=>{
+      document.querySelector('.workspace')?.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+  }
+}
+
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',initFAQ,{once:true});
+}else{
+  initFAQ();
+}
 
 </script>
 <script type="module">
