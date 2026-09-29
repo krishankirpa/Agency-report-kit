@@ -131,6 +131,31 @@
     }
   ]
 }</script>
+
+<style id="workspace-ui-fix">
+/* Workspace header: keep the report title readable instead of squeezing it beside the toolbar. */
+.head{min-width:0;}
+.headIntro{min-width:0;}
+.headIntro h2{font-size:clamp(24px,2.6vw,30px);line-height:1.12;letter-spacing:-.035em;max-width:none;text-wrap:balance;}
+.headIntro p{max-width:760px;}
+@media (max-width:1100px){
+  .head{flex-direction:column;align-items:stretch;gap:14px;}
+  .headIntro{width:100%;}
+  .tools{width:100%;max-width:none;}
+  .controlRow{width:100%;}
+  .controlRow .currencyControl{flex:1 1 220px;}
+  .headIntro h2{font-size:28px;}
+}
+@media (max-width:700px){
+  .head{padding:14px;}
+  .headIntro h2{font-size:25px;line-height:1.08;}
+  .headIntro p{font-size:11px;}
+  .workspaceMeta{margin-top:8px;}
+  .controlRow{display:grid;grid-template-columns:1fr;gap:8px;}
+  .controlRow .currencyControl{width:100%;}
+  .controlRow .currencyControl select{max-width:none;flex:1;}
+}
+</style>
 </head>
 <body>
 <nav class="nav">
@@ -186,7 +211,7 @@
 <div class="head">
 <div class="headIntro">
 <div class="kicker">REPORT WORKSPACE</div>
-<h2>Build your client report.</h2>
+<h2>Build a client-ready report</h2>
 <p id="fileStatus">No report loaded — upload a CSV or use Demo Data to preview the report.</p><div class="workspaceMeta"><span class="metaPill" id="dataStatePill">WAITING FOR DATA</span><span class="metaPill" id="clientStatePill">NO CLIENT SELECTED</span></div>
 </div>
 <div class="tools">
