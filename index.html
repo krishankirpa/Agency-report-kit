@@ -345,6 +345,73 @@ body{overflow-x:hidden}
 }
 
 </style>
+
+<style id="template-theme-logo-fix">
+/* Template-specific live-preview themes: same data, distinct visual systems. */
+.templatePreviewDialog{
+  --tp-head-1:#171a2b;
+  --tp-head-2:#4f46e5;
+  --tp-accent:#5546dc;
+  --tp-soft:#eef2ff;
+  --tp-text:#101828;
+  --tp-border:#e4e7ec;
+  --tp-bg:#f7f8fb;
+  background:var(--tp-bg);
+}
+.templatePreviewDialog[data-template="executive"]{--tp-head-1:#241b54;--tp-head-2:#7657ff;--tp-accent:#6d5ce7;--tp-soft:#efebff;--tp-bg:#f8f7ff}
+.templatePreviewDialog[data-template="multiplatform"]{--tp-head-1:#073b4c;--tp-head-2:#0ea5a8;--tp-accent:#0891b2;--tp-soft:#e6fbff;--tp-bg:#f3fbfc}
+.templatePreviewDialog[data-template="leadgen"]{--tp-head-1:#0d402d;--tp-head-2:#1aa56f;--tp-accent:#159a67;--tp-soft:#e8f8f0;--tp-bg:#f4fbf7}
+.templatePreviewDialog[data-template="ecommerce"]{--tp-head-1:#421f35;--tp-head-2:#e7832e;--tp-accent:#d86b16;--tp-soft:#fff1e4;--tp-bg:#fff8f2}
+.templatePreviewDialog[data-template="deepdive"]{--tp-head-1:#27134f;--tp-head-2:#9b5de5;--tp-accent:#8b5cf6;--tp-soft:#f1eafe;--tp-bg:#faf7ff}
+.templatePreviewDialog .templatePreviewBody{background:var(--tp-bg)}
+.templatePreviewDialog .tpHead{background:linear-gradient(135deg,var(--tp-head-1),var(--tp-head-2));border:1px solid rgba(255,255,255,.16);box-shadow:0 10px 26px color-mix(in srgb,var(--tp-accent) 16%,transparent)}
+.templatePreviewDialog .tpKpi strong{color:var(--tp-accent)}
+.templatePreviewDialog .tpPanel{border-color:var(--tp-border);box-shadow:0 3px 14px rgba(16,24,40,.035)}
+.templatePreviewDialog .tpPanel h4{color:var(--tp-accent)}
+.templatePreviewDialog .tpItem{border-color:color-mix(in srgb,var(--tp-accent) 18%,#eef0f3);background:rgba(255,255,255,.86)}
+.templatePreviewDialog .tpItem:hover{border-color:color-mix(in srgb,var(--tp-accent) 40%,#eef0f3);background:#fff}
+.templatePreviewDialog .tpTag{background:var(--tp-soft);color:var(--tp-accent)}
+.templatePreviewDialog .tpTable th{color:var(--tp-accent)}
+.templatePreviewDialog .templatePreviewAction.primary{background:var(--tp-accent);border-color:var(--tp-accent)}
+.templatePreviewDialog[data-template="multiplatform"] .tpCols{grid-template-columns:.9fr 1.1fr}
+.templatePreviewDialog[data-template="leadgen"] .tpCols{grid-template-columns:1fr 1fr}
+.templatePreviewDialog[data-template="leadgen"] .tpCols .tpGrid4{grid-template-columns:1fr 1fr}
+.templatePreviewDialog[data-template="ecommerce"] .tpCols{grid-template-columns:1fr 1fr}
+.templatePreviewDialog[data-template="ecommerce"] .tpCols .tpGrid4{grid-template-columns:1fr 1fr}
+.templatePreviewDialog[data-template="deepdive"] .tpCols{grid-template-columns:1.32fr .68fr}
+.templatePreviewDialog[data-template="multiplatform"] .tpHead .tpTitle:before{content:"CHANNEL MIX · "}
+.templatePreviewDialog[data-template="leadgen"] .tpHead .tpTitle:before{content:"ACQUISITION · "}
+.templatePreviewDialog[data-template="ecommerce"] .tpHead .tpTitle:before{content:"PROFITABILITY · "}
+.templatePreviewDialog[data-template="deepdive"] .tpHead .tpTitle:before{content:"DIAGNOSTICS · "}
+.templatePreviewDialog[data-template="multiplatform"] .tpHead .tpTitle:before,
+.templatePreviewDialog[data-template="leadgen"] .tpHead .tpTitle:before,
+.templatePreviewDialog[data-template="ecommerce"] .tpHead .tpTitle:before,
+.templatePreviewDialog[data-template="deepdive"] .tpHead .tpTitle:before{font-size:.45em;letter-spacing:.12em;opacity:.72;display:block;margin-bottom:3px;font-weight:800}
+
+/* Distinct template cards so users can see the theme before opening a preview. */
+.templateCard[data-template="executive"].active{border-color:#6d5ce7;background:#f8f7ff}
+.templateCard[data-template="multiplatform"].active{border-color:#0891b2;background:#f1fbfd}
+.templateCard[data-template="leadgen"].active{border-color:#159a67;background:#f1fbf6}
+.templateCard[data-template="ecommerce"].active{border-color:#d86b16;background:#fff7ef}
+.templateCard[data-template="deepdive"].active{border-color:#8b5cf6;background:#faf7ff}
+.templateCard[data-template="multiplatform"] .templateUse{color:#087f92;background:#e9fbff}
+.templateCard[data-template="leadgen"] .templateUse{color:#0f8a5d;background:#e8f8f0}
+.templateCard[data-template="ecommerce"] .templateUse{color:#c45b0c;background:#fff0e0}
+.templateCard[data-template="deepdive"] .templateUse{color:#7c3aed;background:#f1eafe}
+
+/* Larger brand/logo presentation. */
+.brandingLogoMini{width:82px;height:82px;border-radius:16px}
+.brandingPreviewLogo{width:64px;height:64px;border-radius:14px}
+.printBrandLogo{width:46px;height:46px;border-radius:10px}
+.templatePreviewDialog .tpBrandLogo{width:54px!important;height:54px!important;border-radius:13px!important}
+@media(max-width:760px){
+  .templatePreviewDialog[data-template="multiplatform"] .tpCols,
+  .templatePreviewDialog[data-template="leadgen"] .tpCols,
+  .templatePreviewDialog[data-template="ecommerce"] .tpCols,
+  .templatePreviewDialog[data-template="deepdive"] .tpCols{grid-template-columns:1fr}
+}
+</style>
+
 </head>
 <body>
 <nav class="nav">
@@ -1789,7 +1856,9 @@ function applyTemplate(v){
   selectedTemplate=v||"executive";
   safeStorage.setItem("ark_template",selectedTemplate);
   const sel=document.getElementById("templateSelect");
-  if(sel) sel.value=selectedTemplate;
+  if(sel){ sel.value=selectedTemplate; sel.dataset.template=selectedTemplate; }
+  const previewDialog=document.getElementById("templatePreviewModal")?.querySelector(".templatePreviewDialog");
+  if(previewDialog) previewDialog.dataset.template=selectedTemplate;
   document.querySelectorAll(".templateCard").forEach(card=>{
     const active=card.dataset.template===selectedTemplate;
     card.classList.toggle("active",active);
@@ -1901,8 +1970,10 @@ function showTemplatePreview(){
       left=`<div class="tpPanel"><h4>Campaign detail</h4><table class="tpTable"><thead><tr><th>Campaign</th><th>Spend</th><th>Results</th><th>CPL</th><th>ROAS</th></tr></thead><tbody>${campaignRows||'<tr><td colspan="5">No campaign rows available.</td></tr>'}</tbody></table></div>`;
       right=`<div class="tpPanel"><h4>Scale / watchlist</h4><div class="tpList">${scaleRows||'<div class="tpItem"><strong>No scale signals</strong><span>Load campaign data to generate this section.</span></div>'}</div></div>`;
     }
-    body.innerHTML=`<div class="tpHead"><div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:9px;background:#fff;display:grid;place-items:center;overflow:hidden;color:#5546dc;font-weight:900;flex:0 0 auto">${branding.logoData?`<img src="${branding.logoData}" alt="" style="width:100%;height:100%;object-fit:contain">`:`${esc(initialsForBrand(branding.companyName))}`}</div><div><div class="tpEyebrow">${esc(branding.companyName)} · ${esc(focusTitle)}</div><div class="tpTitle">${esc(templatePreviewTitle())}</div></div></div><div class="tpMeta">${esc(branding.tagline)} · ${esc(period)} · ${esc(currency)} · ${current.length} rows analyzed</div></div><div class="tpGrid4"><div class="tpKpi"><small>Ad Spend</small><strong>${money(m.spend)}</strong><span>${currency}</span></div><div class="tpKpi"><small>Results</small><strong>${m.leads.toLocaleString()}</strong><span>Conversions / leads</span></div><div class="tpKpi"><small>CPL</small><strong>${money(m.cpl)}</strong><span>Blended</span></div><div class="tpKpi"><small>ROAS</small><strong>${roasValue}</strong><span>${esc(roasSource)}</span></div></div><div class="tpCols">${left}${right}</div>${commonRoaBlock}<div class="tpPanel" style="margin-top:14px"><h4>Top campaigns · actual uploaded data</h4><table class="tpTable"><thead><tr><th>Campaign</th><th>Spend</th><th>Results</th><th>CPL</th><th>ROAS</th></tr></thead><tbody>${campaignRows||'<tr><td colspan="5">No campaign rows available.</td></tr>'}</tbody></table></div><div class="tpCols" style="margin-top:14px"><div class="tpPanel"><h4>Next actions</h4><div class="tpList">${actionItems||'<div class="tpItem"><strong>Generate report</strong><span>Your next actions will appear here after analysis.</span></div>'}</div></div><div class="tpPanel"><h4>Template mode</h4><div class="tpSummary">${esc(templatePreviewTitle())} uses the same uploaded dataset but emphasizes a different reporting workflow.</div><div style="margin-top:10px"><span class="tpTag">✓ ${esc(templatePreviewTitle())} active</span></div></div></div><div class="tpFooter">Preview uses the current report data; export/share uses the same dataset. ROAS is never inferred from result counts.</div>`;
+    body.innerHTML=`<div class="tpHead"><div style="display:flex;align-items:center;gap:12px"><div class="tpBrandLogo" style="background:#fff;display:grid;place-items:center;overflow:hidden;color:#5546dc;font-weight:900;flex:0 0 auto">${branding.logoData?`<img src="${branding.logoData}" alt="" style="width:100%;height:100%;object-fit:contain">`:`${esc(initialsForBrand(branding.companyName))}`}</div><div><div class="tpEyebrow">${esc(branding.companyName)} · ${esc(focusTitle)}</div><div class="tpTitle">${esc(templatePreviewTitle())}</div></div></div><div class="tpMeta">${esc(branding.tagline)} · ${esc(period)} · ${esc(currency)} · ${current.length} rows analyzed</div></div><div class="tpGrid4"><div class="tpKpi"><small>Ad Spend</small><strong>${money(m.spend)}</strong><span>${currency}</span></div><div class="tpKpi"><small>Results</small><strong>${m.leads.toLocaleString()}</strong><span>Conversions / leads</span></div><div class="tpKpi"><small>CPL</small><strong>${money(m.cpl)}</strong><span>Blended</span></div><div class="tpKpi"><small>ROAS</small><strong>${roasValue}</strong><span>${esc(roasSource)}</span></div></div><div class="tpCols">${left}${right}</div>${commonRoaBlock}<div class="tpPanel" style="margin-top:14px"><h4>Top campaigns · actual uploaded data</h4><table class="tpTable"><thead><tr><th>Campaign</th><th>Spend</th><th>Results</th><th>CPL</th><th>ROAS</th></tr></thead><tbody>${campaignRows||'<tr><td colspan="5">No campaign rows available.</td></tr>'}</tbody></table></div><div class="tpCols" style="margin-top:14px"><div class="tpPanel"><h4>Next actions</h4><div class="tpList">${actionItems||'<div class="tpItem"><strong>Generate report</strong><span>Your next actions will appear here after analysis.</span></div>'}</div></div><div class="tpPanel"><h4>Template mode</h4><div class="tpSummary">${esc(templatePreviewTitle())} uses the same uploaded dataset but emphasizes a different reporting workflow.</div><div style="margin-top:10px"><span class="tpTag">✓ ${esc(templatePreviewTitle())} active</span></div></div></div><div class="tpFooter">Preview uses the current report data; export/share uses the same dataset. ROAS is never inferred from result counts.</div>`;
   }
+  const dialog=modal.querySelector(".templatePreviewDialog");
+  if(dialog) dialog.dataset.template=selectedTemplate;
   modal.classList.add("open");
   modal.setAttribute("aria-hidden","false");
   document.body.style.overflow="hidden";
